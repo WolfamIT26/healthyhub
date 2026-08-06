@@ -54,9 +54,14 @@ export interface CreateOneTimeTokenInput {
 }
 
 export interface AuthenticationRepository {
+  findAccountById(userAccountId: string): Promise<UserAccountEntity | null>;
   findAccountByNormalizedEmail(normalizedEmail: string): Promise<UserAccountEntity | null>;
   emailExists(normalizedEmail: string): Promise<boolean>;
   createAccount(input: CreateUserAccountInput): Promise<UserAccountEntity>;
+  assignRole(userAccountId: string, role: RoleName, assignedAt: Date): Promise<void>;
+  updatePassword(userAccountId: string, passwordHash: string): Promise<void>;
+  markEmailVerified(userAccountId: string, verifiedAt: Date): Promise<void>;
+  touchLastLogin(userAccountId: string, loggedInAt: Date): Promise<void>;
   setAccountStatus(
     userAccountId: string,
     status: AccountStatus,
@@ -67,10 +72,18 @@ export interface AuthenticationRepository {
   rotateSession(input: RotateSessionInput): Promise<boolean>;
   revokeSession(sessionId: string, reason: string, revokedAt: Date): Promise<void>;
   revokeAllSessions(userAccountId: string, reason: string, revokedAt: Date): Promise<number>;
+  revokeOtherSessions(
+    userAccountId: string,
+    currentSessionId: string,
+    reason: string,
+    revokedAt: Date,
+  ): Promise<number>;
   markRefreshReuse(sessionId: string, compromisedAt: Date): Promise<void>;
   createPasswordReset(input: CreateOneTimeTokenInput): Promise<PasswordResetRequestEntity>;
+  findPasswordReset(tokenReference: string): Promise<PasswordResetRequestEntity | null>;
   consumePasswordReset(tokenReference: string, consumedAt: Date): Promise<boolean>;
   createEmailVerification(input: CreateOneTimeTokenInput): Promise<AccountVerificationEntity>;
+  findEmailVerification(tokenReference: string): Promise<AccountVerificationEntity | null>;
   consumeEmailVerification(tokenReference: string, consumedAt: Date): Promise<boolean>;
   recordLoginAttempt(input: RecordLoginAttemptInput): Promise<LoginAttemptEntity>;
   countFailedLoginAttempts(identifierHash: string, since: Date): Promise<number>;

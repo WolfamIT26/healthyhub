@@ -2,7 +2,7 @@
 
 ## Current Status / Trạng thái hiện tại
 
-`Implementation Complete - Database Verification Blocked`
+`Backend Implementation Complete - Database Integration Verification Blocked`
 
 ## Progress / Tiến độ
 
@@ -13,8 +13,9 @@
 | Task 2 shared contracts | Complete; build/typecheck pass |
 | Repository/data-access foundation | Complete for Prompt 17 |
 | Seed foundation | Complete; unit idempotency contract pass |
-| Data-layer unit tests | 4 files / 8 tests pass |
-| Backend security/runtime/frontend | Not Started |
+| Automated tests | 7 unit files / 19 tests pass; 3 MySQL tests skipped by environment |
+| Backend security/runtime | Complete; database integration verification blocked |
+| Frontend | Out of scope |
 
 ## Blocker / Vướng mắc
 
@@ -22,4 +23,4 @@ Docker daemon không hoạt động (`Cannot connect to the Docker daemon`), nê
 
 ## Last Updated / Cập nhật cuối
 
-2026-08-06 — Prompt 16 Authentication Database, Entities & Shared Contracts.
+2026-08-06 — Prompt 17 Authentication Backend Implementation.

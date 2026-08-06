@@ -4,6 +4,8 @@
 
 ### Added / Đã thêm
 
+- Triển khai Authentication Backend V1 (Prompt 17): NestJS controller/service/DTO/guards, Argon2id, JWT, rotating refresh token, CSRF, RBAC, account lock, audit và unit tests; database integration verification đang bị chặn do MySQL/Docker không khả dụng.
+
 - Thêm Authentication/User identity TypeORM migrations, 9 entities, repository/data-access foundation và RBAC seed.
 - Thêm Authentication V1 shared TypeScript contracts và 8 data-layer unit tests.
 

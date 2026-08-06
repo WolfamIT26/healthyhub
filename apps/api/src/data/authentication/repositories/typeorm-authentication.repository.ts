@@ -40,6 +40,10 @@ export class TypeOrmAuthenticationRepository implements AuthenticationRepository
     this.verifications = dataSource.getRepository(AccountVerificationEntity);
   }
 
+  findAccountById(userAccountId: string): Promise<UserAccountEntity | null> {
+    return this.users.findOne({ where: { id: userAccountId } });
+  }
+
   findAccountByNormalizedEmail(normalizedEmail: string): Promise<UserAccountEntity | null> {
     return this.users
       .createQueryBuilder('user')
@@ -65,6 +69,39 @@ export class TypeOrmAuthenticationRepository implements AuthenticationRepository
         permissionsVersion: 1,
       }),
     );
+  }
+
+  async assignRole(userAccountId: string, role: RoleName, assignedAt: Date): Promise<void> {
+    const roleEntity = await this.dataSource.getRepository(RoleEntity).findOne({
+      where: { roleCode: role, roleStatus: 'active' },
+    });
+    if (!roleEntity) throw new Error(`Role seed missing: ${role}`);
+    const assignments = this.dataSource.getRepository(UserRoleAssignmentEntity);
+    await assignments.save(
+      assignments.create({
+        userAccountId,
+        roleId: roleEntity.id,
+        assignedAt,
+        expiresAt: null,
+        assignmentStatus: 'active',
+      }),
+    );
+  }
+
+  async updatePassword(userAccountId: string, passwordHash: string): Promise<void> {
+    await this.users.update(userAccountId, { passwordHash });
+  }
+
+  async markEmailVerified(userAccountId: string, verifiedAt: Date): Promise<void> {
+    await this.users.update(userAccountId, {
+      emailVerifiedAt: verifiedAt,
+      userStatus: 'active',
+      lockedUntil: null,
+    });
+  }
+
+  async touchLastLogin(userAccountId: string, loggedInAt: Date): Promise<void> {
+    await this.users.update(userAccountId, { lastLoginAt: loggedInAt });
   }
 
   async setAccountStatus(
@@ -142,6 +179,23 @@ export class TypeOrmAuthenticationRepository implements AuthenticationRepository
     return result.affected ?? 0;
   }
 
+  async revokeOtherSessions(
+    userAccountId: string,
+    currentSessionId: string,
+    reason: string,
+    revokedAt: Date,
+  ): Promise<number> {
+    const result = await this.sessions
+      .createQueryBuilder()
+      .update(AuthenticationSessionEntity)
+      .set({ sessionStatus: 'revoked', revokedReason: reason, revokedAt })
+      .where('user_account_id = :userAccountId', { userAccountId })
+      .andWhere('id != :currentSessionId', { currentSessionId })
+      .andWhere('session_status = :status', { status: 'active' })
+      .execute();
+    return result.affected ?? 0;
+  }
+
   async markRefreshReuse(sessionId: string, compromisedAt: Date): Promise<void> {
     await this.sessions.update(sessionId, {
       sessionStatus: 'compromised',
@@ -162,6 +216,10 @@ export class TypeOrmAuthenticationRepository implements AuthenticationRepository
         usedAt: null,
       }),
     );
+  }
+
+  findPasswordReset(tokenReference: string): Promise<PasswordResetRequestEntity | null> {
+    return this.resets.findOne({ where: { tokenReference } });
   }
 
   async consumePasswordReset(tokenReference: string, consumedAt: Date): Promise<boolean> {
@@ -187,6 +245,10 @@ export class TypeOrmAuthenticationRepository implements AuthenticationRepository
         verifiedAt: null,
       }),
     );
+  }
+
+  findEmailVerification(tokenReference: string): Promise<AccountVerificationEntity | null> {
+    return this.verifications.findOne({ where: { tokenReference } });
   }
 
   async consumeEmailVerification(tokenReference: string, consumedAt: Date): Promise<boolean> {

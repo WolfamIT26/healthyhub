@@ -1044,3 +1044,6 @@ tests/e2e/.gitkeep
 tests/integration/.gitkeep
 tests/performance/.gitkeep
 ```
+# Authentication Backend V1 — Prompt 17
+
+Đã triển khai backend Authentication V1 trong `apps/api`: 10 operation theo OpenAPI, Argon2id, JWT 15 phút, refresh opaque rotation/reuse detection, cookie/CSRF cho web, header cho mobile, lockout, RBAC guard, reset/change password, session revocation, audit và notification gateway stub. Unit/typecheck/lint/build hoàn tất; xác minh tích hợp MySQL bị chặn bởi môi trường.

@@ -31,3 +31,14 @@ Enumeration response/timing review, brute-force per IP+identifier, token replay/
 `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:integration`, project E2E command once introduced, `npm run openapi:validate`, `npm run docs:check`, `npm run secrets:check`, `npm run audit:deps`, and `git diff --check`.
 
 No test/code was created in this documentation phase.
+# Authentication Testing
+
+## Automated verification
+
+- 7 unit test files / 19 tests pass, bao phủ Argon2id hash/verify, password policy, email normalization, keyed identifier digest, CSRF signing/tamper detection, JWT issuer/audience/signature, generic recovery, hash-only reset token, refresh reuse và logout revoke.
+- Entity, repository, seed và migration construction tests từ Prompt 16 tiếp tục chạy.
+- Typecheck, lint và Nest build được chạy bằng Node 20.
+
+## Blocked integration verification
+
+MySQL/Docker không khả dụng trong môi trường hiện tại, nên 3 database integration tests bị skip và chưa thể xác nhận migration up/down, unique/FK/transaction behavior và HTTP integration với MySQL 8. Đây là blocker xác minh tích hợp, không phải blocker code backend.

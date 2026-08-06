@@ -30,6 +30,21 @@ export interface HealthyHubEnvironment {
     rateLimitLimit: number;
     redactionKeys: string[];
   };
+  authentication: {
+    jwtSecret: string;
+    jwtIssuer: string;
+    jwtAudience: string;
+    csrfSecret: string;
+    identifierHmacSecret: string;
+    accessTokenTtlSeconds: number;
+    refreshTokenTtlSeconds: number;
+    resetTokenTtlSeconds: number;
+    verificationTokenTtlSeconds: number;
+    argonMemoryCostKib: number;
+    argonTimeCost: number;
+    argonParallelism: number;
+    allowedOrigins: string[];
+  };
   database: {
     host: string;
     port: number;
@@ -63,6 +78,48 @@ export function getValidatedEnvironment(source: NodeJS.ProcessEnv): HealthyHubEn
       rateLimitTtlMs: parsePositiveNumber(source.RATE_LIMIT_TTL_MS, 60000, 'RATE_LIMIT_TTL_MS'),
       rateLimitLimit: parsePositiveNumber(source.RATE_LIMIT_LIMIT, 100, 'RATE_LIMIT_LIMIT'),
       redactionKeys: parseCsv(source.LOG_REDACTION_KEYS ?? SENSITIVE_LOG_KEYS.join(',')),
+    },
+    authentication: {
+      jwtSecret: requireValue(source.AUTH_JWT_SECRET ?? source.JWT_SECRET, 'AUTH_JWT_SECRET'),
+      jwtIssuer: source.AUTH_JWT_ISSUER ?? 'healthyhub-api',
+      jwtAudience: source.AUTH_JWT_AUDIENCE ?? 'healthyhub-clients',
+      csrfSecret: requireValue(source.AUTH_CSRF_SECRET, 'AUTH_CSRF_SECRET'),
+      identifierHmacSecret: requireValue(
+        source.AUTH_IDENTIFIER_HMAC_SECRET,
+        'AUTH_IDENTIFIER_HMAC_SECRET',
+      ),
+      accessTokenTtlSeconds: parsePositiveNumber(
+        source.AUTH_ACCESS_TOKEN_TTL_SECONDS,
+        900,
+        'AUTH_ACCESS_TOKEN_TTL_SECONDS',
+      ),
+      refreshTokenTtlSeconds: parsePositiveNumber(
+        source.AUTH_REFRESH_TOKEN_TTL_SECONDS,
+        2_592_000,
+        'AUTH_REFRESH_TOKEN_TTL_SECONDS',
+      ),
+      resetTokenTtlSeconds: parsePositiveNumber(
+        source.AUTH_RESET_TOKEN_TTL_SECONDS,
+        900,
+        'AUTH_RESET_TOKEN_TTL_SECONDS',
+      ),
+      verificationTokenTtlSeconds: parsePositiveNumber(
+        source.AUTH_VERIFICATION_TOKEN_TTL_SECONDS,
+        86_400,
+        'AUTH_VERIFICATION_TOKEN_TTL_SECONDS',
+      ),
+      argonMemoryCostKib: parsePositiveNumber(
+        source.AUTH_ARGON_MEMORY_COST_KIB,
+        19_456,
+        'AUTH_ARGON_MEMORY_COST_KIB',
+      ),
+      argonTimeCost: parsePositiveNumber(source.AUTH_ARGON_TIME_COST, 2, 'AUTH_ARGON_TIME_COST'),
+      argonParallelism: parsePositiveNumber(
+        source.AUTH_ARGON_PARALLELISM,
+        1,
+        'AUTH_ARGON_PARALLELISM',
+      ),
+      allowedOrigins: parseCsv(source.AUTH_ALLOWED_ORIGINS ?? source.CORS_ORIGINS ?? ''),
     },
     database: {
       host: requireValue(source.MYSQL_HOST, 'MYSQL_HOST'),
@@ -142,7 +199,13 @@ function validateProductionSafety(env: HealthyHubEnvironment): void {
   }
 
   const unsafeFragments = ['change_me', 'replace_with'];
-  const values = [env.database.host, env.database.password];
+  const values = [
+    env.database.host,
+    env.database.password,
+    env.authentication.jwtSecret,
+    env.authentication.csrfSecret,
+    env.authentication.identifierHmacSecret,
+  ];
 
   for (const value of values) {
     if (unsafeFragments.some((fragment) => value.includes(fragment))) {

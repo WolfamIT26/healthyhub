@@ -28,6 +28,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       exception instanceof HttpException ? exception.getResponse() : undefined;
     const duration = request.startedAt ? Date.now() - request.startedAt : undefined;
     const message = this.getClientMessage(exceptionResponse, statusCode);
+    const typed = this.getTypedError(exceptionResponse);
 
     const envelope: ApiErrorEnvelope = {
       success: false,
@@ -35,11 +36,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message,
       data: null,
       error: {
-        code: this.getErrorCode(statusCode),
-        category: this.getErrorCategory(statusCode),
+        code: typed?.code ?? this.getErrorCode(statusCode),
+        category: typed?.category ?? this.getErrorCategory(statusCode),
         message,
         validationErrors: this.getValidationErrors(exceptionResponse),
-        retryable: statusCode >= 500 || statusCode === HttpStatus.TOO_MANY_REQUESTS,
+        retryable:
+          typed?.retryable ??
+          (statusCode >= 500 || statusCode === HttpStatus.TOO_MANY_REQUESTS),
         details: this.env.app.env === 'production' ? undefined : this.getSafeDetails(exception),
       },
       metadata: {
@@ -69,6 +72,19 @@ export class HttpExceptionFilter implements ExceptionFilter {
     );
 
     response.status(statusCode).json(envelope);
+  }
+
+  private getTypedError(exceptionResponse: unknown):
+    | { code: string; category: ErrorCategory; retryable?: boolean }
+    | undefined {
+    if (!exceptionResponse || typeof exceptionResponse !== 'object') return undefined;
+    const value = exceptionResponse as Record<string, unknown>;
+    if (typeof value.code !== 'string' || typeof value.category !== 'string') return undefined;
+    return {
+      code: value.code,
+      category: value.category as ErrorCategory,
+      retryable: typeof value.retryable === 'boolean' ? value.retryable : undefined,
+    };
   }
 
   private getClientMessage(exceptionResponse: unknown, statusCode: number): string {

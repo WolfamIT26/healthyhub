@@ -28,4 +28,18 @@ JWT xác định identity, session và token metadata; User domain cung cấp ac
 
 ## Data-access Foundation / Nền data-access đã triển khai
 
-`AuthenticationRepository` và `TypeOrmAuthenticationRepository` cung cấp account lookup/create/status, session create/lookup theo public ID/atomic generation rotation/revoke/reuse, one-time reset/verification create-consume, login-attempt count/record và role/effective-permission reads. Session hash chỉ được explicit-select cùng public ID để Prompt 17 kiểm tra constant-time trước atomic generation update; không có lookup trực tiếp bằng raw/hash token. Transaction orchestration tiếp tục dùng `TransactionRunner`; chưa có AuthService/controller/module runtime.
+`AuthenticationRepository` và `TypeOrmAuthenticationRepository` cung cấp account lookup/create/status/password/email verification, role assignment, session create/lookup/atomic generation rotation/revoke/reuse, one-time reset/verification create-consume, login-attempt count/record và effective-permission reads. Runtime service/controller/module Prompt 17 đã được nối với data-access này. Các transaction đa bảng sẽ được xác minh và hoàn thiện cùng MySQL integration; refresh rotation hiện dùng conditional atomic update theo generation.
+# Authentication Backend V1
+
+NestJS runtime nằm tại `apps/api/src/presentation/authentication` và triển khai đúng 10 operationId Authentication trong OpenAPI hiện hữu. Các capability nội bộ bổ sung gồm logout-all, revoke-other-sessions khi đổi mật khẩu và revoke-all khi reset mật khẩu; không thêm endpoint ngoài OpenAPI.
+
+## Security baseline
+
+- Argon2id: 19 MiB, time cost 2, parallelism 1; password 12–128 Unicode và denylist cục bộ.
+- Access JWT 15 phút với `sub`, `sid`, `roles`, `permissionsVersion`, issuer/audience.
+- Refresh opaque 256-bit, chỉ lưu SHA-256, rotation theo generation và phát hiện reuse.
+- Web dùng `__Host-hh_refresh` HttpOnly/Secure/SameSite=Lax và signed double-submit CSRF; mobile dùng `X-Refresh-Token`.
+- Login lock: 5 lần thất bại trong 15 phút, khóa 15 phút; identifier/IP được HMAC trước khi lưu.
+- Forgot/resend luôn trả accepted để chống account enumeration.
+
+Notification hiện là local no-op adapter qua gateway interface. Provider email thật, distributed rate limiter và signing-key rotation là công việc vận hành tiếp theo, không làm thay đổi contract V1.

@@ -19,3 +19,11 @@
 ### Fixed / Sửa lỗi
 
 - Đổi Vitest config API sang `.mts` để test runner tương thích dependency ESM hiện tại; không đổi dependency.
+# Change Log
+
+## 2026-08-06 — Prompt 17
+
+- Implemented Authentication NestJS controller, service, DTOs, guards, decorators and token/crypto layers.
+- Added secure cookie/mobile refresh delivery, CSRF validation, RBAC foundation, account lock and audit events.
+- Added notification gateway adapter and backend security unit tests.
+- OpenAPI, `.spec`, frontend, Redis and Kafka remain unchanged.

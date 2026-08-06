@@ -50,3 +50,14 @@
 - [ ] Backend runtime/frontend/tests còn lại được triển khai theo plan.
 - [ ] Security review hoàn tất.
 - [ ] Acceptance đủ và module lock.
+# Prompt 17 Checklist
+
+- [x] 10 Authentication operationId được nối vào NestJS controller
+- [x] Argon2id, JWT, opaque refresh rotation/reuse detection
+- [x] Web cookie, mobile header, CSRF và exact-origin validation
+- [x] Generic login/forgot/resend behavior và account lock
+- [x] Access guard, roles decorator/guard, current session
+- [x] Password reset/change và session revocation
+- [x] Structured audit events và notification gateway stub
+- [x] Unit test, typecheck, lint, build
+- [ ] MySQL migration + HTTP integration verification (environment blocked)
