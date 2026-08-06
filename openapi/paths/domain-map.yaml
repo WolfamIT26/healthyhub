@@ -1,0 +1,1046 @@
+generatedAt: "2026-08-06"
+source: ".spec/api/domains"
+apiPrefix: "/api/v1"
+domainCount: 23
+endpointCount: 194
+pathCount: 167
+domains:
+  - name: Authentication
+    endpointCount: 10
+    paths:
+      - method: POST
+        uri: /api/v1/auth/register
+        operationId: postAuthRegister
+        auth: "Public"
+        permission: "Public"
+      - method: POST
+        uri: /api/v1/auth/login
+        operationId: postAuthLogin
+        auth: "Public"
+        permission: "Public"
+      - method: POST
+        uri: /api/v1/auth/refresh
+        operationId: postAuthRefresh
+        auth: "Refresh token"
+        permission: "Session owner"
+      - method: POST
+        uri: /api/v1/auth/logout
+        operationId: postAuthLogout
+        auth: "JWT"
+        permission: "Session owner"
+      - method: POST
+        uri: /api/v1/auth/verify-email
+        operationId: postAuthVerifyEmail
+        auth: "Verification token"
+        permission: "Token owner"
+      - method: POST
+        uri: /api/v1/auth/resend-verification
+        operationId: postAuthResendVerification
+        auth: "Optional JWT hoặc email proof"
+        permission: "Account owner"
+      - method: POST
+        uri: /api/v1/auth/forgot-password
+        operationId: postAuthForgotPassword
+        auth: "Public"
+        permission: "Public"
+      - method: POST
+        uri: /api/v1/auth/reset-password
+        operationId: postAuthResetPassword
+        auth: "Reset token"
+        permission: "Token owner"
+      - method: POST
+        uri: /api/v1/auth/change-password
+        operationId: postAuthChangePassword
+        auth: "JWT"
+        permission: "Account owner"
+      - method: GET
+        uri: /api/v1/auth/session
+        operationId: getAuthSession
+        auth: "JWT"
+        permission: "Session owner"
+  - name: User
+    endpointCount: 9
+    paths:
+      - method: GET
+        uri: /api/v1/admin/users
+        operationId: getAdminUsers
+        auth: "Staff JWT"
+        permission: "users:read"
+      - method: POST
+        uri: /api/v1/admin/users
+        operationId: postAdminUsers
+        auth: "Admin JWT"
+        permission: "users:manage"
+      - method: GET
+        uri: /api/v1/admin/users/{userId}
+        operationId: getAdminUsersUserId
+        auth: "Staff JWT"
+        permission: "users:read"
+      - method: PATCH
+        uri: /api/v1/admin/users/{userId}
+        operationId: patchAdminUsersUserId
+        auth: "Admin JWT"
+        permission: "users:manage"
+      - method: PATCH
+        uri: /api/v1/admin/users/{userId}/status
+        operationId: patchAdminUsersUserIdStatus
+        auth: "Admin JWT"
+        permission: "users:manage"
+      - method: GET
+        uri: /api/v1/admin/users/{userId}/permissions
+        operationId: getAdminUsersUserIdPermissions
+        auth: "Admin JWT"
+        permission: "users:read"
+      - method: PATCH
+        uri: /api/v1/admin/users/{userId}/roles
+        operationId: patchAdminUsersUserIdRoles
+        auth: "Admin JWT"
+        permission: "users:manage"
+      - method: GET
+        uri: /api/v1/admin/roles
+        operationId: getAdminRoles
+        auth: "Staff JWT"
+        permission: "users:read"
+      - method: GET
+        uri: /api/v1/admin/permissions
+        operationId: getAdminPermissions
+        auth: "Admin JWT"
+        permission: "users:read"
+  - name: Customer
+    endpointCount: 10
+    paths:
+      - method: GET
+        uri: /api/v1/me/profile
+        operationId: getMeProfile
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: PATCH
+        uri: /api/v1/me/profile
+        operationId: patchMeProfile
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: GET
+        uri: /api/v1/me/addresses
+        operationId: getMeAddresses
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: POST
+        uri: /api/v1/me/addresses
+        operationId: postMeAddresses
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: PATCH
+        uri: /api/v1/me/addresses/{addressId}
+        operationId: patchMeAddressesAddressId
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: DELETE
+        uri: /api/v1/me/addresses/{addressId}
+        operationId: deleteMeAddressesAddressId
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: GET
+        uri: /api/v1/admin/customers
+        operationId: getAdminCustomers
+        auth: "Staff JWT"
+        permission: "customers:read"
+      - method: GET
+        uri: /api/v1/admin/customers/{customerId}
+        operationId: getAdminCustomersCustomerId
+        auth: "Staff JWT"
+        permission: "customers:read"
+      - method: PATCH
+        uri: /api/v1/admin/customers/{customerId}
+        operationId: patchAdminCustomersCustomerId
+        auth: "Manager/Admin JWT"
+        permission: "customers:manage"
+      - method: PATCH
+        uri: /api/v1/admin/customers/{customerId}/segment
+        operationId: patchAdminCustomersCustomerIdSegment
+        auth: "Manager/Admin JWT"
+        permission: "customers:manage"
+  - name: Staff
+    endpointCount: 7
+    paths:
+      - method: GET
+        uri: /api/v1/admin/staff
+        operationId: getAdminStaff
+        auth: "Admin JWT"
+        permission: "staff:read"
+      - method: POST
+        uri: /api/v1/admin/staff
+        operationId: postAdminStaff
+        auth: "Admin JWT"
+        permission: "staff:manage"
+      - method: GET
+        uri: /api/v1/admin/staff/{staffId}
+        operationId: getAdminStaffStaffId
+        auth: "Admin JWT"
+        permission: "staff:read"
+      - method: PATCH
+        uri: /api/v1/admin/staff/{staffId}
+        operationId: patchAdminStaffStaffId
+        auth: "Admin JWT"
+        permission: "staff:manage"
+      - method: PATCH
+        uri: /api/v1/admin/staff/{staffId}/status
+        operationId: patchAdminStaffStaffIdStatus
+        auth: "Admin JWT"
+        permission: "staff:manage"
+      - method: PATCH
+        uri: /api/v1/admin/staff/{staffId}/roles
+        operationId: patchAdminStaffStaffIdRoles
+        auth: "Admin JWT"
+        permission: "staff:manage"
+      - method: GET
+        uri: /api/v1/admin/staff/{staffId}/activity-summary
+        operationId: getAdminStaffStaffIdActivitySummary
+        auth: "Manager/Admin JWT"
+        permission: "staff:read"
+  - name: Product
+    endpointCount: 11
+    paths:
+      - method: GET
+        uri: /api/v1/public/products
+        operationId: getPublicProducts
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/public/products/{productId}
+        operationId: getPublicProductsProductId
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/public/products/options
+        operationId: getPublicProductsOptions
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/admin/products
+        operationId: getAdminProducts
+        auth: "Staff JWT"
+        permission: "products:read"
+      - method: POST
+        uri: /api/v1/admin/products
+        operationId: postAdminProducts
+        auth: "Staff/Manager JWT"
+        permission: "products:manage"
+      - method: GET
+        uri: /api/v1/admin/products/{productId}
+        operationId: getAdminProductsProductId
+        auth: "Staff JWT"
+        permission: "products:read"
+      - method: PATCH
+        uri: /api/v1/admin/products/{productId}
+        operationId: patchAdminProductsProductId
+        auth: "Staff/Manager JWT"
+        permission: "products:manage"
+      - method: PATCH
+        uri: /api/v1/admin/products/{productId}/status
+        operationId: patchAdminProductsProductIdStatus
+        auth: "Manager/Admin JWT"
+        permission: "products:manage"
+      - method: POST
+        uri: /api/v1/admin/products/{productId}/media
+        operationId: postAdminProductsProductIdMedia
+        auth: "Staff/Manager JWT"
+        permission: "products:manage"
+      - method: POST
+        uri: /api/v1/admin/products/imports
+        operationId: postAdminProductsImports
+        auth: "Manager/Admin JWT"
+        permission: "products:manage"
+      - method: POST
+        uri: /api/v1/admin/products/exports
+        operationId: postAdminProductsExports
+        auth: "Manager/Admin JWT"
+        permission: "products:read"
+  - name: Category
+    endpointCount: 9
+    paths:
+      - method: GET
+        uri: /api/v1/public/categories
+        operationId: getPublicCategories
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/public/categories/tree
+        operationId: getPublicCategoriesTree
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/public/categories/{categoryId}
+        operationId: getPublicCategoriesCategoryId
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/admin/categories
+        operationId: getAdminCategories
+        auth: "Staff JWT"
+        permission: "categories:read"
+      - method: POST
+        uri: /api/v1/admin/categories
+        operationId: postAdminCategories
+        auth: "Manager/Admin JWT"
+        permission: "categories:manage"
+      - method: GET
+        uri: /api/v1/admin/categories/{categoryId}
+        operationId: getAdminCategoriesCategoryId
+        auth: "Staff JWT"
+        permission: "categories:read"
+      - method: PATCH
+        uri: /api/v1/admin/categories/{categoryId}
+        operationId: patchAdminCategoriesCategoryId
+        auth: "Manager/Admin JWT"
+        permission: "categories:manage"
+      - method: PATCH
+        uri: /api/v1/admin/categories/{categoryId}/status
+        operationId: patchAdminCategoriesCategoryIdStatus
+        auth: "Manager/Admin JWT"
+        permission: "categories:manage"
+      - method: PATCH
+        uri: /api/v1/admin/categories/reorder
+        operationId: patchAdminCategoriesReorder
+        auth: "Manager/Admin JWT"
+        permission: "categories:manage"
+  - name: Brand
+    endpointCount: 8
+    paths:
+      - method: GET
+        uri: /api/v1/public/brands
+        operationId: getPublicBrands
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/public/brands/{brandId}
+        operationId: getPublicBrandsBrandId
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/admin/brands
+        operationId: getAdminBrands
+        auth: "Staff JWT"
+        permission: "brands:read"
+      - method: POST
+        uri: /api/v1/admin/brands
+        operationId: postAdminBrands
+        auth: "Manager/Admin JWT"
+        permission: "brands:manage"
+      - method: GET
+        uri: /api/v1/admin/brands/{brandId}
+        operationId: getAdminBrandsBrandId
+        auth: "Staff JWT"
+        permission: "brands:read"
+      - method: PATCH
+        uri: /api/v1/admin/brands/{brandId}
+        operationId: patchAdminBrandsBrandId
+        auth: "Manager/Admin JWT"
+        permission: "brands:manage"
+      - method: PATCH
+        uri: /api/v1/admin/brands/{brandId}/status
+        operationId: patchAdminBrandsBrandIdStatus
+        auth: "Manager/Admin JWT"
+        permission: "brands:manage"
+      - method: POST
+        uri: /api/v1/admin/brands/{brandId}/media
+        operationId: postAdminBrandsBrandIdMedia
+        auth: "Manager/Admin JWT"
+        permission: "brands:manage"
+  - name: Inventory
+    endpointCount: 6
+    paths:
+      - method: GET
+        uri: /api/v1/admin/inventory
+        operationId: getAdminInventory
+        auth: "Staff JWT"
+        permission: "inventory:read"
+      - method: GET
+        uri: /api/v1/admin/inventory/{productId}
+        operationId: getAdminInventoryProductId
+        auth: "Staff JWT"
+        permission: "inventory:read"
+      - method: POST
+        uri: /api/v1/admin/inventory/adjustments
+        operationId: postAdminInventoryAdjustments
+        auth: "Manager/Admin JWT"
+        permission: "inventory:adjust"
+      - method: GET
+        uri: /api/v1/admin/inventory/movements
+        operationId: getAdminInventoryMovements
+        auth: "Staff JWT"
+        permission: "inventory:read"
+      - method: GET
+        uri: /api/v1/admin/inventory/alerts
+        operationId: getAdminInventoryAlerts
+        auth: "Staff JWT"
+        permission: "inventory:read"
+      - method: POST
+        uri: /api/v1/admin/inventory/exports
+        operationId: postAdminInventoryExports
+        auth: "Manager/Admin JWT"
+        permission: "inventory:read"
+  - name: Cart
+    endpointCount: 8
+    paths:
+      - method: GET
+        uri: /api/v1/cart
+        operationId: getCart
+        auth: "Guest token hoặc Customer JWT"
+        permission: "Cart owner"
+      - method: POST
+        uri: /api/v1/cart/items
+        operationId: postCartItems
+        auth: "Guest token hoặc Customer JWT"
+        permission: "Cart owner"
+      - method: PATCH
+        uri: /api/v1/cart/items/{cartItemId}
+        operationId: patchCartItemsCartItemId
+        auth: "Guest token hoặc Customer JWT"
+        permission: "Cart owner"
+      - method: DELETE
+        uri: /api/v1/cart/items/{cartItemId}
+        operationId: deleteCartItemsCartItemId
+        auth: "Guest token hoặc Customer JWT"
+        permission: "Cart owner"
+      - method: POST
+        uri: /api/v1/cart/apply-coupon
+        operationId: postCartApplyCoupon
+        auth: "Guest token hoặc Customer JWT"
+        permission: "Cart owner"
+      - method: DELETE
+        uri: /api/v1/cart/coupon
+        operationId: deleteCartCoupon
+        auth: "Guest token hoặc Customer JWT"
+        permission: "Cart owner"
+      - method: POST
+        uri: /api/v1/cart/validate
+        operationId: postCartValidate
+        auth: "Guest token hoặc Customer JWT"
+        permission: "Cart owner"
+      - method: POST
+        uri: /api/v1/cart/merge
+        operationId: postCartMerge
+        auth: "Customer JWT"
+        permission: "Cart owner"
+  - name: Wishlist
+    endpointCount: 4
+    paths:
+      - method: GET
+        uri: /api/v1/me/wishlist
+        operationId: getMeWishlist
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: POST
+        uri: /api/v1/me/wishlist/items
+        operationId: postMeWishlistItems
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: DELETE
+        uri: /api/v1/me/wishlist/items/{wishlistItemId}
+        operationId: deleteMeWishlistItemsWishlistItemId
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: DELETE
+        uri: /api/v1/me/wishlist/products/{productId}
+        operationId: deleteMeWishlistProductsProductId
+        auth: "Customer JWT"
+        permission: "Owner"
+  - name: Order
+    endpointCount: 10
+    paths:
+      - method: POST
+        uri: /api/v1/orders
+        operationId: postOrders
+        auth: "Guest token hoặc Customer JWT"
+        permission: "Cart owner"
+      - method: GET
+        uri: /api/v1/me/orders
+        operationId: getMeOrders
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: GET
+        uri: /api/v1/me/orders/{orderId}
+        operationId: getMeOrdersOrderId
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: POST
+        uri: /api/v1/me/orders/{orderId}/cancel
+        operationId: postMeOrdersOrderIdCancel
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: GET
+        uri: /api/v1/admin/orders
+        operationId: getAdminOrders
+        auth: "Staff JWT"
+        permission: "orders:read"
+      - method: GET
+        uri: /api/v1/admin/orders/{orderId}
+        operationId: getAdminOrdersOrderId
+        auth: "Staff JWT"
+        permission: "orders:read"
+      - method: PATCH
+        uri: /api/v1/admin/orders/{orderId}/status
+        operationId: patchAdminOrdersOrderIdStatus
+        auth: "Staff/Manager JWT"
+        permission: "orders:process"
+      - method: POST
+        uri: /api/v1/admin/orders/{orderId}/cancel
+        operationId: postAdminOrdersOrderIdCancel
+        auth: "Staff/Manager JWT"
+        permission: "orders:process"
+      - method: POST
+        uri: /api/v1/admin/orders/{orderId}/confirm
+        operationId: postAdminOrdersOrderIdConfirm
+        auth: "Staff/Manager JWT"
+        permission: "orders:process"
+      - method: GET
+        uri: /api/v1/admin/orders/{orderId}/timeline
+        operationId: getAdminOrdersOrderIdTimeline
+        auth: "Staff JWT"
+        permission: "orders:read"
+  - name: Payment
+    endpointCount: 8
+    paths:
+      - method: POST
+        uri: /api/v1/payments/intents
+        operationId: postPaymentsIntents
+        auth: "Customer JWT hoặc guest checkout token"
+        permission: "Order payer"
+      - method: GET
+        uri: /api/v1/payments/{paymentId}
+        operationId: getPaymentsPaymentId
+        auth: "Customer JWT hoặc Staff JWT"
+        permission: "Owner hoặc payments:read"
+      - method: POST
+        uri: /api/v1/payments/{paymentId}/confirm
+        operationId: postPaymentsPaymentIdConfirm
+        auth: "Customer JWT"
+        permission: "Order payer"
+      - method: GET
+        uri: /api/v1/admin/payments
+        operationId: getAdminPayments
+        auth: "Staff JWT"
+        permission: "payments:read"
+      - method: GET
+        uri: /api/v1/admin/payments/{paymentId}
+        operationId: getAdminPaymentsPaymentId
+        auth: "Staff JWT"
+        permission: "payments:read"
+      - method: POST
+        uri: /api/v1/admin/payments/{paymentId}/refunds
+        operationId: postAdminPaymentsPaymentIdRefunds
+        auth: "Manager/Admin JWT"
+        permission: "payments:refund"
+      - method: GET
+        uri: /api/v1/admin/payments/{paymentId}/transactions
+        operationId: getAdminPaymentsPaymentIdTransactions
+        auth: "Staff JWT"
+        permission: "payments:read"
+      - method: POST
+        uri: /api/v1/webhooks/payment/{provider}
+        operationId: postWebhooksPaymentProvider
+        auth: "Provider auth"
+        permission: "Provider scope"
+  - name: Shipping
+    endpointCount: 7
+    paths:
+      - method: POST
+        uri: /api/v1/shipping/quotes
+        operationId: postShippingQuotes
+        auth: "Public hoặc Customer JWT"
+        permission: "Public/owner"
+      - method: GET
+        uri: /api/v1/shipping/shipments/{shipmentId}/tracking
+        operationId: getShippingShipmentsShipmentIdTracking
+        auth: "Customer JWT hoặc tracking proof"
+        permission: "Owner/proof"
+      - method: GET
+        uri: /api/v1/admin/shipments
+        operationId: getAdminShipments
+        auth: "Staff JWT"
+        permission: "shipping:read"
+      - method: GET
+        uri: /api/v1/admin/shipments/{shipmentId}
+        operationId: getAdminShipmentsShipmentId
+        auth: "Staff JWT"
+        permission: "shipping:read"
+      - method: PATCH
+        uri: /api/v1/admin/shipments/{shipmentId}/status
+        operationId: patchAdminShipmentsShipmentIdStatus
+        auth: "Staff/Manager JWT"
+        permission: "shipping:manage"
+      - method: POST
+        uri: /api/v1/admin/shipments/{shipmentId}/tracking-events
+        operationId: postAdminShipmentsShipmentIdTrackingEvents
+        auth: "Staff/Manager JWT"
+        permission: "shipping:manage"
+      - method: POST
+        uri: /api/v1/webhooks/shipping/{provider}
+        operationId: postWebhooksShippingProvider
+        auth: "Provider auth"
+        permission: "Provider scope"
+  - name: Coupon
+    endpointCount: 7
+    paths:
+      - method: POST
+        uri: /api/v1/coupons/validate
+        operationId: postCouponsValidate
+        auth: "Guest token hoặc Customer JWT"
+        permission: "Cart/order owner"
+      - method: GET
+        uri: /api/v1/admin/coupons
+        operationId: getAdminCoupons
+        auth: "Manager/Admin JWT"
+        permission: "coupons:read"
+      - method: POST
+        uri: /api/v1/admin/coupons
+        operationId: postAdminCoupons
+        auth: "Manager/Admin JWT"
+        permission: "coupons:manage"
+      - method: GET
+        uri: /api/v1/admin/coupons/{couponId}
+        operationId: getAdminCouponsCouponId
+        auth: "Manager/Admin JWT"
+        permission: "coupons:read"
+      - method: PATCH
+        uri: /api/v1/admin/coupons/{couponId}
+        operationId: patchAdminCouponsCouponId
+        auth: "Manager/Admin JWT"
+        permission: "coupons:manage"
+      - method: PATCH
+        uri: /api/v1/admin/coupons/{couponId}/status
+        operationId: patchAdminCouponsCouponIdStatus
+        auth: "Manager/Admin JWT"
+        permission: "coupons:manage"
+      - method: GET
+        uri: /api/v1/admin/coupons/{couponId}/usage
+        operationId: getAdminCouponsCouponIdUsage
+        auth: "Manager/Admin JWT"
+        permission: "coupons:read"
+  - name: Promotion
+    endpointCount: 8
+    paths:
+      - method: GET
+        uri: /api/v1/public/promotions
+        operationId: getPublicPromotions
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/public/promotions/{promotionId}
+        operationId: getPublicPromotionsPromotionId
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/admin/promotions
+        operationId: getAdminPromotions
+        auth: "Manager/Admin JWT"
+        permission: "promotions:read"
+      - method: POST
+        uri: /api/v1/admin/promotions
+        operationId: postAdminPromotions
+        auth: "Manager/Admin JWT"
+        permission: "promotions:manage"
+      - method: GET
+        uri: /api/v1/admin/promotions/{promotionId}
+        operationId: getAdminPromotionsPromotionId
+        auth: "Manager/Admin JWT"
+        permission: "promotions:read"
+      - method: PATCH
+        uri: /api/v1/admin/promotions/{promotionId}
+        operationId: patchAdminPromotionsPromotionId
+        auth: "Manager/Admin JWT"
+        permission: "promotions:manage"
+      - method: PATCH
+        uri: /api/v1/admin/promotions/{promotionId}/status
+        operationId: patchAdminPromotionsPromotionIdStatus
+        auth: "Manager/Admin JWT"
+        permission: "promotions:manage"
+      - method: POST
+        uri: /api/v1/admin/promotions/{promotionId}/preview
+        operationId: postAdminPromotionsPromotionIdPreview
+        auth: "Manager/Admin JWT"
+        permission: "promotions:read"
+  - name: Loyalty
+    endpointCount: 6
+    paths:
+      - method: GET
+        uri: /api/v1/me/loyalty/balance
+        operationId: getMeLoyaltyBalance
+        auth: "Member/VIP JWT"
+        permission: "Owner"
+      - method: GET
+        uri: /api/v1/me/loyalty/transactions
+        operationId: getMeLoyaltyTransactions
+        auth: "Member/VIP JWT"
+        permission: "Owner"
+      - method: GET
+        uri: /api/v1/admin/loyalty/customers/{customerId}
+        operationId: getAdminLoyaltyCustomersCustomerId
+        auth: "Staff/Manager JWT"
+        permission: "loyalty:read"
+      - method: POST
+        uri: /api/v1/admin/loyalty/customers/{customerId}/adjustments
+        operationId: postAdminLoyaltyCustomersCustomerIdAdjustments
+        auth: "Manager/Admin JWT"
+        permission: "loyalty:manage"
+      - method: GET
+        uri: /api/v1/admin/loyalty/transactions
+        operationId: getAdminLoyaltyTransactions
+        auth: "Manager/Admin JWT"
+        permission: "loyalty:read"
+      - method: GET
+        uri: /api/v1/admin/loyalty/tiers
+        operationId: getAdminLoyaltyTiers
+        auth: "Manager/Admin JWT"
+        permission: "loyalty:read"
+  - name: Review
+    endpointCount: 8
+    paths:
+      - method: GET
+        uri: /api/v1/public/products/{productId}/reviews
+        operationId: getPublicProductsProductIdReviews
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/public/products/{productId}/reviews/summary
+        operationId: getPublicProductsProductIdReviewsSummary
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/me/reviews
+        operationId: getMeReviews
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: POST
+        uri: /api/v1/me/reviews
+        operationId: postMeReviews
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: PATCH
+        uri: /api/v1/me/reviews/{reviewId}
+        operationId: patchMeReviewsReviewId
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: DELETE
+        uri: /api/v1/me/reviews/{reviewId}
+        operationId: deleteMeReviewsReviewId
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: GET
+        uri: /api/v1/admin/reviews
+        operationId: getAdminReviews
+        auth: "Staff JWT"
+        permission: "reviews:read"
+      - method: PATCH
+        uri: /api/v1/admin/reviews/{reviewId}/moderation
+        operationId: patchAdminReviewsReviewIdModeration
+        auth: "Staff/Manager JWT"
+        permission: "reviews:moderate"
+  - name: Blog
+    endpointCount: 8
+    paths:
+      - method: GET
+        uri: /api/v1/public/blog-posts
+        operationId: getPublicBlogPosts
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/public/blog-posts/{postId}
+        operationId: getPublicBlogPostsPostId
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/admin/blog-posts
+        operationId: getAdminBlogPosts
+        auth: "Staff JWT"
+        permission: "blog:read"
+      - method: POST
+        uri: /api/v1/admin/blog-posts
+        operationId: postAdminBlogPosts
+        auth: "Staff/Manager JWT"
+        permission: "blog:manage"
+      - method: GET
+        uri: /api/v1/admin/blog-posts/{postId}
+        operationId: getAdminBlogPostsPostId
+        auth: "Staff JWT"
+        permission: "blog:read"
+      - method: PATCH
+        uri: /api/v1/admin/blog-posts/{postId}
+        operationId: patchAdminBlogPostsPostId
+        auth: "Staff/Manager JWT"
+        permission: "blog:manage"
+      - method: PATCH
+        uri: /api/v1/admin/blog-posts/{postId}/status
+        operationId: patchAdminBlogPostsPostIdStatus
+        auth: "Manager/Admin JWT"
+        permission: "blog:manage"
+      - method: POST
+        uri: /api/v1/admin/blog-posts/{postId}/media
+        operationId: postAdminBlogPostsPostIdMedia
+        auth: "Staff/Manager JWT"
+        permission: "blog:manage"
+  - name: Media
+    endpointCount: 8
+    paths:
+      - method: POST
+        uri: /api/v1/media/uploads/prepare
+        operationId: postMediaUploadsPrepare
+        auth: "JWT"
+        permission: "media:upload"
+      - method: POST
+        uri: /api/v1/media/uploads/complete
+        operationId: postMediaUploadsComplete
+        auth: "JWT"
+        permission: "media:upload"
+      - method: GET
+        uri: /api/v1/media/{mediaId}
+        operationId: getMediaMediaId
+        auth: "JWT hoặc Public theo visibility"
+        permission: "Scope theo media"
+      - method: GET
+        uri: /api/v1/media/{mediaId}/download
+        operationId: getMediaMediaIdDownload
+        auth: "JWT hoặc Public theo visibility"
+        permission: "Scope theo media"
+      - method: GET
+        uri: /api/v1/admin/media
+        operationId: getAdminMedia
+        auth: "Staff JWT"
+        permission: "media:read"
+      - method: PATCH
+        uri: /api/v1/admin/media/{mediaId}
+        operationId: patchAdminMediaMediaId
+        auth: "Staff/Manager JWT"
+        permission: "media:manage"
+      - method: PATCH
+        uri: /api/v1/admin/media/{mediaId}/visibility
+        operationId: patchAdminMediaMediaIdVisibility
+        auth: "Manager/Admin JWT"
+        permission: "media:manage"
+      - method: DELETE
+        uri: /api/v1/admin/media/{mediaId}
+        operationId: deleteAdminMediaMediaId
+        auth: "Manager/Admin JWT"
+        permission: "media:manage"
+  - name: Notification
+    endpointCount: 10
+    paths:
+      - method: GET
+        uri: /api/v1/me/notifications
+        operationId: getMeNotifications
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: PATCH
+        uri: /api/v1/me/notifications/{notificationId}/read
+        operationId: patchMeNotificationsNotificationIdRead
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: PATCH
+        uri: /api/v1/me/notifications/read-all
+        operationId: patchMeNotificationsReadAll
+        auth: "Customer JWT"
+        permission: "Owner"
+      - method: GET
+        uri: /api/v1/admin/notifications
+        operationId: getAdminNotifications
+        auth: "Staff/Manager JWT"
+        permission: "notifications:read"
+      - method: POST
+        uri: /api/v1/admin/notifications/send
+        operationId: postAdminNotificationsSend
+        auth: "Manager/Admin JWT"
+        permission: "notifications:send"
+      - method: GET
+        uri: /api/v1/admin/notifications/{notificationId}
+        operationId: getAdminNotificationsNotificationId
+        auth: "Staff/Manager JWT"
+        permission: "notifications:read"
+      - method: GET
+        uri: /api/v1/admin/notifications/templates
+        operationId: getAdminNotificationsTemplates
+        auth: "Staff/Manager JWT"
+        permission: "notifications:read"
+      - method: POST
+        uri: /api/v1/admin/notifications/templates
+        operationId: postAdminNotificationsTemplates
+        auth: "Manager/Admin JWT"
+        permission: "notifications:manage"
+      - method: PATCH
+        uri: /api/v1/admin/notifications/templates/{templateId}
+        operationId: patchAdminNotificationsTemplatesTemplateId
+        auth: "Manager/Admin JWT"
+        permission: "notifications:manage"
+      - method: POST
+        uri: /api/v1/webhooks/notification/{provider}
+        operationId: postWebhooksNotificationProvider
+        auth: "Provider auth"
+        permission: "Provider scope"
+  - name: Analytics
+    endpointCount: 9
+    paths:
+      - method: GET
+        uri: /api/v1/admin/analytics/dashboard
+        operationId: getAdminAnalyticsDashboard
+        auth: "Staff/Manager/Admin JWT"
+        permission: "analytics:read"
+      - method: GET
+        uri: /api/v1/admin/analytics/sales
+        operationId: getAdminAnalyticsSales
+        auth: "Manager/Admin JWT"
+        permission: "analytics:read"
+      - method: GET
+        uri: /api/v1/admin/analytics/products
+        operationId: getAdminAnalyticsProducts
+        auth: "Manager/Admin JWT"
+        permission: "analytics:read"
+      - method: GET
+        uri: /api/v1/admin/analytics/customers
+        operationId: getAdminAnalyticsCustomers
+        auth: "Manager/Admin JWT"
+        permission: "analytics:read"
+      - method: GET
+        uri: /api/v1/admin/analytics/inventory
+        operationId: getAdminAnalyticsInventory
+        auth: "Manager/Admin JWT"
+        permission: "analytics:read"
+      - method: GET
+        uri: /api/v1/admin/analytics/marketing
+        operationId: getAdminAnalyticsMarketing
+        auth: "Manager/Admin JWT"
+        permission: "analytics:read"
+      - method: GET
+        uri: /api/v1/admin/analytics/ai
+        operationId: getAdminAnalyticsAi
+        auth: "Admin JWT"
+        permission: "analytics:read"
+      - method: POST
+        uri: /api/v1/admin/analytics/exports
+        operationId: postAdminAnalyticsExports
+        auth: "Manager/Admin JWT"
+        permission: "analytics:export"
+      - method: POST
+        uri: /api/v1/analytics/events
+        operationId: postAnalyticsEvents
+        auth: "Public hoặc JWT"
+        permission: "Event scope"
+  - name: AI
+    endpointCount: 14
+    paths:
+      - method: POST
+        uri: /api/v1/ai/chat
+        operationId: postAiChat
+        auth: "Optional JWT hoặc Customer JWT"
+        permission: "ai:use public-safe"
+      - method: POST
+        uri: /api/v1/ai/recommendations/products
+        operationId: postAiRecommendationsProducts
+        auth: "Optional JWT hoặc Customer JWT"
+        permission: "ai:use"
+      - method: POST
+        uri: /api/v1/ai/search/products
+        operationId: postAiSearchProducts
+        auth: "Public hoặc Customer JWT"
+        permission: "ai:use public-safe"
+      - method: POST
+        uri: /api/v1/ai/compare/products
+        operationId: postAiCompareProducts
+        auth: "Public hoặc Customer JWT"
+        permission: "ai:use public-safe"
+      - method: POST
+        uri: /api/v1/ai/nutrition/meal-plans
+        operationId: postAiNutritionMealPlans
+        auth: "Customer JWT"
+        permission: "ai:nutrition"
+      - method: POST
+        uri: /api/v1/ai/nutrition/calories
+        operationId: postAiNutritionCalories
+        auth: "Customer JWT"
+        permission: "ai:nutrition"
+      - method: POST
+        uri: /api/v1/ai/ocr
+        operationId: postAiOcr
+        auth: "Customer JWT hoặc Staff JWT"
+        permission: "ai:vision"
+      - method: POST
+        uri: /api/v1/ai/vision/food-recognition
+        operationId: postAiVisionFoodRecognition
+        auth: "Customer JWT"
+        permission: "ai:vision"
+      - method: POST
+        uri: /api/v1/admin/ai/marketing/captions
+        operationId: postAdminAiMarketingCaptions
+        auth: "Manager/Admin JWT"
+        permission: "ai:marketing"
+      - method: POST
+        uri: /api/v1/admin/ai/marketing/emails
+        operationId: postAdminAiMarketingEmails
+        auth: "Manager/Admin JWT"
+        permission: "ai:marketing"
+      - method: POST
+        uri: /api/v1/admin/ai/analytics/insights
+        operationId: postAdminAiAnalyticsInsights
+        auth: "Manager/Admin JWT"
+        permission: "ai:analytics"
+      - method: GET
+        uri: /api/v1/admin/ai/interactions
+        operationId: getAdminAiInteractions
+        auth: "Admin JWT"
+        permission: "ai:review"
+      - method: GET
+        uri: /api/v1/admin/ai/interactions/{interactionId}
+        operationId: getAdminAiInteractionsInteractionId
+        auth: "Admin JWT"
+        permission: "ai:review"
+      - method: POST
+        uri: /api/v1/ai/feedback
+        operationId: postAiFeedback
+        auth: "Customer JWT hoặc Staff JWT"
+        permission: "Actor scope"
+  - name: Settings
+    endpointCount: 9
+    paths:
+      - method: GET
+        uri: /api/v1/public/settings/storefront
+        operationId: getPublicSettingsStorefront
+        auth: "Public"
+        permission: "Public"
+      - method: GET
+        uri: /api/v1/admin/settings
+        operationId: getAdminSettings
+        auth: "Admin JWT"
+        permission: "settings:read"
+      - method: GET
+        uri: /api/v1/admin/settings/{settingId}
+        operationId: getAdminSettingsSettingId
+        auth: "Admin JWT"
+        permission: "settings:read"
+      - method: PATCH
+        uri: /api/v1/admin/settings/{settingId}
+        operationId: patchAdminSettingsSettingId
+        auth: "Admin JWT"
+        permission: "settings:manage"
+      - method: GET
+        uri: /api/v1/admin/settings/feature-flags
+        operationId: getAdminSettingsFeatureFlags
+        auth: "Admin JWT"
+        permission: "settings:read"
+      - method: PATCH
+        uri: /api/v1/admin/settings/feature-flags/{flagKey}
+        operationId: patchAdminSettingsFeatureFlagsFlagKey
+        auth: "Admin JWT"
+        permission: "settings:manage"
+      - method: GET
+        uri: /api/v1/admin/settings/security
+        operationId: getAdminSettingsSecurity
+        auth: "Admin JWT"
+        permission: "settings:read"
+      - method: PATCH
+        uri: /api/v1/admin/settings/security
+        operationId: patchAdminSettingsSecurity
+        auth: "Admin JWT"
+        permission: "settings:manage"
+      - method: GET
+        uri: /api/v1/admin/settings/integrations
+        operationId: getAdminSettingsIntegrations
+        auth: "Admin JWT"
+        permission: "settings:read"

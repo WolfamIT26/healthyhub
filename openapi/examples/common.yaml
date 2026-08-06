@@ -1,0 +1,498 @@
+Success:
+  summary: "Envelope thành công"
+  value:
+    success: true
+    status: success
+    message: "Thao tác thành công."
+    data:
+      id: "res_1001"
+      type: "resource"
+      status: "active"
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+      requestDurationMs: 35
+    requestId: "req_1001"
+    traceId: "trace_1001"
+    contractVersion: "v1"
+CreatedSuccess:
+  summary: "Tạo mới thành công"
+  value:
+    success: true
+    status: success
+    message: "Tạo dữ liệu thành công."
+    data:
+      id: "res_1002"
+      type: "resource"
+      status: "active"
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+      requestDurationMs: 48
+    requestId: "req_1002"
+    traceId: "trace_1002"
+    contractVersion: "v1"
+AcceptedSuccess:
+  summary: "Yêu cầu bất đồng bộ đã được tiếp nhận"
+  value:
+    success: true
+    status: success
+    message: "Yêu cầu đã được tiếp nhận."
+    data:
+      accepted: true
+      jobId: "job_1001"
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+      requestDurationMs: 21
+    requestId: "req_1003"
+    traceId: "trace_1003"
+    contractVersion: "v1"
+PaginatedSuccess:
+  summary: "Danh sách phân trang"
+  value:
+    success: true
+    status: success
+    message: "Lấy danh sách thành công."
+    data:
+      items:
+        - id: "res_1001"
+          name: "Mục dữ liệu mẫu"
+          status: "active"
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+      requestDurationMs: 42
+      pagination:
+        page: 1
+        pageSize: 20
+        totalItems: 1
+        totalPages: 1
+        hasNextPage: false
+        hasPreviousPage: false
+      appliedFilter:
+        filters: []
+      appliedSearch:
+        keyword: ""
+        fields: []
+      appliedSort:
+        sort:
+          - field: "createdAt"
+            direction: "desc"
+    requestId: "req_1004"
+    traceId: "trace_1004"
+    contractVersion: "v1"
+AiSuccess:
+  summary: "AI Gateway thành công"
+  value:
+    success: true
+    status: success
+    message: "AI xử lý thành công."
+    data:
+      interactionId: "aiint_1001"
+      result:
+        text: "Kết quả AI đã được tạo theo ngữ cảnh được phép."
+      confidence: 0.82
+      model: "configured-ai-provider"
+      safety:
+        reviewed: true
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+      requestDurationMs: 320
+    requestId: "req_1005"
+    traceId: "trace_1005"
+    contractVersion: "v1"
+GenericCommandRequest:
+  summary: "Request ghi dữ liệu tổng quát"
+  value:
+    data:
+      status: "active"
+    reason: "Cập nhật theo yêu cầu quản trị."
+    metadata:
+      client: "web"
+      locale: "vi-VN"
+      timezone: "Asia/Ho_Chi_Minh"
+FileUploadPrepareRequest:
+  summary: "Chuẩn bị tải tệp"
+  value:
+    fileName: "product-image.png"
+    contentType: "image/png"
+    size: 204800
+    purpose: "product_image"
+FileUploadCompleteRequest:
+  summary: "Hoàn tất tải tệp"
+  value:
+    uploadId: "upl_1001"
+    mediaId: "med_1001"
+    checksum: "sha256:local-checksum"
+ImportRequest:
+  summary: "Tạo job nhập dữ liệu"
+  value:
+    source: "uploaded_file"
+    mediaId: "med_1002"
+    options:
+      validateOnly: true
+ExportRequest:
+  summary: "Tạo job xuất dữ liệu"
+  value:
+    format: "csv"
+    filters: []
+AiRequest:
+  summary: "Request AI tổng quát"
+  value:
+    input:
+      query: "Tư vấn sản phẩm healthy phù hợp nhu cầu khách hàng."
+    context:
+      channel: "web"
+    locale: "vi-VN"
+    consent: true
+AiFeedbackRequest:
+  summary: "Phản hồi kết quả AI"
+  value:
+    interactionId: "aiint_1001"
+    rating: 4
+    comment: "Kết quả hữu ích và cần rõ hơn về khẩu phần."
+PaymentIntentRequest:
+  summary: "Tạo payment intent"
+  value:
+    orderId: "ord_1001"
+    amount:
+      amount: "250000.00"
+      currency: "VND"
+    provider: "configured-payment-provider"
+    returnUrl: "/checkout/payment-return"
+ShippingQuoteRequest:
+  summary: "Tính phí vận chuyển"
+  value:
+    items:
+      - productId: "prd_1001"
+        quantity: 2
+    address:
+      fullName: "Khách hàng mẫu"
+      phone: "0900000000"
+      line1: "Địa chỉ giao hàng mẫu"
+      ward: "Phường mẫu"
+      district: "Quận mẫu"
+      province: "TP. Hồ Chí Minh"
+      countryCode: "VN"
+    provider: "configured-shipping-provider"
+AnalyticsEventRequest:
+  summary: "Ghi nhận tracking event"
+  value:
+    eventName: "product_viewed"
+    occurredAt: "2026-08-06T10:00:00+07:00"
+    anonymousId: "anon_1001"
+    properties:
+      productId: "prd_1001"
+WebhookEventRequest:
+  summary: "Webhook provider"
+  value:
+    eventId: "evt_1001"
+    eventType: "provider.event.received"
+    occurredAt: "2026-08-06T10:00:00+07:00"
+    provider: "configured-provider"
+    payload:
+      resourceId: "res_1001"
+      status: "completed"
+AuthRegisterSuccess:
+  summary: "Đăng ký cần xác minh email"
+  value:
+    success: true
+    status: success
+    message: "Đăng ký thành công. Vui lòng kiểm tra email để xác minh tài khoản."
+    data:
+      user:
+        id: "1001"
+        email: "customer@example.com"
+        fullName: "Khách hàng HealthyHub"
+        roles: [CUSTOMER]
+      verification:
+        status: pending
+        expiresAt: "2026-08-07T10:00:00+07:00"
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+    requestId: "req_auth_register_1001"
+    traceId: "trace_auth_register_1001"
+    contractVersion: "v1"
+AuthLoginSuccess:
+  summary: "Đăng nhập Web; refresh token chỉ nằm trong HttpOnly cookie"
+  value:
+    success: true
+    status: success
+    message: "Đăng nhập thành công."
+    data:
+      accessToken: "<redacted>"
+      token:
+        tokenType: Bearer
+        accessTokenExpiresAt: "2026-08-06T10:15:00+07:00"
+      session:
+        id: "10000000-0000-4000-8000-000000000001"
+        status: active
+        issuedAt: "2026-08-06T10:00:00+07:00"
+        expiresAt: "2026-09-05T10:00:00+07:00"
+      actor:
+        id: "1001"
+        email: "customer@example.com"
+        fullName: "Khách hàng HealthyHub"
+        roles: [CUSTOMER]
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+    requestId: "req_auth_login_1001"
+    traceId: "trace_auth_login_1001"
+    contractVersion: "v1"
+AuthRefreshSuccess:
+  summary: "Làm mới access token và rotate refresh cookie"
+  value:
+    success: true
+    status: success
+    message: "Phiên đăng nhập đã được làm mới."
+    data:
+      accessToken: "<redacted>"
+      token:
+        tokenType: Bearer
+        accessTokenExpiresAt: "2026-08-06T10:30:00+07:00"
+      session:
+        id: "10000000-0000-4000-8000-000000000001"
+        status: active
+        issuedAt: "2026-08-06T10:00:00+07:00"
+        expiresAt: "2026-09-05T10:00:00+07:00"
+      actor:
+        id: "1001"
+        email: "customer@example.com"
+        fullName: "Khách hàng HealthyHub"
+        roles: [CUSTOMER]
+    metadata:
+      timestamp: "2026-08-06T10:15:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+    requestId: "req_auth_refresh_1001"
+    traceId: "trace_auth_refresh_1001"
+    contractVersion: "v1"
+AuthActionSuccess:
+  summary: "Authentication action thành công"
+  value:
+    success: true
+    status: success
+    message: "Yêu cầu đã được xử lý thành công."
+    data:
+      accepted: true
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+    requestId: "req_auth_action_1001"
+    traceId: "trace_auth_action_1001"
+    contractVersion: "v1"
+AuthSessionSuccess:
+  summary: "Session hiện tại"
+  value:
+    success: true
+    status: success
+    message: "Phiên đăng nhập hợp lệ."
+    data:
+      session:
+        id: "10000000-0000-4000-8000-000000000001"
+        status: active
+        issuedAt: "2026-08-06T10:00:00+07:00"
+        expiresAt: "2026-09-05T10:00:00+07:00"
+      actor:
+        id: "1001"
+        email: "customer@example.com"
+        fullName: "Khách hàng HealthyHub"
+        roles: [CUSTOMER]
+      permissions: ["profile:read", "orders:read"]
+      permissionsVersion: 1
+    metadata:
+      timestamp: "2026-08-06T10:05:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+    requestId: "req_auth_session_1001"
+    traceId: "trace_auth_session_1001"
+    contractVersion: "v1"
+BadRequestError:
+  summary: "Lỗi request"
+  value:
+    success: false
+    status: error
+    message: "Request không hợp lệ."
+    data: null
+    error:
+      code: "COMMON_BAD_REQUEST"
+      category: "VALIDATION"
+      message: "Tham số request không hợp lệ."
+      retryable: false
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+    requestId: "req_err_1001"
+    traceId: "trace_err_1001"
+    contractVersion: "v1"
+ValidationError:
+  summary: "Lỗi validation"
+  value:
+    success: false
+    status: error
+    message: "Dữ liệu không hợp lệ."
+    data: null
+    error:
+      code: "VALIDATION_FAILED"
+      category: "VALIDATION"
+      message: "Một hoặc nhiều trường không hợp lệ."
+      validationErrors:
+        - field: "data.name"
+          code: "REQUIRED"
+          message: "Trường bắt buộc chưa được cung cấp."
+          rejectedValuePolicy: "hidden"
+      retryable: false
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+    requestId: "req_err_1002"
+    traceId: "trace_err_1002"
+    contractVersion: "v1"
+AuthError:
+  summary: "Lỗi xác thực"
+  value:
+    success: false
+    status: error
+    message: "Cần xác thực."
+    data: null
+    error:
+      code: "AUTH.AUTHENTICATION.TOKEN_INVALID"
+      category: "AUTH"
+      message: "Access token không hợp lệ hoặc đã hết hạn."
+      retryable: false
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+    requestId: "req_err_1003"
+    traceId: "trace_err_1003"
+    contractVersion: "v1"
+PermissionError:
+  summary: "Lỗi phân quyền"
+  value:
+    success: false
+    status: error
+    message: "Không đủ quyền."
+    data: null
+    error:
+      code: "PERMISSION.AUTHENTICATION.DENIED"
+      category: "PERMISSION"
+      message: "Tài khoản không có quyền thực hiện thao tác này."
+      retryable: false
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+    requestId: "req_err_1004"
+    traceId: "trace_err_1004"
+    contractVersion: "v1"
+NotFoundError:
+  summary: "Không tìm thấy"
+  value:
+    success: false
+    status: error
+    message: "Không tìm thấy tài nguyên."
+    data: null
+    error:
+      code: "RESOURCE_NOT_FOUND"
+      category: "NOT_FOUND"
+      message: "Tài nguyên yêu cầu không tồn tại hoặc không còn khả dụng."
+      retryable: false
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+    requestId: "req_err_1005"
+    traceId: "trace_err_1005"
+    contractVersion: "v1"
+ConflictError:
+  summary: "Xung đột dữ liệu"
+  value:
+    success: false
+    status: error
+    message: "Xung đột dữ liệu."
+    data: null
+    error:
+      code: "RESOURCE_CONFLICT"
+      category: "CONFLICT"
+      message: "Dữ liệu hiện tại không còn phù hợp để xử lý thao tác."
+      retryable: false
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+    requestId: "req_err_1006"
+    traceId: "trace_err_1006"
+    contractVersion: "v1"
+RateLimitError:
+  summary: "Vượt rate limit"
+  value:
+    success: false
+    status: error
+    message: "Vượt giới hạn request."
+    data: null
+    error:
+      code: "RATE_LIMIT_EXCEEDED"
+      category: "RATE_LIMIT"
+      message: "Vui lòng thử lại sau."
+      retryable: true
+      retryAfter: 60
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+    requestId: "req_err_1007"
+    traceId: "trace_err_1007"
+    contractVersion: "v1"
+SystemError:
+  summary: "Lỗi hệ thống"
+  value:
+    success: false
+    status: error
+    message: "Lỗi hệ thống."
+    data: null
+    error:
+      code: "SYSTEM_ERROR"
+      category: "SYSTEM"
+      message: "Hệ thống gặp lỗi ngoài dự kiến."
+      retryable: true
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+    requestId: "req_err_1008"
+    traceId: "trace_err_1008"
+    contractVersion: "v1"
+IntegrationError:
+  summary: "Lỗi tích hợp"
+  value:
+    success: false
+    status: error
+    message: "Lỗi tích hợp."
+    data: null
+    error:
+      code: "INTEGRATION_GATEWAY_ERROR"
+      category: "INTEGRATION"
+      message: "Gateway hoặc provider bên ngoài phản hồi lỗi."
+      retryable: true
+    metadata:
+      timestamp: "2026-08-06T10:00:00+07:00"
+      timezone: "Asia/Ho_Chi_Minh"
+      locale: "vi-VN"
+    requestId: "req_err_1009"
+    traceId: "trace_err_1009"
+    contractVersion: "v1"

@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "CommonJS",
+    "outDir": "dist",
+    "rootDir": "src",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
+    "types": ["node"],
+    "paths": {
+      "@healthyhub/shared-config": ["../../packages/shared-config/dist/index.d.ts"],
+      "@healthyhub/shared-types": ["../../packages/shared-types/dist/index.d.ts"],
+      "@healthyhub/shared-utils": ["../../packages/shared-utils/dist/index.d.ts"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["dist", "node_modules"]
+}

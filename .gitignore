@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.yarn/
+
+# Build output
+dist/
+build/
+coverage/
+.turbo/
+.vite/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Docker and database local data
+.docker-data/
+mysql-data/
+phpmyadmin-data/
+
+# Runtime generated content
+backup/**/*
+!backup/**/
+!backup/**/.gitkeep
+!backup/**/*.md
+storage/**/*
+!storage/**/
+!storage/**/.gitkeep
+!storage/**/*.md
+logs/**/*
+!logs/**/
+!logs/**/.gitkeep
+!logs/**/*.md
+
+# Temporary files
+tmp/
+temp/
+*.tmp

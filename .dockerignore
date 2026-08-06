@@ -1,0 +1,16 @@
+node_modules
+npm-debug.log
+dist
+build
+coverage
+.git
+.env
+.env.*
+!.env.example
+!.env.*.example
+backup
+logs
+storage
+tmp
+temp
+.DS_Store

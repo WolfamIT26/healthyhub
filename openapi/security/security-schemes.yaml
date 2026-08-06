@@ -1,0 +1,30 @@
+BearerAuth:
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: "JWT access token dùng cho Customer, Staff, Manager, Admin và Super Admin."
+RefreshTokenAuth:
+  type: apiKey
+  in: header
+  name: X-Refresh-Token
+  description: "Refresh token cho Mobile App tương lai; lấy từ secure OS storage. Web không dùng header này."
+RefreshCookieAuth:
+  type: apiKey
+  in: cookie
+  name: __Host-hh_refresh
+  description: "Refresh token opaque của Web; HttpOnly, Secure, SameSite=Lax, Path=/, host-only."
+CsrfTokenAuth:
+  type: apiKey
+  in: header
+  name: X-CSRF-Token
+  description: "Signed double-submit CSRF token bắt buộc khi Web refresh bằng cookie."
+ApiKeyAuth:
+  type: apiKey
+  in: header
+  name: X-API-Key
+  description: "API key dùng cho tracking event hoặc tích hợp provider khi API Specification yêu cầu."
+WebhookSignatureAuth:
+  type: apiKey
+  in: header
+  name: X-Webhook-Signature
+  description: "Chữ ký webhook để xác minh payload từ provider."

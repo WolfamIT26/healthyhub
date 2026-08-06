@@ -1,0 +1,93 @@
+paymentProviderEvent:
+  post:
+    operationId: "paymentProviderWebhookEvent"
+    summary: "Payment provider gửi sự kiện thanh toán"
+    description: |
+      Provider thanh toán gửi sự kiện ngoài băng tới HealthyHub. Endpoint thực tế nhận sự kiện là /api/v1/webhooks/payment/{provider}.
+      Payload phải có eventId để chống xử lý lặp, chữ ký X-Webhook-Signature để xác minh và cơ chế retry theo provider.
+    tags: [Payment]
+    security:
+      - WebhookSignatureAuth: []
+      - ApiKeyAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/common.yaml#/WebhookEventRequest"
+          examples:
+            providerEvent:
+              $ref: "../examples/common.yaml#/WebhookEventRequest"
+    responses:
+      "202":
+        $ref: "../responses/common.yaml#/Accepted"
+      "400":
+        $ref: "../responses/common.yaml#/BadRequest"
+      "401":
+        $ref: "../responses/common.yaml#/Unauthorized"
+      "409":
+        $ref: "../responses/common.yaml#/Conflict"
+      "500":
+        $ref: "../responses/common.yaml#/InternalServerError"
+shippingProviderEvent:
+  post:
+    operationId: "shippingProviderWebhookEvent"
+    summary: "Shipping provider gửi sự kiện vận chuyển"
+    description: |
+      Provider vận chuyển gửi cập nhật trạng thái vận đơn tới HealthyHub. Endpoint thực tế nhận sự kiện là /api/v1/webhooks/shipping/{provider}.
+      Hệ thống phải xác minh chữ ký, lưu audit log, xử lý idempotency theo eventId và cho phép provider retry.
+    tags: [Shipping]
+    security:
+      - WebhookSignatureAuth: []
+      - ApiKeyAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/common.yaml#/WebhookEventRequest"
+          examples:
+            providerEvent:
+              $ref: "../examples/common.yaml#/WebhookEventRequest"
+    responses:
+      "202":
+        $ref: "../responses/common.yaml#/Accepted"
+      "400":
+        $ref: "../responses/common.yaml#/BadRequest"
+      "401":
+        $ref: "../responses/common.yaml#/Unauthorized"
+      "409":
+        $ref: "../responses/common.yaml#/Conflict"
+      "500":
+        $ref: "../responses/common.yaml#/InternalServerError"
+notificationProviderEvent:
+  post:
+    operationId: "notificationProviderWebhookEvent"
+    summary: "Notification provider gửi sự kiện gửi thông báo"
+    description: |
+      Provider thông báo gửi delivery event về HealthyHub. Endpoint thực tế nhận sự kiện là /api/v1/webhooks/notification/{provider}.
+      Payload cần được kiểm chữ ký, ghi audit log và phản hồi 202 để provider dừng retry khi đã nhận hợp lệ.
+    tags: [Notification]
+    security:
+      - WebhookSignatureAuth: []
+      - ApiKeyAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/common.yaml#/WebhookEventRequest"
+          examples:
+            providerEvent:
+              $ref: "../examples/common.yaml#/WebhookEventRequest"
+    responses:
+      "202":
+        $ref: "../responses/common.yaml#/Accepted"
+      "400":
+        $ref: "../responses/common.yaml#/BadRequest"
+      "401":
+        $ref: "../responses/common.yaml#/Unauthorized"
+      "409":
+        $ref: "../responses/common.yaml#/Conflict"
+      "500":
+        $ref: "../responses/common.yaml#/InternalServerError"

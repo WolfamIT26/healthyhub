@@ -1,0 +1,246 @@
+RequestIdHeader:
+  name: X-Request-Id
+  in: header
+  required: false
+  description: "Mã request do client truyền vào để đối soát log."
+  schema:
+    type: string
+TraceIdHeader:
+  name: X-Trace-Id
+  in: header
+  required: false
+  description: "Mã trace cho distributed tracing."
+  schema:
+    type: string
+AcceptLanguageHeader:
+  name: Accept-Language
+  in: header
+  required: false
+  description: "Ngôn ngữ phản hồi mong muốn."
+  schema:
+    type: string
+    enum: [vi-VN, en-US]
+IdempotencyKeyHeader:
+  name: X-Idempotency-Key
+  in: header
+  required: false
+  description: "Khóa chống xử lý lặp cho thao tác ghi, thanh toán, webhook hoặc AI tốn chi phí."
+  schema:
+    type: string
+PageParam:
+  name: page
+  in: query
+  required: false
+  description: "Trang hiện tại, bắt đầu từ 1."
+  schema:
+    type: integer
+    minimum: 1
+    default: 1
+PageSizeParam:
+  name: pageSize
+  in: query
+  required: false
+  description: "Số bản ghi mỗi trang."
+  schema:
+    type: integer
+    minimum: 1
+    maximum: 100
+    default: 20
+QParam:
+  name: q
+  in: query
+  required: false
+  description: "Từ khóa tìm kiếm."
+  schema:
+    type: string
+SortParam:
+  name: sort
+  in: query
+  required: false
+  description: "Chuỗi sort dạng field:direction, ví dụ createdAt:desc."
+  schema:
+    type: string
+FilterParam:
+  name: filter
+  in: query
+  required: false
+  description: "Filter dạng chuỗi quy ước theo Data Contract."
+  schema:
+    type: string
+DateFromParam:
+  name: dateFrom
+  in: query
+  required: false
+  description: "Mốc bắt đầu theo ISO 8601."
+  schema:
+    type: string
+    format: date-time
+DateToParam:
+  name: dateTo
+  in: query
+  required: false
+  description: "Mốc kết thúc theo ISO 8601."
+  schema:
+    type: string
+    format: date-time
+UserIdPath:
+  name: userId
+  in: path
+  required: true
+  description: "Mã định danh userId theo API Specification."
+  schema:
+    type: string
+AddressIdPath:
+  name: addressId
+  in: path
+  required: true
+  description: "Mã định danh addressId theo API Specification."
+  schema:
+    type: string
+CustomerIdPath:
+  name: customerId
+  in: path
+  required: true
+  description: "Mã định danh customerId theo API Specification."
+  schema:
+    type: string
+StaffIdPath:
+  name: staffId
+  in: path
+  required: true
+  description: "Mã định danh staffId theo API Specification."
+  schema:
+    type: string
+ProductIdPath:
+  name: productId
+  in: path
+  required: true
+  description: "Mã định danh productId theo API Specification."
+  schema:
+    type: string
+CategoryIdPath:
+  name: categoryId
+  in: path
+  required: true
+  description: "Mã định danh categoryId theo API Specification."
+  schema:
+    type: string
+BrandIdPath:
+  name: brandId
+  in: path
+  required: true
+  description: "Mã định danh brandId theo API Specification."
+  schema:
+    type: string
+CartItemIdPath:
+  name: cartItemId
+  in: path
+  required: true
+  description: "Mã định danh cartItemId theo API Specification."
+  schema:
+    type: string
+WishlistItemIdPath:
+  name: wishlistItemId
+  in: path
+  required: true
+  description: "Mã định danh wishlistItemId theo API Specification."
+  schema:
+    type: string
+OrderIdPath:
+  name: orderId
+  in: path
+  required: true
+  description: "Mã định danh orderId theo API Specification."
+  schema:
+    type: string
+PaymentIdPath:
+  name: paymentId
+  in: path
+  required: true
+  description: "Mã định danh paymentId theo API Specification."
+  schema:
+    type: string
+ProviderPath:
+  name: provider
+  in: path
+  required: true
+  description: "Mã định danh provider theo API Specification."
+  schema:
+    type: string
+ShipmentIdPath:
+  name: shipmentId
+  in: path
+  required: true
+  description: "Mã định danh shipmentId theo API Specification."
+  schema:
+    type: string
+CouponIdPath:
+  name: couponId
+  in: path
+  required: true
+  description: "Mã định danh couponId theo API Specification."
+  schema:
+    type: string
+PromotionIdPath:
+  name: promotionId
+  in: path
+  required: true
+  description: "Mã định danh promotionId theo API Specification."
+  schema:
+    type: string
+ReviewIdPath:
+  name: reviewId
+  in: path
+  required: true
+  description: "Mã định danh reviewId theo API Specification."
+  schema:
+    type: string
+PostIdPath:
+  name: postId
+  in: path
+  required: true
+  description: "Mã định danh postId theo API Specification."
+  schema:
+    type: string
+MediaIdPath:
+  name: mediaId
+  in: path
+  required: true
+  description: "Mã định danh mediaId theo API Specification."
+  schema:
+    type: string
+NotificationIdPath:
+  name: notificationId
+  in: path
+  required: true
+  description: "Mã định danh notificationId theo API Specification."
+  schema:
+    type: string
+TemplateIdPath:
+  name: templateId
+  in: path
+  required: true
+  description: "Mã định danh templateId theo API Specification."
+  schema:
+    type: string
+InteractionIdPath:
+  name: interactionId
+  in: path
+  required: true
+  description: "Mã định danh interactionId theo API Specification."
+  schema:
+    type: string
+SettingIdPath:
+  name: settingId
+  in: path
+  required: true
+  description: "Mã định danh settingId theo API Specification."
+  schema:
+    type: string
+FlagKeyPath:
+  name: flagKey
+  in: path
+  required: true
+  description: "Mã định danh flagKey theo API Specification."
+  schema:
+    type: string

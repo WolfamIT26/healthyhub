@@ -1,0 +1,908 @@
+SuccessEnvelope:
+  type: object
+  description: "Envelope thành công chuẩn cho toàn hệ thống."
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success:
+      type: boolean
+      const: true
+    status:
+      type: string
+      enum: [success]
+    message:
+      type: string
+    data:
+      $ref: "#/GenericResource"
+    metadata:
+      $ref: "#/ResponseMetadata"
+    warnings:
+      type: array
+      items:
+        $ref: "#/Warning"
+    requestId:
+      type: string
+    traceId:
+      type: string
+    contractVersion:
+      type: string
+      enum: [v1]
+ErrorEnvelope:
+  type: object
+  description: "Envelope lỗi chuẩn theo Data Contract."
+  additionalProperties: false
+  required: [success, status, message, data, error, metadata, requestId, traceId, contractVersion]
+  properties:
+    success:
+      type: boolean
+      const: false
+    status:
+      type: string
+      enum: [error]
+    message:
+      type: string
+    data:
+      type: "null"
+    error:
+      $ref: "#/ErrorObject"
+    metadata:
+      $ref: "#/ResponseMetadata"
+    requestId:
+      type: string
+    traceId:
+      type: string
+    contractVersion:
+      type: string
+      enum: [v1]
+AcceptedEnvelope:
+  allOf:
+    - $ref: "#/SuccessEnvelope"
+    - type: object
+      properties:
+        data:
+          $ref: "#/AcceptedData"
+JobEnvelope:
+  allOf:
+    - $ref: "#/SuccessEnvelope"
+    - type: object
+      properties:
+        data:
+          $ref: "#/JobData"
+PaginatedResponse:
+  type: object
+  description: "Envelope danh sách có phân trang."
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success:
+      type: boolean
+      const: true
+    status:
+      type: string
+      enum: [success]
+    message:
+      type: string
+    data:
+      $ref: "#/PaginatedData"
+    metadata:
+      allOf:
+        - $ref: "#/ResponseMetadata"
+        - type: object
+          properties:
+            pagination:
+              $ref: "#/PaginationMetadata"
+            appliedFilter:
+              $ref: "#/AppliedFilter"
+            appliedSearch:
+              $ref: "#/AppliedSearch"
+            appliedSort:
+              $ref: "#/AppliedSort"
+    requestId:
+      type: string
+    traceId:
+      type: string
+    contractVersion:
+      type: string
+      enum: [v1]
+AiResponseEnvelope:
+  allOf:
+    - $ref: "#/SuccessEnvelope"
+    - type: object
+      properties:
+        data:
+          $ref: "#/AiResult"
+ResponseMetadata:
+  type: object
+  description: "Metadata chung của response."
+  additionalProperties: true
+  properties:
+    timestamp:
+      type: string
+      format: date-time
+    timezone:
+      type: string
+      enum: [Asia/Ho_Chi_Minh, UTC]
+    locale:
+      type: string
+      enum: [vi-VN, en-US]
+    requestDurationMs:
+      type: integer
+      minimum: 0
+RequestMetadata:
+  type: object
+  description: "Metadata client gửi kèm request khi cần."
+  additionalProperties: true
+  properties:
+    client:
+      type: string
+    locale:
+      type: string
+      enum: [vi-VN, en-US]
+    timezone:
+      type: string
+Warning:
+  type: object
+  additionalProperties: false
+  required: [code, message]
+  properties:
+    code:
+      type: string
+    message:
+      type: string
+    field:
+      type: string
+PaginationRequest:
+  type: object
+  additionalProperties: false
+  properties:
+    page:
+      type: integer
+      minimum: 1
+      default: 1
+    pageSize:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 20
+PaginationMetadata:
+  type: object
+  additionalProperties: false
+  required: [page, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage]
+  properties:
+    page:
+      type: integer
+      minimum: 1
+    pageSize:
+      type: integer
+      minimum: 1
+    totalItems:
+      type: integer
+      minimum: 0
+    totalPages:
+      type: integer
+      minimum: 0
+    hasNextPage:
+      type: boolean
+    hasPreviousPage:
+      type: boolean
+PaginatedData:
+  type: object
+  additionalProperties: false
+  required: [items]
+  properties:
+    items:
+      type: array
+      items:
+        $ref: "#/GenericListItem"
+GenericListItem:
+  type: object
+  description: "Item danh sách ở mức contract tổng quát. Domain DTO chi tiết sẽ được sinh ở phase sau."
+  additionalProperties: true
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    status:
+      type: string
+GenericResource:
+  type: object
+  description: "Resource tổng quát dùng khi phase này chưa sinh DTO nghiệp vụ."
+  additionalProperties: true
+  properties:
+    id:
+      type: string
+    type:
+      type: string
+    status:
+      type: string
+    audit:
+      $ref: "#/AuditMetadata"
+GenericCommandRequest:
+  type: object
+  description: "Request ghi dữ liệu tổng quát. DTO chi tiết sẽ được định nghĩa ở phase backend/API DTO."
+  additionalProperties: true
+  properties:
+    data:
+      type: object
+      additionalProperties: true
+    reason:
+      type: string
+    metadata:
+      $ref: "#/RequestMetadata"
+AppliedFilter:
+  type: object
+  additionalProperties: true
+  properties:
+    filters:
+      type: array
+      items:
+        $ref: "#/FilterRule"
+AppliedSearch:
+  type: object
+  additionalProperties: false
+  properties:
+    keyword:
+      type: string
+    fields:
+      type: array
+      items:
+        type: string
+AppliedSort:
+  type: object
+  additionalProperties: false
+  properties:
+    sort:
+      type: array
+      items:
+        $ref: "#/SortRule"
+FilterRule:
+  type: object
+  additionalProperties: false
+  required: [field, operator, value]
+  properties:
+    field:
+      type: string
+    operator:
+      type: string
+      enum: [eq, neq, gt, gte, lt, lte, in, contains, between]
+    value:
+      oneOf:
+        - type: string
+        - type: number
+        - type: boolean
+        - type: array
+          items: {}
+SortRule:
+  type: object
+  additionalProperties: false
+  required: [field, direction]
+  properties:
+    field:
+      type: string
+    direction:
+      type: string
+      enum: [asc, desc]
+SearchRequest:
+  type: object
+  additionalProperties: false
+  properties:
+    keyword:
+      type: string
+      minLength: 1
+    filters:
+      type: array
+      items:
+        $ref: "#/FilterRule"
+    sort:
+      type: array
+      items:
+        $ref: "#/SortRule"
+    pagination:
+      $ref: "#/PaginationRequest"
+ErrorObject:
+  type: object
+  additionalProperties: false
+  required: [code, category, message]
+  properties:
+    code:
+      type: string
+    category:
+      type: string
+      enum: [VALIDATION, BUSINESS, AUTH, PERMISSION, NOT_FOUND, CONFLICT, RATE_LIMIT, SYSTEM, INTEGRATION, AI]
+    domain:
+      type: string
+    message:
+      type: string
+    details:
+      type: object
+      additionalProperties: true
+    validationErrors:
+      type: array
+      items:
+        $ref: "#/ValidationError"
+    retryable:
+      type: boolean
+    retryAfter:
+      type: integer
+      minimum: 0
+    supportCode:
+      type: string
+ValidationError:
+  type: object
+  additionalProperties: false
+  required: [field, code, message]
+  properties:
+    field:
+      type: string
+    code:
+      type: string
+    message:
+      type: string
+    rule:
+      type: string
+    rejectedValuePolicy:
+      type: string
+      enum: [hidden, masked, returned]
+    path:
+      type: string
+BusinessError:
+  allOf:
+    - $ref: "#/ErrorObject"
+    - type: object
+      properties:
+        category:
+          const: BUSINESS
+SystemError:
+  allOf:
+    - $ref: "#/ErrorObject"
+    - type: object
+      properties:
+        category:
+          const: SYSTEM
+AiError:
+  allOf:
+    - $ref: "#/ErrorObject"
+    - type: object
+      properties:
+        category:
+          const: AI
+Money:
+  type: object
+  additionalProperties: false
+  required: [amount, currency]
+  properties:
+    amount:
+      type: string
+      pattern: '^-?[0-9]+(\.[0-9]{1,2})?$'
+    currency:
+      type: string
+      minLength: 3
+      maxLength: 3
+Address:
+  type: object
+  additionalProperties: false
+  properties:
+    fullName:
+      type: string
+    phone:
+      type: string
+    line1:
+      type: string
+    ward:
+      type: string
+    district:
+      type: string
+    province:
+      type: string
+    countryCode:
+      type: string
+      minLength: 2
+      maxLength: 2
+AuditMetadata:
+  type: object
+  additionalProperties: false
+  properties:
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+    deletedAt:
+      type: [string, "null"]
+      format: date-time
+    createdBy:
+      type: [string, "null"]
+    updatedBy:
+      type: [string, "null"]
+    deletedBy:
+      type: [string, "null"]
+    version:
+      type: integer
+      minimum: 1
+EnumValue:
+  type: object
+  additionalProperties: false
+  required: [value, label]
+  properties:
+    value:
+      type: string
+    label:
+      type: string
+    description:
+      type: string
+StatusEnum:
+  type: string
+  enum: [draft, active, inactive, archived, pending, completed, canceled]
+AuthRegisterRequest:
+  type: object
+  additionalProperties: false
+  required: [email, password, fullName]
+  properties:
+    email:
+      type: string
+      format: email
+    password:
+      type: string
+      minLength: 12
+      maxLength: 128
+      writeOnly: true
+    fullName:
+      type: string
+      minLength: 2
+    phone:
+      type: string
+      deprecated: true
+      description: "Optional profile field only; không phải login identifier V1."
+    acceptedTerms:
+      type: boolean
+AuthLoginRequest:
+  type: object
+  additionalProperties: false
+  required: [email, password]
+  properties:
+    email:
+      type: string
+      format: email
+    password:
+      type: string
+      minLength: 1
+      maxLength: 128
+      writeOnly: true
+RefreshTokenRequest:
+  type: object
+  deprecated: true
+  description: "Không dùng trong V1; refresh token truyền bằng secure cookie Web hoặc X-Refresh-Token Mobile."
+  additionalProperties: false
+TokenActionRequest:
+  type: object
+  additionalProperties: false
+  required: [token]
+  properties:
+    token:
+      type: string
+      writeOnly: true
+ResendVerificationRequest:
+  type: object
+  additionalProperties: false
+  required: [email]
+  properties:
+    email:
+      type: string
+      format: email
+ForgotPasswordRequest:
+  type: object
+  additionalProperties: false
+  required: [email]
+  properties:
+    email:
+      type: string
+      format: email
+ResetPasswordRequest:
+  type: object
+  additionalProperties: false
+  required: [token, newPassword]
+  properties:
+    token:
+      type: string
+      writeOnly: true
+    newPassword:
+      type: string
+      minLength: 12
+      maxLength: 128
+      writeOnly: true
+ChangePasswordRequest:
+  type: object
+  additionalProperties: false
+  required: [currentPassword, newPassword]
+  properties:
+    currentPassword:
+      type: string
+      minLength: 1
+      maxLength: 128
+      writeOnly: true
+    newPassword:
+      type: string
+      minLength: 12
+      maxLength: 128
+      writeOnly: true
+ActorSummary:
+  type: object
+  additionalProperties: false
+  required: [id, email, fullName, roles]
+  properties:
+    id:
+      type: string
+    email:
+      type: string
+      format: email
+    fullName:
+      type: string
+    roles:
+      type: array
+      items:
+        type: string
+        enum: [CUSTOMER, STAFF, MANAGER, ADMINISTRATOR]
+VerificationSummary:
+  type: object
+  additionalProperties: false
+  required: [status, expiresAt]
+  properties:
+    status:
+      type: string
+      enum: [pending, verified]
+    expiresAt:
+      type: string
+      format: date-time
+AuthenticationSessionSummary:
+  type: object
+  additionalProperties: false
+  required: [id, status, issuedAt, expiresAt]
+  properties:
+    id:
+      type: string
+      format: uuid
+    status:
+      type: string
+      enum: [active, expired, revoked, compromised]
+    issuedAt:
+      type: string
+      format: date-time
+    expiresAt:
+      type: string
+      format: date-time
+TokenMetadata:
+  type: object
+  additionalProperties: false
+  required: [tokenType, accessTokenExpiresAt]
+  properties:
+    tokenType:
+      type: string
+      const: Bearer
+    accessTokenExpiresAt:
+      type: string
+      format: date-time
+    refreshTokenExpiresAt:
+      type: string
+      format: date-time
+      description: "Có cho Mobile; Web dựa vào cookie Max-Age."
+RegisterResult:
+  type: object
+  additionalProperties: false
+  required: [user, verification]
+  properties:
+    user:
+      $ref: "#/ActorSummary"
+    verification:
+      $ref: "#/VerificationSummary"
+AuthenticationResult:
+  type: object
+  additionalProperties: false
+  required: [accessToken, token, session, actor]
+  properties:
+    accessToken:
+      type: string
+      description: "JWT access token; Web giữ in-memory."
+    refreshToken:
+      type: string
+      description: "Chỉ có cho Mobile client được xác định rõ; không có trong Web response."
+    token:
+      $ref: "#/TokenMetadata"
+    session:
+      $ref: "#/AuthenticationSessionSummary"
+    actor:
+      $ref: "#/ActorSummary"
+TokenRefreshResult:
+  allOf:
+    - $ref: "#/AuthenticationResult"
+CurrentSessionResult:
+  type: object
+  additionalProperties: false
+  required: [session, actor, permissions, permissionsVersion]
+  properties:
+    session:
+      $ref: "#/AuthenticationSessionSummary"
+    actor:
+      $ref: "#/ActorSummary"
+    permissions:
+      type: array
+      items:
+        type: string
+    permissionsVersion:
+      type: integer
+      minimum: 1
+AuthActionResult:
+  type: object
+  additionalProperties: false
+  properties:
+    accepted:
+      type: boolean
+    sessionStatus:
+      type: string
+      enum: [revoked]
+    verificationStatus:
+      type: string
+      enum: [verified]
+    passwordChanged:
+      type: boolean
+    sessionsRevoked:
+      type: boolean
+    otherSessionsRevoked:
+      type: boolean
+RegisterResponseEnvelope:
+  allOf:
+    - $ref: "#/SuccessEnvelope"
+    - type: object
+      properties:
+        data:
+          $ref: "#/RegisterResult"
+AuthenticationResponseEnvelope:
+  allOf:
+    - $ref: "#/SuccessEnvelope"
+    - type: object
+      properties:
+        data:
+          $ref: "#/AuthenticationResult"
+TokenRefreshResponseEnvelope:
+  allOf:
+    - $ref: "#/SuccessEnvelope"
+    - type: object
+      properties:
+        data:
+          $ref: "#/TokenRefreshResult"
+CurrentSessionResponseEnvelope:
+  allOf:
+    - $ref: "#/SuccessEnvelope"
+    - type: object
+      properties:
+        data:
+          $ref: "#/CurrentSessionResult"
+AuthActionResponseEnvelope:
+  allOf:
+    - $ref: "#/SuccessEnvelope"
+    - type: object
+      properties:
+        data:
+          $ref: "#/AuthActionResult"
+FileUploadPrepareRequest:
+  type: object
+  additionalProperties: false
+  required: [fileName, contentType, size]
+  properties:
+    fileName:
+      type: string
+    contentType:
+      type: string
+    size:
+      type: integer
+      minimum: 1
+    purpose:
+      type: string
+      enum: [product_image, document, ai_upload, blog_media, brand_media]
+FileUploadCompleteRequest:
+  type: object
+  additionalProperties: false
+  required: [uploadId, mediaId]
+  properties:
+    uploadId:
+      type: string
+    mediaId:
+      type: string
+    checksum:
+      type: string
+FileUploadContract:
+  type: object
+  additionalProperties: false
+  properties:
+    uploadId:
+      type: string
+    uploadUrl:
+      type: string
+      format: uri-reference
+    expiresAt:
+      type: string
+      format: date-time
+FileDownloadContract:
+  type: object
+  additionalProperties: false
+  properties:
+    downloadUrl:
+      type: string
+      format: uri-reference
+    expiresAt:
+      type: string
+      format: date-time
+ImportRequest:
+  type: object
+  additionalProperties: false
+  required: [source]
+  properties:
+    source:
+      type: string
+      enum: [uploaded_file, storage_file]
+    mediaId:
+      type: string
+    options:
+      type: object
+      additionalProperties: true
+ExportRequest:
+  type: object
+  additionalProperties: false
+  properties:
+    format:
+      type: string
+      enum: [csv, xlsx, json]
+      default: csv
+    filters:
+      type: array
+      items:
+        $ref: "#/FilterRule"
+AiRequest:
+  type: object
+  additionalProperties: false
+  required: [input]
+  properties:
+    input:
+      type: object
+      additionalProperties: true
+    context:
+      type: object
+      additionalProperties: true
+    locale:
+      type: string
+      enum: [vi-VN, en-US]
+    consent:
+      type: boolean
+AiFeedbackRequest:
+  type: object
+  additionalProperties: false
+  required: [interactionId, rating]
+  properties:
+    interactionId:
+      type: string
+    rating:
+      type: integer
+      minimum: 1
+      maximum: 5
+    comment:
+      type: string
+AiResult:
+  type: object
+  additionalProperties: true
+  required: [interactionId, result]
+  properties:
+    interactionId:
+      type: string
+    result:
+      type: object
+      additionalProperties: true
+    confidence:
+      type: number
+      minimum: 0
+      maximum: 1
+    model:
+      type: string
+    safety:
+      type: object
+      additionalProperties: true
+PaymentIntentRequest:
+  type: object
+  additionalProperties: false
+  required: [orderId, amount, provider]
+  properties:
+    orderId:
+      type: string
+    amount:
+      $ref: "#/Money"
+    provider:
+      type: string
+    returnUrl:
+      type: string
+      format: uri-reference
+ShippingQuoteRequest:
+  type: object
+  additionalProperties: false
+  required: [items, address]
+  properties:
+    items:
+      type: array
+      minItems: 1
+      items:
+        type: object
+        additionalProperties: true
+    address:
+      $ref: "#/Address"
+    provider:
+      type: string
+AnalyticsEventRequest:
+  type: object
+  additionalProperties: false
+  required: [eventName, occurredAt]
+  properties:
+    eventName:
+      type: string
+    occurredAt:
+      type: string
+      format: date-time
+    anonymousId:
+      type: string
+    userId:
+      type: string
+    properties:
+      type: object
+      additionalProperties: true
+WebhookEventRequest:
+  type: object
+  additionalProperties: true
+  required: [eventId, eventType, occurredAt, payload]
+  properties:
+    eventId:
+      type: string
+    eventType:
+      type: string
+    occurredAt:
+      type: string
+      format: date-time
+    provider:
+      type: string
+    signature:
+      type: string
+      writeOnly: true
+    payload:
+      type: object
+      additionalProperties: true
+WebhookAcknowledgement:
+  type: object
+  additionalProperties: false
+  required: [received, eventId]
+  properties:
+    received:
+      type: boolean
+    eventId:
+      type: string
+    duplicate:
+      type: boolean
+AcceptedData:
+  type: object
+  additionalProperties: true
+  properties:
+    accepted:
+      type: boolean
+    jobId:
+      type: string
+    eventId:
+      type: string
+JobData:
+  type: object
+  additionalProperties: false
+  required: [jobId, status]
+  properties:
+    jobId:
+      type: string
+    status:
+      type: string
+      enum: [queued, running, completed, failed]
+    queuedAt:
+      type: string
+      format: date-time

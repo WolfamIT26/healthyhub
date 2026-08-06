@@ -1,0 +1,276 @@
+Ok:
+  description: "Thành công."
+  headers:
+    X-Request-Id:
+      schema:
+        type: string
+    X-Trace-Id:
+      schema:
+        type: string
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/SuccessEnvelope"
+      examples:
+        success:
+          $ref: "../examples/common.yaml#/Success"
+Created:
+  description: "Tạo mới thành công."
+  headers:
+    X-Request-Id:
+      schema:
+        type: string
+    X-Trace-Id:
+      schema:
+        type: string
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/SuccessEnvelope"
+      examples:
+        created:
+          $ref: "../examples/common.yaml#/CreatedSuccess"
+AuthRegisterCreated:
+  description: "Đăng ký thành công; cần xác minh email."
+  headers:
+    Cache-Control:
+      schema:
+        type: string
+        const: no-store
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/RegisterResponseEnvelope"
+      examples:
+        success:
+          $ref: "../examples/common.yaml#/AuthRegisterSuccess"
+AuthLoginOk:
+  description: "Đăng nhập thành công. Web response thiết lập refresh cookie; JSON không chứa refresh token."
+  headers:
+    Cache-Control:
+      schema:
+        type: string
+        const: no-store
+    Set-Cookie:
+      schema:
+        type: string
+      description: "Web: __Host-hh_refresh=<opaque>; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=<configured>."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/AuthenticationResponseEnvelope"
+      examples:
+        success:
+          $ref: "../examples/common.yaml#/AuthLoginSuccess"
+AuthRefreshOk:
+  description: "Rotation thành công. Web rotates cookie; Mobile nhận token theo client contract."
+  headers:
+    Cache-Control:
+      schema:
+        type: string
+        const: no-store
+    Set-Cookie:
+      schema:
+        type: string
+      description: "Web: refresh cookie mới với cùng security attributes."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/TokenRefreshResponseEnvelope"
+      examples:
+        success:
+          $ref: "../examples/common.yaml#/AuthRefreshSuccess"
+AuthActionOk:
+  description: "Authentication action thành công."
+  headers:
+    Cache-Control:
+      schema:
+        type: string
+        const: no-store
+    Set-Cookie:
+      schema:
+        type: string
+      description: "Theo operation: logout/reset xóa __Host-hh_refresh bằng Max-Age=0; change-password rotate cookie; action khác không thiết lập."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/AuthActionResponseEnvelope"
+      examples:
+        success:
+          $ref: "../examples/common.yaml#/AuthActionSuccess"
+AuthSessionOk:
+  description: "Session hiện tại và effective authorization scope."
+  headers:
+    Cache-Control:
+      schema:
+        type: string
+        const: no-store
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/CurrentSessionResponseEnvelope"
+      examples:
+        success:
+          $ref: "../examples/common.yaml#/AuthSessionSuccess"
+Accepted:
+  description: "Yêu cầu đã được tiếp nhận để xử lý bất đồng bộ."
+  headers:
+    X-Request-Id:
+      schema:
+        type: string
+    X-Trace-Id:
+      schema:
+        type: string
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/AcceptedEnvelope"
+      examples:
+        accepted:
+          $ref: "../examples/common.yaml#/AcceptedSuccess"
+NoContent:
+  description: "Không có nội dung phản hồi. Dùng khi implementation chọn trả 204 cho thao tác xóa hoặc action không cần envelope."
+PaginatedOk:
+  description: "Trả về danh sách có phân trang."
+  headers:
+    X-Request-Id:
+      schema:
+        type: string
+    X-Trace-Id:
+      schema:
+        type: string
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/PaginatedResponse"
+      examples:
+        paginated:
+          $ref: "../examples/common.yaml#/PaginatedSuccess"
+AiOk:
+  description: "AI Gateway xử lý thành công."
+  headers:
+    X-Request-Id:
+      schema:
+        type: string
+    X-Trace-Id:
+      schema:
+        type: string
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/AiResponseEnvelope"
+      examples:
+        ai:
+          $ref: "../examples/common.yaml#/AiSuccess"
+FileDownloadOk:
+  description: "Tải tệp thành công."
+  headers:
+    X-Request-Id:
+      schema:
+        type: string
+    X-Trace-Id:
+      schema:
+        type: string
+    Content-Disposition:
+      schema:
+        type: string
+  content:
+    application/octet-stream:
+      schema:
+        type: string
+        format: binary
+BadRequest:
+  description: "Request không hợp lệ ở mức cú pháp hoặc tham số."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/ErrorEnvelope"
+      examples:
+        error:
+          $ref: "../examples/common.yaml#/BadRequestError"
+Unauthorized:
+  description: "Thiếu hoặc sai thông tin xác thực."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/ErrorEnvelope"
+      examples:
+        error:
+          $ref: "../examples/common.yaml#/AuthError"
+Forbidden:
+  description: "Người dùng không có quyền thực hiện thao tác."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/ErrorEnvelope"
+      examples:
+        error:
+          $ref: "../examples/common.yaml#/PermissionError"
+NotFound:
+  description: "Không tìm thấy tài nguyên."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/ErrorEnvelope"
+      examples:
+        error:
+          $ref: "../examples/common.yaml#/NotFoundError"
+Conflict:
+  description: "Xung đột dữ liệu, trạng thái hoặc idempotency."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/ErrorEnvelope"
+      examples:
+        error:
+          $ref: "../examples/common.yaml#/ConflictError"
+ValidationError:
+  description: "Dữ liệu không đạt validation rule."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/ErrorEnvelope"
+      examples:
+        error:
+          $ref: "../examples/common.yaml#/ValidationError"
+TooManyRequests:
+  description: "Vượt giới hạn rate limit."
+  headers:
+    Retry-After:
+      schema:
+        type: integer
+        minimum: 0
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/ErrorEnvelope"
+      examples:
+        error:
+          $ref: "../examples/common.yaml#/RateLimitError"
+InternalServerError:
+  description: "Lỗi hệ thống không mong muốn."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/ErrorEnvelope"
+      examples:
+        error:
+          $ref: "../examples/common.yaml#/SystemError"
+BadGateway:
+  description: "Gateway hoặc provider bên ngoài trả lỗi."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/ErrorEnvelope"
+      examples:
+        error:
+          $ref: "../examples/common.yaml#/IntegrationError"
+ServiceUnavailable:
+  description: "Dịch vụ tạm thời không sẵn sàng."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/common.yaml#/ErrorEnvelope"
+      examples:
+        error:
+          $ref: "../examples/common.yaml#/IntegrationError"

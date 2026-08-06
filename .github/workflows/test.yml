@@ -1,0 +1,28 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  workspace-test:
+    name: Workspace Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Unit Test
+        run: npm run test
+
+      - name: Integration Test Foundation
+        run: npm run test:integration

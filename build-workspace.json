@@ -1,0 +1,16 @@
+{
+  "name": "healthyhub-build-workspace",
+  "buildOrder": [
+    "packages/shared-types",
+    "packages/shared-utils",
+    "packages/shared-config",
+    "apps/api",
+    "apps/web",
+    "apps/mobile"
+  ],
+  "rules": [
+    "Build shared packages trước app để runtime import resolve qua dist.",
+    "apps/mobile hiện chỉ là placeholder nên chưa có build script bắt buộc.",
+    "Không build OpenAPI, database hoặc docs như source code."
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "name": "@healthyhub/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HealthyHub NestJS API foundation.",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "nest start --watch",
+    "build": "nest build",
+    "start": "nest start",
+    "start:prod": "node dist/main.js",
+    "lint": "eslint \"src/**/*.ts\" --max-warnings=0",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run --passWithNoTests",
+    "test:integration": "vitest run --config vitest.integration.config.ts --passWithNoTests",
+    "migration:show": "npm run build && typeorm -d dist/database/data-source.js migration:show",
+    "migration:run": "npm run build && typeorm -d dist/database/data-source.js migration:run",
+    "migration:revert": "npm run build && typeorm -d dist/database/data-source.js migration:revert",
+    "seed": "npm run build && node dist/database/seed/seed.js"
+  },
+  "dependencies": {
+    "@healthyhub/shared-config": "file:../../packages/shared-config",
+    "@healthyhub/shared-types": "file:../../packages/shared-types",
+    "@healthyhub/shared-utils": "file:../../packages/shared-utils",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/platform-express": "^11.0.0",
+    "@nestjs/swagger": "^11.0.0",
+    "@nestjs/terminus": "^11.0.0",
+    "@nestjs/typeorm": "11.0.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "mysql2": "^3.12.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "swagger-ui-express": "^5.0.1",
+    "typeorm": "^0.3.20"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/schematics": "^11.0.0",
+    "@nestjs/testing": "^11.0.0",
+    "@types/express": "^4.17.21",
+    "@types/swagger-ui-express": "^4.1.8"
+  }
+}

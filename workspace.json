@@ -1,0 +1,14 @@
+{
+  "name": "healthyhub-workspace",
+  "type": "npm-workspaces",
+  "apps": ["apps/api", "apps/web", "apps/mobile"],
+  "packages": [
+    "packages/shared",
+    "packages/shared-types",
+    "packages/shared-utils",
+    "packages/shared-config"
+  ],
+  "specifications": ["openapi", "database"],
+  "infrastructure": ["infra", "scripts", "configs", "config"],
+  "rule": "File này chỉ mô tả workspace, không triển khai code nghiệp vụ."
+}
