@@ -2,8 +2,9 @@
 
 ## Ready Implementation Queue / Hàng đợi triển khai
 
-- [ ] Task 1: migration/entity theo physical spec đã duyệt.
-- [ ] Task 2: shared auth contracts theo Data Contract/OpenAPI.
+- [x] Task 1 implementation: migration/entity theo physical spec đã duyệt.
+- [ ] Task 1 verification: chạy migration up/down và constraint integration khi Docker/MySQL sẵn sàng.
+- [x] Task 2: shared auth contracts theo Data Contract/OpenAPI.
 - [ ] Task 3–12: backend security/flows/RBAC và frontend forms/guards.
 - [ ] Task 13–16: unit, integration, E2E và security review.
 - [ ] Task 17–18: documentation update và module lock.

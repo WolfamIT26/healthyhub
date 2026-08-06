@@ -25,3 +25,7 @@ Giữ NestJS app, global validation/envelope/filter, TypeORM config, base audit,
 ## Authorization / Phân quyền
 
 JWT xác định identity, session và token metadata; User domain cung cấp account state/roles/effective permissions. Guard phân biệt 401 (không xác thực) và 403 (đã xác thực, thiếu quyền). Admin status endpoint vẫn thuộc User module nhưng Authentication cung cấp revoke capability.
+
+## Data-access Foundation / Nền data-access đã triển khai
+
+`AuthenticationRepository` và `TypeOrmAuthenticationRepository` cung cấp account lookup/create/status, session create/lookup theo public ID/atomic generation rotation/revoke/reuse, one-time reset/verification create-consume, login-attempt count/record và role/effective-permission reads. Session hash chỉ được explicit-select cùng public ID để Prompt 17 kiểm tra constant-time trước atomic generation update; không có lookup trực tiếp bằng raw/hash token. Transaction orchestration tiếp tục dùng `TransactionRunner`; chưa có AuthService/controller/module runtime.

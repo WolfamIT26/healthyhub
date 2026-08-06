@@ -12,7 +12,7 @@
     "lint": "eslint \"src/**/*.ts\" --max-warnings=0",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run --passWithNoTests",
-    "test:integration": "vitest run --config vitest.integration.config.ts --passWithNoTests",
+    "test:integration": "vitest run --config vitest.integration.config.mts --passWithNoTests",
     "migration:show": "npm run build && typeorm -d dist/database/data-source.js migration:show",
     "migration:run": "npm run build && typeorm -d dist/database/data-source.js migration:run",
     "migration:revert": "npm run build && typeorm -d dist/database/data-source.js migration:revert",

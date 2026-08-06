@@ -1,5 +1,23 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.5.0] - 2026-08-06
+
+### Added / Đã thêm
+
+- Thêm Authentication/User identity TypeORM migrations, 9 entities, repository/data-access foundation và RBAC seed.
+- Thêm Authentication V1 shared TypeScript contracts và 8 data-layer unit tests.
+
+### Changed / Đã cập nhật
+
+- Chuyển API Vitest config sang `.mts` để tương thích ESM dependency mà không đổi dependency.
+- Cập nhật Authentication module sang `Implementation Complete - Database Verification Blocked`.
+
+### Notes / Ghi chú
+
+- API/shared lint, typecheck và build đạt; unit tests đạt.
+- Migration MySQL up/down chưa chạy vì Docker daemon không hoạt động.
+- Không tạo controller/service nghiệp vụ/endpoint/UI và không sửa `.spec` hoặc OpenAPI.
+
 ## [0.4.0] - 2026-08-06
 
 ### Added / Đã thêm

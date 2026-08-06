@@ -31,3 +31,8 @@ HealthyHub sử dụng MySQL và SQL.
 - AI interactions / Tương tác AI.
 - Marketing campaigns / Chiến dịch marketing.
 
+## Authentication Data Implementation / Triển khai dữ liệu Authentication
+
+Prompt 16 đã tạo hai TypeORM migrations rollback được: User identity/RBAC foundation và bốn bảng Authentication. Entity dùng BaseAudit/optimistic version; password/refresh/reset/verification/identifier/IP chỉ lưu hash và không default-select. `TYPEORM_SYNCHRONIZE` tiếp tục tắt.
+
+Unit migration/entity tests đã đạt. Migration run/revert trên MySQL 8 còn blocked vì Docker daemon chưa hoạt động; phải hoàn tất bước này trước khi coi database verification hoàn thành.

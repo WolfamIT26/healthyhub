@@ -40,6 +40,13 @@
 
 ## Implementation / Triển khai
 
-- [ ] Database/shared/backend/frontend/tests được triển khai theo plan.
+- [x] Hai TypeORM migrations có up/down và đúng ownership.
+- [x] 9 entities khớp migration; hash không default-select/serialize.
+- [x] Repository/transaction foundation đủ cho Prompt 17.
+- [x] Shared request/response/session/RBAC/error contracts được tạo.
+- [x] Seed role/permission idempotent, không tạo admin account.
+- [x] API/shared lint, typecheck, build và 8 unit tests đạt.
+- [ ] Migration up/down + constraint integration trên MySQL (Docker daemon unavailable).
+- [ ] Backend runtime/frontend/tests còn lại được triển khai theo plan.
 - [ ] Security review hoàn tất.
 - [ ] Acceptance đủ và module lock.

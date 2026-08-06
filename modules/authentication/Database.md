@@ -18,3 +18,13 @@ Common audit columns remain, but Authentication V1 tables do not have `tenant_id
 Rotation row-locks session and atomically compares generation/hash before replace. Old generation marks family compromised. User deletion revokes/cancels active records, then bounded cleanup removes linkage; audit is retained 365 days by its owner unless legal hold.
 
 The authoritative column/type/check/index definition is `.spec/database-physical/domains/authentication.md`. Database mapping has no remaining V1 conflict.
+
+## Implementation / Triển khai Prompt 16
+
+- Migration `1760000000000-create-user-identity-foundation.ts`: `user_accounts`, `roles`, `permissions`, `role_permissions`, `user_role_assignments`.
+- Migration `1760000001000-create-authentication-data.ts`: bốn bảng Authentication đã duyệt.
+- Migration dùng TypeORM `MigrationInterface`, có `up/down`, named PK/FK/unique/index/check; `synchronize` vẫn tắt.
+- 9 entity dùng `BaseAuditEntity`; password/token/identifier/IP hashes có `select: false` và `@Exclude`.
+- Seed idempotent chỉ tạo bốn role V1, hai permission `users:manage`/`sessions:manage` và mapping Administrator; không tạo account/admin/password.
+
+Unit metadata/migration tests đã đạt. Migration run/revert trên MySQL thật chưa chạy vì Docker daemon không hoạt động; không giả định kết quả integration.

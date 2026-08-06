@@ -28,3 +28,10 @@ P0 gate đã đạt ngày 2026-08-06; upstream specs/OpenAPI đã đồng bộ. 
 ## Sequencing Note / Ghi chú thứ tự
 
 Email verification implementation is included across Tasks 3–5 and 12–15 because current V1 specifications require it. Account status implementation belongs to User domain; Task 11 integrates authorization and session revocation without moving ownership.
+
+## Implementation Progress / Tiến độ triển khai
+
+- Task 1: code/migration/entity/unit metadata tests complete; MySQL migration run/revert blocked by unavailable Docker daemon.
+- Task 2: complete; shared-types build/typecheck/lint pass.
+- Prompt 16 repository/seed foundation: complete at data-access level.
+- Tasks 3–18: not started except documentation updates specific to Prompt 16.

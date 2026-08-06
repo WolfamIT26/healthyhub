@@ -25,4 +25,11 @@ Foundation hiện có:
 - Exception filter, response envelope, request context, logging, rate-limit foundation trong `src/common`.
 - Gateway contract/base structure trong `src/gateways`.
 
+Authentication data foundation hiện có:
+
+- Hai TypeORM migrations cho User identity/RBAC và bốn bảng Authentication.
+- Chín entities trong `src/data/user` và `src/data/authentication`.
+- Authentication repository abstraction/TypeORM implementation và idempotent role/permission seed.
+- Chưa có AuthController/AuthService hoặc endpoint runtime.
+
 Tài liệu vận hành nằm tại `docs/implementation-foundation/README.md`.

@@ -44,6 +44,8 @@ Nội dung bao gồm: mục tiêu, công nghệ, cấu trúc source, hệ thốn
 
 Prompt 15.5 đã chốt password Argon2id 12–128 ký tự, access token 15 phút, rotating refresh token, Web HttpOnly cookie + CSRF, Mobile secure-storage header, email-only login, temporary lock, RBAC/permission, dedicated response/error schemas, single-tenant V1 và bounded retention. Data Contract, API/flow, physical DB, UI Contract và OpenAPI đã đồng bộ. Module ở trạng thái `Ready for Implementation`; chưa tạo code hoặc migration.
 
+Prompt 16 đã triển khai tầng dữ liệu: hai TypeORM migrations, 9 entities, Authentication repository foundation, idempotent role/permission seed và shared Authentication contracts. API/shared build, typecheck, lint và 8 unit tests đạt. Migration integration còn blocked vì Docker daemon chưa hoạt động; chưa có AuthController/AuthService/UI.
+
 ## Cau truc source da chuan bi / Cấu trúc source đã chuẩn bị
 
 Chỉ tạo placeholder, chưa có code nghiệp vụ.

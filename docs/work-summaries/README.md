@@ -49,6 +49,7 @@ Mỗi file tổng hợp nên có:
 - [Prompt 14 - Implementation Foundation](2026-08-06-12-prompt-14-implementation-foundation.md).
 - [Prompt 15 - Authentication Specification Mapping](2026-08-06-13-prompt-15-authentication-specification-mapping.md).
 - [Prompt 15.5 - Resolve Authentication Decisions](2026-08-06-14-prompt-15-5-resolve-authentication-decisions.md).
+- [Prompt 16 - Authentication Data and Shared Contracts](2026-08-06-15-prompt-16-authentication-data-shared-contracts.md).
 
 ## Usage Rule / Quy tắc sử dụng
 

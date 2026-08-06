@@ -2,23 +2,24 @@
 
 ## Current Status / Trạng thái hiện tại
 
-`Ready for Implementation`
+`Implementation Complete - Database Verification Blocked`
 
-## Readiness / Mức sẵn sàng
+## Progress / Tiến độ
 
 | Area | Status |
 | --- | --- |
-| P0 decisions | 10/10 Approved |
-| Data Contract, API Spec, Authentication Flow | Aligned |
-| Physical Database mapping | Aligned, single-tenant V1 |
-| UI session/error handling | Defined |
-| OpenAPI security/request/response/error/examples | Validated |
-| Code, migration, entity, UI implementation | Not Started (next phase) |
+| Approved P0/specification/OpenAPI | Complete |
+| Task 1 migration/entities | Implementation complete; MySQL run/revert blocked |
+| Task 2 shared contracts | Complete; build/typecheck pass |
+| Repository/data-access foundation | Complete for Prompt 17 |
+| Seed foundation | Complete; unit idempotency contract pass |
+| Data-layer unit tests | 4 files / 8 tests pass |
+| Backend security/runtime/frontend | Not Started |
 
-## Blockers / Vướng mắc
+## Blocker / Vướng mắc
 
-None affecting V1 migration, shared contract or implementation. Future items are P1/Future in `TODO.md`.
+Docker daemon không hoạt động (`Cannot connect to the Docker daemon`), nên chưa thể chạy migration `up/down` và constraint/FK integration trên MySQL 8. Code-level migration construction/rollback-order tests đã chạy nhưng không thay thế database integration.
 
 ## Last Updated / Cập nhật cuối
 
-2026-08-06 — Prompt 15.5 Resolve Authentication Decisions & Unlock Module.
+2026-08-06 — Prompt 16 Authentication Database, Entities & Shared Contracts.
