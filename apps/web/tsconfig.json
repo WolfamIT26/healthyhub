@@ -15,5 +15,5 @@
       "@healthyhub/shared-utils": ["../../packages/shared-utils/dist/index.d.ts"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts", "tailwind.config.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts", "vitest.config.mts", "tailwind.config.ts"]
 }

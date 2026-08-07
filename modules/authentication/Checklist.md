@@ -61,3 +61,18 @@
 - [x] Structured audit events và notification gateway stub
 - [x] Unit test, typecheck, lint, build
 - [ ] MySQL migration + HTTP integration verification (environment blocked)
+
+# Prompt 18 Checklist
+
+- [x] Login/Register/Forgot/Reset/Verify UI theo UI Contract
+- [x] `fullName`, confirm-password client-only và password policy validation
+- [x] Memory-only access token; refresh token không vào JS storage
+- [x] Credentialed Axios, web client header, CSRF cookie mirror
+- [x] Single-flight refresh và one-retry protection
+- [x] Session restore, logout, session-expired state
+- [x] Guest/protected/customer/admin guards và permission foundation
+- [x] Vietnamese safe error mapping, 401/403/network/rate-limit handling
+- [x] Responsive/accessibility styles và labels
+- [x] 6 frontend test files / 18 tests pass
+- [x] Web/API HTTP+CORS smoke test
+- [ ] Full verified-account integration flow (test fixture/notification delivery blocked)

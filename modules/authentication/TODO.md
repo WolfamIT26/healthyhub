@@ -3,6 +3,9 @@
 ## Ready Implementation Queue / Hàng đợi triển khai
 
 - [x] Fix runtime login overflow: normalize raw User-Agent thành browser/client family trước khi ghi login attempt.
+- [x] Prompt 18: Authentication forms, session restore, refresh, guards và frontend tests.
+- [ ] Backend follow-up: clear refresh/CSRF cookies sau reset-password đúng Data Contract.
+- [ ] Chạy full web/API auth integration khi có verified test fixture hoặc notification test adapter được phê duyệt.
 
 - [x] Task 1 implementation: migration/entity theo physical spec đã duyệt.
 - [ ] Task 1 verification: chạy migration up/down và constraint integration khi Docker/MySQL sẵn sàng.

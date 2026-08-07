@@ -17,3 +17,10 @@ Login, register and forgot use email only; phone/username are not login identifi
 Existing `/login`, `/register`, `/verify-email`, `/forgot-password`, `/reset-password`; account-security path remains a frontend routing choice but uses the fixed change-password API. Customer/admin redirects require backend-returned effective authorization. All forms retain label/error-summary/focus/loading/mobile one-column requirements and never display secret/internal account state.
 
 UI Contracts for login/register/forgot-reset have been updated and contain no unresolved session-handling blocker.
+
+## Prompt 18 Implementation — 2026-08-07
+
+- Implemented `/login`, `/register`, `/forgot-password`, `/reset-password` and `/verify-email` with Vietnamese validation, loading, safe errors and accessible labels.
+- Added in-memory access-token/session store, session restore, logout, customer/admin protected routes, guest-only routes and role/permission helpers.
+- Axios sends credentials and `X-Client-Platform: web`; refresh mirrors signed `hh_csrf` cookie into `X-CSRF-Token`, coordinates one refresh promise and retries a protected request at most once.
+- Refresh token is never read or persisted by JavaScript. No token/password logging and no secret/VITE secret were added.

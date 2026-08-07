@@ -43,3 +43,9 @@ No test/code was created in this documentation phase.
 ## Blocked integration verification
 
 MySQL/Docker không khả dụng trong môi trường hiện tại, nên 3 database integration tests bị skip và chưa thể xác nhận migration up/down, unique/FK/transaction behavior và HTTP integration với MySQL 8. Đây là blocker xác minh tích hợp, không phải blocker code backend.
+
+## Prompt 18 Frontend Verification
+
+- 6 files / 18 tests pass: login success/failure, register validation/success, forgot generic success, reset missing token, session restore/failure, protected/guest/admin guards, refresh success/failure, 401/403 và network error.
+- Root lint/typecheck, `build:web`, full root build, secrets check và `git diff --check` pass.
+- Local HTTP smoke: `/login` 200; API CORS preflight 204 với exact origin và credentials.

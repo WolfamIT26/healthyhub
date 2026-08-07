@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
 
 import { webEnv } from '../../config/env';
+import { AuthNavigation } from '../../features/auth/AuthNavigation';
 
 export function PublicLayout() {
   return (
@@ -21,6 +22,7 @@ export function PublicLayout() {
               Quản trị
             </NavLink>
           </nav>
+          <AuthNavigation />
         </div>
       </header>
       <Outlet />

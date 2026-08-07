@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { AuthNavigation } from '../../features/auth/AuthNavigation';
 
 export function CustomerLayout() {
   return (
@@ -16,6 +17,7 @@ export function CustomerLayout() {
               Khu khách hàng
             </NavLink>
           </nav>
+          <AuthNavigation />
         </div>
       </header>
       <Outlet />

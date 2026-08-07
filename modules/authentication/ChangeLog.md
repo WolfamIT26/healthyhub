@@ -33,3 +33,10 @@
 - Fixed `login_attempts.user_agent_family` overflow by persisting a bounded browser/client family instead of truncated raw User-Agent.
 - Added regression coverage for Chrome, Safari, Firefox, Edge, missing and abnormal User-Agent values, plus failed-login attempt persistence.
 - Kept the existing `VARCHAR(100)` migration/entity definition unchanged because specification and schema already match.
+
+## 2026-08-07 — Prompt 18 Authentication Frontend
+
+- Added Authentication pages, API client, memory session context/store, refresh handling and route guards.
+- Added HttpOnly-cookie-compatible credential transport, CSRF header mirroring and `X-Client-Platform: web`.
+- Added 18 frontend tests covering forms, restore, guards, refresh and safe errors.
+- Recorded backend reset-cookie mismatch and full integration fixture blocker without changing backend/OpenAPI/policy.

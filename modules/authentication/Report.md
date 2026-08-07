@@ -37,3 +37,11 @@ Không thay đổi `.spec` hoặc `openapi`. Không thay đổi approved policy,
 Điều tra lỗi login xác nhận raw `request.headers['user-agent']` được truyền vào request context rồi cắt 120 ký tự trước khi ghi `login_attempts.user_agent_family`, trong khi entity và migration cùng quy định `VARCHAR(100)`. Đây là lỗi application mapping, không phải schema mismatch.
 
 Đã thay raw User-Agent bằng browser/client family ngắn gọn (`Chrome`, `Safari`, `Firefox`, `Edge`, `Unknown`) và giới hạn phòng vệ 32 ký tự trước persistence. Không sửa migration, Authentication policy hoặc OpenAPI; không thêm dependency.
+
+## Prompt 18 Frontend Report — 2026-08-07
+
+Authentication frontend V1 đã triển khai forms, API client, memory-only access token, session restore, coordinated refresh, cookie/CSRF transport, logout, guest/protected guards và role/permission foundation. Frontend tests 6 files/18 tests pass.
+
+HTTP smoke test xác nhận `/login` trả 200 và API local trả credentialed CORS preflight 204 cho `http://localhost:3000`. Full flow bị chặn vì local notification adapter không gửi/expose verification token và không có verified test fixture; không bypass account verification.
+
+Backend mismatch ghi nhận, không tự sửa: reset-password revokes sessions nhưng controller hiện chưa clear refresh/CSRF cookies trong HTTP response như Data Contract mô tả. Frontend xóa memory state; cookie cũ không refresh được sau revoke, nhưng backend vẫn cần correction ở task riêng.

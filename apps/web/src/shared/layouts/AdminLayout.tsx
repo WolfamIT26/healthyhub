@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { AuthNavigation } from '../../features/auth/AuthNavigation';
 
 export function AdminLayout() {
   return (
@@ -16,6 +17,7 @@ export function AdminLayout() {
               Dashboard nền
             </NavLink>
           </nav>
+          <div className="mt-4 text-sm"><AuthNavigation /></div>
         </aside>
         <Outlet />
       </div>
