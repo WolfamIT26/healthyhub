@@ -48,3 +48,45 @@ export function redactSensitiveKeys<T>(value: T, keys: string[]): T {
 
   return redacted as T;
 }
+
+export type PasswordPolicyFailure = 'length' | 'common' | 'email';
+
+const COMMON_PASSWORDS = new Set([
+  'password',
+  'password123',
+  'password1234',
+  '123456',
+  '12345678',
+  '123456789012',
+  'qwerty',
+  'qwertyuiop12',
+  'admin',
+  'letmein123456',
+  'healthyhub',
+  'healthyhub123',
+]);
+
+export function getPasswordPolicyFailure(password: string, email?: string): PasswordPolicyFailure | undefined {
+  if (password.length < 12 || password.length > 128) return 'length';
+
+  const normalizedPassword = password.normalize('NFKC').toLocaleLowerCase('en-US');
+  if (COMMON_PASSWORDS.has(normalizedPassword)) return 'common';
+
+  if (email) {
+    const normalizedEmail = email.trim().normalize('NFKC').toLocaleLowerCase('en-US');
+    const separator = normalizedEmail.lastIndexOf('@');
+    if (separator > 0 && separator < normalizedEmail.length - 1) {
+      const localPart = normalizedEmail.slice(0, separator);
+      const domain = normalizedEmail.slice(separator + 1);
+      const emailTerms = new Set([
+        normalizedEmail,
+        domain,
+        ...(localPart.length >= 3 ? [localPart] : []),
+        ...domain.split('.').filter((part) => part.length >= 4),
+      ]);
+      if ([...emailTerms].some((term) => normalizedPassword.includes(term))) return 'email';
+    }
+  }
+
+  return undefined;
+}

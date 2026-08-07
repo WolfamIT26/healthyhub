@@ -36,6 +36,7 @@ No test/code was created in this documentation phase.
 ## Automated verification
 
 - 8 unit test files / 26 tests pass, bao phủ Argon2id hash/verify, password policy, email normalization, keyed identifier digest, CSRF signing/tamper detection, JWT issuer/audience/signature, generic recovery, hash-only reset token, refresh reuse, logout revoke và User-Agent family normalization.
+- Prompt 18.3: API 8 files/30 tests pass trên Node 20, gồm password policy theo email cho Register/Reset/Change. Frontend 7 files/24 tests pass trên Node 20, gồm show/hide mặc định, toggle hai chiều, giữ focus/value, keyboard activation, email-derived/common-password rejection và strong password chứa `@` không liên quan email.
 - Entity, repository, seed và migration construction tests từ Prompt 16 tiếp tục chạy.
 - Typecheck, lint và Nest build được chạy bằng Node 20.
 - Regression tests cho Chrome User-Agent dài, Safari, Firefox, thiếu User-Agent, dữ liệu bất thường/rất dài và Edge precedence. Service test xác nhận failed-login attempt vẫn được ghi với `userAgentFamily: Chrome`.

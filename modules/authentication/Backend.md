@@ -36,6 +36,7 @@ NestJS runtime nằm tại `apps/api/src/presentation/authentication` và triể
 ## Security baseline
 
 - Argon2id: 19 MiB, time cost 2, parallelism 1; password 12–128 Unicode và denylist cục bộ.
+- Prompt 18.3: Register, Reset Password và Change Password dùng chung password-policy helper. Ngoài length/no-composition và deny-list nhỏ, backend từ chối password chứa full email, local-part, full domain hoặc domain label có ý nghĩa (không phân biệt hoa thường). Reset tra account từ token và kiểm tra policy trước khi consume token; Login không áp creation policy.
 - Access JWT 15 phút với `sub`, `sid`, `roles`, `permissionsVersion`, issuer/audience.
 - Refresh opaque 256-bit, chỉ lưu SHA-256, rotation theo generation và phát hiện reuse.
 - Web dùng `__Host-hh_refresh` HttpOnly/Secure/SameSite=Lax và signed double-submit CSRF; mobile dùng `X-Refresh-Token`.

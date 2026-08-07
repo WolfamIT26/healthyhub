@@ -76,3 +76,29 @@
 - [x] 6 frontend test files / 18 tests pass
 - [x] Web/API HTTP+CORS smoke test
 - [ ] Full verified-account integration flow (test fixture/notification delivery blocked)
+
+# Prompt 18.1 Unified Visual Checklist
+
+- [x] Chỉ dùng `Authentication Banner.png` cho mọi standalone Authentication page/state
+- [x] Thay split layout bằng floating translucent card responsive, tối đa 460px
+- [x] Card center-left trên tablet/desktop và không che mascot/key visual bên phải
+- [x] Logo Symbol và HealthyHub wordmark lớn hơn nằm trong card
+- [x] State illustrations giữ đúng ngữ cảnh và lazy-load
+- [x] Gỡ import login/register/Hero banner cũ, không xóa hoặc đổi tên asset
+- [x] Giữ nguyên Authentication logic, API, route, backend, database, policy và OpenAPI
+- [x] Kiểm tra trực tiếp đủ 5 route ở desktop/tablet/mobile
+- [ ] Chạy lại 6 files/18 frontend tests sau khi xử lý xung đột jsdom ESM trên Node 18
+
+# Prompt 18.2 Centered Card Checklist
+
+- [x] Card căn giữa ngang và dọc bằng flex ở mọi breakpoint
+- [x] Register dài vẫn căn giữa hợp lý và page scroll khi viewport thấp
+- [x] Card responsive tối đa 460px, mobile cách viewport khoảng 16px
+- [x] Animated green conic-gradient glow nhẹ, không che nội dung
+- [x] `prefers-reduced-motion` tắt animation và giữ viền xanh tĩnh
+- [x] Banner dùng `object-fit: contain`, giữ nguyên tỷ lệ và không crop artwork
+- [x] Khoảng trống từ `contain` dùng gradient gần màu banner
+- [x] Hero tự lấy phần viewport còn lại sau header, không hardcode header height
+- [x] Giữ nguyên header navigation, route/link/menu
+- [x] Kiểm tra trực tiếp 5 Authentication routes ở các breakpoint yêu cầu
+- [x] Không thay Authentication logic, API, validation, route guard, backend hoặc asset

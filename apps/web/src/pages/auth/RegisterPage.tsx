@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { AuthCard, AuthField, AuthForm, FormAlert, StateIllustration, SubmitButton } from '../../features/auth/AuthCard';
 import { authApi } from '../../features/auth/authApi';
 import { authAssets } from '../../features/auth/authAssets';
+import { PasswordField } from '../../features/auth/PasswordField';
 import { validateConfirmation, validateEmail, validateNewPassword } from '../../features/auth/authValidation';
 import type { NormalizedApiError } from '../../services/api/normalizeApiError';
 
@@ -20,7 +21,7 @@ export function RegisterPage() {
     const nextErrors: Record<string, string> = {};
     if (!form.fullName.trim()) nextErrors.fullName = 'Vui lòng nhập họ và tên.';
     nextErrors.email = validateEmail(form.email) ?? '';
-    nextErrors.password = validateNewPassword(form.password) ?? '';
+    nextErrors.password = validateNewPassword(form.password, form.email) ?? '';
     nextErrors.confirmation = validateConfirmation(form.password, form.confirmation) ?? '';
     Object.keys(nextErrors).forEach((key) => { if (!nextErrors[key]) delete nextErrors[key]; });
     setErrors(nextErrors);
@@ -38,14 +39,14 @@ export function RegisterPage() {
   }
 
   return (
-    <AuthCard title="Tạo tài khoản" description="Đăng ký tài khoản khách hàng HealthyHub." banner={authAssets.registerBanner} bannerAlt="Trợ lý HealthyHub chào đón thành viên mới" footer={<span>Đã có tài khoản? <Link to="/login">Đăng nhập</Link></span>}>
+    <AuthCard title="Tạo tài khoản" description="Đăng ký tài khoản khách hàng HealthyHub." footer={<span>Đã có tài khoản? <Link to="/login">Đăng nhập</Link></span>}>
       {success ? <><StateIllustration src={authAssets.successIllustration} alt="Đăng ký thành công" /><FormAlert tone="success">{success}</FormAlert></> : <AuthForm onSubmit={submit}>
         {error ? <FormAlert>{error}</FormAlert> : null}
         <AuthField id="fullName" label="Họ và tên" value={form.fullName} onChange={update('fullName')} error={errors.fullName} autoComplete="name" />
         <AuthField id="email" label="Email" type="email" value={form.email} onChange={update('email')} error={errors.email} autoComplete="email" />
-        <AuthField id="password" label="Mật khẩu" type="password" value={form.password} onChange={update('password')} error={errors.password} autoComplete="new-password" />
-        <p className="field-hint">Dùng 12–128 ký tự. Không sử dụng mật khẩu phổ biến.</p>
-        <AuthField id="confirmation" label="Xác nhận mật khẩu" type="password" value={form.confirmation} onChange={update('confirmation')} error={errors.confirmation} autoComplete="new-password" />
+        <PasswordField id="password" label="Mật khẩu" value={form.password} onChange={update('password')} error={errors.password} autoComplete="new-password" />
+        <p className="field-hint">Dùng 12–128 ký tự, không chứa email hoặc phần dễ đoán từ email và không sử dụng mật khẩu phổ biến.</p>
+        <PasswordField id="confirmation" label="Xác nhận mật khẩu" value={form.confirmation} onChange={update('confirmation')} error={errors.confirmation} autoComplete="new-password" />
         <SubmitButton pending={pending}>Đăng ký</SubmitButton>
       </AuthForm>}
     </AuthCard>

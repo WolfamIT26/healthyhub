@@ -7,34 +7,32 @@ interface AuthCardProps {
   description: string;
   children: ReactNode;
   footer?: ReactNode;
-  banner?: string;
-  bannerAlt?: string;
 }
 
-export function AuthCard({ title, description, children, footer, banner, bannerAlt = '' }: AuthCardProps) {
+export function AuthCard({ title, description, children, footer }: AuthCardProps) {
   return (
     <main className="auth-page">
-      <section className={`auth-shell ${banner ? 'auth-shell-with-banner' : ''}`} aria-labelledby="auth-title">
-        <div className="auth-card">
+      <img
+        className="auth-background"
+        src={authAssets.authenticationBanner}
+        alt=""
+        width="1536"
+        height="1024"
+        fetchPriority="high"
+      />
+      <div className="auth-background-overlay" aria-hidden="true" />
+      <div className="auth-card-frame">
+        <section className="auth-card" aria-labelledby="auth-title">
           <Link to="/" className="auth-brand" aria-label="HealthyHub - Về trang chủ">
-            <img src={authAssets.logoSymbol} alt="" width="44" height="44" />
+            <img src={authAssets.logoSymbol} alt="" width="48" height="48" />
             <span>HealthyHub</span>
           </Link>
           <h1 id="auth-title">{title}</h1>
           <p className="auth-description">{description}</p>
           {children}
           {footer ? <div className="auth-footer">{footer}</div> : null}
-        </div>
-        {banner ? (
-          <div className="auth-visual" aria-hidden={bannerAlt ? undefined : true}>
-            <img
-              src={banner}
-              alt={bannerAlt}
-              loading="lazy"
-            />
-          </div>
-        ) : null}
-      </section>
+        </section>
+      </div>
     </main>
   );
 }

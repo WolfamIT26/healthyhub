@@ -41,8 +41,25 @@
 - Added 18 frontend tests covering forms, restore, guards, refresh and safe errors.
 - Recorded backend reset-cookie mismatch and full integration fixture blocker without changing backend/OpenAPI/policy.
 
-## 2026-08-07 — Prompt 18.1 Existing Asset Integration
+## 2026-08-07 — Prompt 18.1 Unified Authentication Visual Design
 
-- Integrated existing HealthyHub login/register/Hero banners, Logo Symbol and state illustrations into Authentication pages.
-- Added responsive desktop visual panels, mobile-first form layout and lazy-loaded imagery.
+- Unified all standalone Authentication pages and related states on `Authentication Banner.png`.
+- Replaced the split panel with a responsive translucent floating card, preserving the right-side mascot/key visual.
+- Enlarged in-card HealthyHub branding and retained contextual state illustrations with accessible image behavior.
+- Removed obsolete login/register/Hero banner imports without deleting or renaming repository assets.
 - Preserved Authentication behavior, API calls, routes, accessibility and Tailwind conventions.
+
+## 2026-08-07 — Prompt 18.2 Centered Authentication Card
+
+- Centered every Authentication card horizontally and vertically across desktop, laptop, tablet and mobile.
+- Changed the Authentication banner from cropped `cover` rendering to aspect-ratio-preserving `contain` rendering over a matching gradient.
+- Added a subtle five-second animated green conic-gradient glow with a static reduced-motion fallback.
+- Made the Authentication hero consume the viewport remainder through layout flex sizing rather than a hardcoded header-height offset.
+- Preserved Authentication logic, validation, API calls, routing, session handling and assets.
+
+## 2026-08-07 — Prompt 18.3 Password UX & Policy
+
+- Added a shared accessible show/hide password field to Login, Register and Reset Password forms.
+- Added one shared password-policy helper used by frontend UX and authoritative backend Register/Reset/Change flows.
+- Rejected small common-password deny-list entries and case-insensitive email-derived terms without banning `@`, `.`, or other valid symbols generally.
+- Added frontend component/form/policy tests and backend flow/policy tests; Login credential verification remains unchanged.

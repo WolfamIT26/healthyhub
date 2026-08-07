@@ -25,6 +25,16 @@ UI Contracts for login/register/forgot-reset have been updated and contain no un
 - Axios sends credentials and `X-Client-Platform: web`; refresh mirrors signed `hh_csrf` cookie into `X-CSRF-Token`, coordinates one refresh promise and retries a protected request at most once.
 - Refresh token is never read or persisted by JavaScript. No token/password logging and no secret/VITE secret were added.
 
-## Prompt 18.1 Visual Asset Integration — 2026-08-07
+## Prompt 18.1 Unified Authentication Visual Design — 2026-08-07
 
-Authentication pages đã dùng các asset HealthyHub hiện hữu: login/register/Hero banner, Logo Symbol và loading/success/maintenance illustrations. Desktop dùng split layout, mobile giữ form một cột; ảnh trạng thái và banner được lazy-load. Không thay logic, API, route hoặc backend.
+Tất cả trang và trạng thái Authentication độc lập dùng duy nhất `assets/banners/Authentication Banner.png` làm nền `cover`. Form được đặt trong card sáng bán trong suốt rộng tối đa 460px ở vị trí center-left trên tablet/desktop và căn giữa trên mobile; mascot cùng key visual bên phải được giữ thoáng. Logo Symbol và chữ HealthyHub lớn hơn được đặt trong card; loading/success/maintenance illustrations chỉ xuất hiện cho trạng thái tương ứng. Không thay logic, API, route hoặc backend.
+
+## Prompt 18.2 Centered Card & Responsive Banner — 2026-08-07
+
+Card Authentication được căn giữa thật theo cả hai trục bằng flex ở mọi breakpoint. Hero tự chiếm phần viewport còn lại sau header nhờ flex-column layout, không hardcode header height; form dài làm hero/page tăng chiều cao và vẫn scroll tự nhiên. Banner chuyển sang `object-fit: contain` trên nền gradient đồng màu để giữ trọn artwork và đúng tỷ lệ. Card có animated green conic-gradient glow 5 giây, tự chuyển thành viền xanh tĩnh khi `prefers-reduced-motion: reduce`.
+
+## Prompt 18.3 Password UX & Policy — 2026-08-07
+
+Login, Register password/confirmation và Reset password/confirmation dùng chung `PasswordField`: mặc định ẩn, nút icon hiện/ẩn có `aria-label`, `aria-pressed`, hỗ trợ bàn phím và giữ focus/value khi click. Frontend chưa có Change Password screen nên không thêm route ngoài scope.
+
+Frontend giữ policy 12–128 ký tự/no-composition và bổ sung thông báo tiếng Việt cho mật khẩu phổ biến hoặc chứa email, local-part, domain/domain label không phân biệt hoa thường. Register kiểm tra theo email đang nhập; Reset không biết email từ token nên frontend kiểm tra length/common, backend enforce đầy đủ theo account.

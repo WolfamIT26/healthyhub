@@ -27,7 +27,7 @@ export function ForgotPasswordPage() {
       setError((caught as NormalizedApiError).message ?? 'Không thể gửi yêu cầu. Vui lòng thử lại.');
     } finally { setPending(false); }
   }
-  return <AuthCard title="Quên mật khẩu" description="Nhập email để nhận hướng dẫn đặt lại mật khẩu." banner={authAssets.heroIllustration} bannerAlt="Không gian chăm sóc sức khỏe HealthyHub" footer={<Link to="/login">Quay lại đăng nhập</Link>}>
+  return <AuthCard title="Quên mật khẩu" description="Nhập email để nhận hướng dẫn đặt lại mật khẩu." footer={<Link to="/login">Quay lại đăng nhập</Link>}>
     {accepted ? <><StateIllustration src={authAssets.successIllustration} alt="Yêu cầu đã được tiếp nhận" /><FormAlert tone="success">Nếu email hợp lệ, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu. Vui lòng kiểm tra hộp thư.</FormAlert></> : <AuthForm onSubmit={submit}>
       {error ? <FormAlert>{error}</FormAlert> : null}
       <AuthField id="email" label="Email" type="email" value={email} onChange={setEmail} error={fieldError} autoComplete="email" />

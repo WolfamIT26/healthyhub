@@ -20,6 +20,13 @@ function setup() {
     revokeSession: vi.fn(),
     revokeAllSessions: vi.fn(),
     createPasswordReset: vi.fn(),
+    findPasswordReset: vi.fn(),
+    consumePasswordReset: vi.fn(),
+    findAccountById: vi.fn(),
+    updatePassword: vi.fn(),
+    revokeOtherSessions: vi.fn(),
+    createAccount: vi.fn(),
+    emailExists: vi.fn(),
     countFailedLoginAttempts: vi.fn(),
     recordLoginAttempt: vi.fn(),
   };
@@ -30,6 +37,9 @@ function setup() {
     randomToken: () => 'opaque-token',
     safeEqual: (left: string, right: string) => left === right,
     identifierDigest: (value: string) => `identifier:${value}`,
+    assertPasswordAllowed: vi.fn(() => true),
+    verifyPassword: vi.fn(() => Promise.resolve(true)),
+    hashPassword: vi.fn(() => Promise.resolve('password-hash')),
   };
   const audit = { emit: vi.fn() };
   const rateLimit = { enforce: vi.fn() };
@@ -42,7 +52,7 @@ function setup() {
     rateLimit as never,
     env,
   );
-  return { service, repository, notifications, audit };
+  return { service, repository, notifications, audit, crypto };
 }
 
 describe('AuthenticationService security flows', () => {
@@ -120,5 +130,59 @@ describe('AuthenticationService security flows', () => {
         userAgentFamily: 'Chrome',
       }),
     );
+  });
+
+  it('enforces email-aware password policy during registration', async () => {
+    const { service, crypto, repository } = setup();
+    crypto.assertPasswordAllowed.mockReturnValue(false);
+
+    await expect(service.register({
+      email: 'PhamViet@gmail.com',
+      password: 'Secure-phamviet-2026',
+      fullName: 'Pham Viet',
+    })).rejects.toBeInstanceOf(AuthenticationException);
+
+    expect(crypto.assertPasswordAllowed).toHaveBeenCalledWith('Secure-phamviet-2026', 'phamviet@gmail.com');
+    expect(repository.createAccount).not.toHaveBeenCalled();
+  });
+
+  it('enforces the account email policy before consuming a reset token', async () => {
+    const { service, crypto, repository } = setup();
+    repository.findPasswordReset.mockResolvedValue({ userAccountId: '10' });
+    repository.findAccountById.mockResolvedValue({ id: '10', normalizedEmail: 'person@yahoo.com' });
+    crypto.assertPasswordAllowed.mockReturnValueOnce(true).mockReturnValueOnce(false);
+
+    await expect(service.resetPassword({
+      token: 'reset-token',
+      newPassword: 'Secure-yahoo-2026',
+    })).rejects.toBeInstanceOf(AuthenticationException);
+
+    expect(crypto.assertPasswordAllowed).toHaveBeenLastCalledWith('Secure-yahoo-2026', 'person@yahoo.com');
+    expect(repository.consumePasswordReset).not.toHaveBeenCalled();
+  });
+
+  it('enforces the account email policy when changing a password', async () => {
+    const { service, crypto, repository } = setup();
+    repository.findAccountById.mockResolvedValue({ id: '10', normalizedEmail: 'person@icloud.com' });
+    repository.findAccountByNormalizedEmail.mockResolvedValue({
+      id: '10',
+      normalizedEmail: 'person@icloud.com',
+      passwordHash: 'current-hash',
+    });
+    crypto.assertPasswordAllowed.mockReturnValueOnce(true).mockReturnValueOnce(false);
+
+    await expect(service.changePassword({
+      userAccountId: '10',
+      sessionId: '20',
+      sessionPublicId: 'session',
+      roles: ['CUSTOMER'],
+      permissionsVersion: 1,
+    }, {
+      currentPassword: 'current-password',
+      newPassword: 'Secure-icloud-2026',
+    })).rejects.toBeInstanceOf(AuthenticationException);
+
+    expect(crypto.assertPasswordAllowed).toHaveBeenLastCalledWith('Secure-icloud-2026', 'person@icloud.com');
+    expect(repository.updatePassword).not.toHaveBeenCalled();
   });
 });

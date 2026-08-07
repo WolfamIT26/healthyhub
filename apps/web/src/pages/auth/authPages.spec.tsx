@@ -67,6 +67,17 @@ describe('Authentication pages', () => {
     expect(await screen.findByText(/Vui lòng kiểm tra email/)).toBeInTheDocument();
   });
 
+  it('rejects a registration password derived from the email before calling the API', async () => {
+    renderPage(<RegisterPage />, '/register');
+    await userEvent.type(screen.getByLabelText('Họ và tên'), 'New User');
+    await userEvent.type(screen.getByLabelText('Email'), 'new@example.com');
+    await userEvent.type(screen.getByLabelText('Mật khẩu'), 'Secure-NEW-2026');
+    await userEvent.type(screen.getByLabelText('Xác nhận mật khẩu'), 'Secure-NEW-2026');
+    await userEvent.click(screen.getByRole('button', { name: 'Đăng ký' }));
+    expect(screen.getByText('Mật khẩu không được chứa email hoặc phần dễ đoán từ email.')).toBeInTheDocument();
+    expect(authApi.register).not.toHaveBeenCalled();
+  });
+
   it('always shows the generic forgot-password accepted state', async () => {
     vi.mocked(authApi.forgotPassword).mockResolvedValue({ accepted: true });
     renderPage(<ForgotPasswordPage />, '/forgot-password');
@@ -78,5 +89,14 @@ describe('Authentication pages', () => {
   it('shows invalid reset-token state when URL has no token', () => {
     renderPage(<ResetPasswordPage />, '/reset-password');
     expect(screen.getByRole('heading', { name: 'Liên kết không hợp lệ' })).toBeInTheDocument();
+  });
+
+  it('rejects a common reset password before calling the API', async () => {
+    renderPage(<ResetPasswordPage />, '/reset-password?token=reset-token');
+    await userEvent.type(screen.getByLabelText('Mật khẩu mới'), 'password1234');
+    await userEvent.type(screen.getByLabelText('Xác nhận mật khẩu mới'), 'password1234');
+    await userEvent.click(screen.getByRole('button', { name: 'Đặt lại mật khẩu' }));
+    expect(screen.getByText('Không sử dụng mật khẩu phổ biến.')).toBeInTheDocument();
+    expect(authApi.resetPassword).not.toHaveBeenCalled();
   });
 });

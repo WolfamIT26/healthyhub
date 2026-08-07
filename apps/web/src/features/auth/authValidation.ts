@@ -1,3 +1,5 @@
+import { getPasswordPolicyFailure } from '@healthyhub/shared-utils';
+
 export interface FormErrors {
   [field: string]: string;
 }
@@ -11,10 +13,11 @@ export function validateEmail(email: string): string | undefined {
   return undefined;
 }
 
-export function validateNewPassword(password: string): string | undefined {
-  if (password.length < 12 || password.length > 128) {
-    return 'Mật khẩu phải dài từ 12 đến 128 ký tự.';
-  }
+export function validateNewPassword(password: string, email?: string): string | undefined {
+  const failure = getPasswordPolicyFailure(password, email);
+  if (failure === 'length') return 'Mật khẩu phải dài từ 12 đến 128 ký tự.';
+  if (failure === 'email') return 'Mật khẩu không được chứa email hoặc phần dễ đoán từ email.';
+  if (failure === 'common') return 'Không sử dụng mật khẩu phổ biến.';
   return undefined;
 }
 

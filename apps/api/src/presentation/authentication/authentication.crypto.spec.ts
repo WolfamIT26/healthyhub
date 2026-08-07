@@ -26,6 +26,13 @@ describe('AuthenticationCrypto', () => {
     expect(crypto.assertPasswordAllowed('một-mật-khẩu-rất-dài')).toBe(true);
   });
 
+  it('rejects account email parts case-insensitively without banning valid symbols', () => {
+    expect(crypto.assertPasswordAllowed('Secure-PHAMVIET-2026', 'phamviet@gmail.com')).toBe(false);
+    expect(crypto.assertPasswordAllowed('Secure-gmail.com-2026', 'phamviet@gmail.com')).toBe(false);
+    expect(crypto.assertPasswordAllowed('Secure-OUTLOOK-2026', 'person@outlook.com')).toBe(false);
+    expect(crypto.assertPasswordAllowed('River@Stone-2026', 'phamviet@gmail.com')).toBe(true);
+  });
+
   it('hashes and verifies with Argon2id without exposing plaintext', async () => {
     const digest = await crypto.hashPassword('correct horse battery staple');
     expect(digest).toContain('$argon2id$');

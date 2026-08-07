@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@property --auth-glow-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 :root {
   color-scheme: light;
   font-family:
@@ -27,19 +33,39 @@ a {
 
 @layer components {
   .auth-page {
-    @apply flex min-h-[calc(100vh-73px)] items-center justify-center bg-gradient-to-br from-leaf-50 via-white to-slate-100 px-4 py-10;
+    @apply relative isolate flex w-full flex-1 items-center justify-center overflow-hidden bg-gradient-to-br from-[#f7f6dd] via-[#eff4cf] to-[#dce8a9] px-4 py-8 sm:py-10;
   }
 
-  .auth-shell {
-    @apply grid w-full max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg;
+  .auth-background {
+    @apply absolute inset-0 -z-20 h-full w-full object-contain object-center;
   }
 
-  .auth-shell-with-banner {
-    @apply lg:max-w-6xl lg:grid-cols-[minmax(380px,0.8fr)_minmax(0,1.2fr)];
+  .auth-background-overlay {
+    @apply absolute inset-0 -z-10 bg-white/10;
+  }
+
+  .auth-card-frame {
+    @apply relative isolate min-w-0 max-w-[460px] rounded-[26px];
+    width: calc(100vw - 2rem);
+  }
+
+  .auth-card-frame::before {
+    content: '';
+    @apply pointer-events-none absolute -inset-[2px] -z-10 rounded-[28px] opacity-80;
+    background: conic-gradient(
+      from var(--auth-glow-angle),
+      transparent 0deg 55deg,
+      rgb(22 163 74 / 0.25) 85deg,
+      rgb(21 128 61 / 0.95) 125deg,
+      rgb(74 222 128 / 0.65) 160deg,
+      transparent 205deg 360deg
+    );
+    filter: blur(5px);
+    animation: auth-glow-spin 5s linear infinite;
   }
 
   .auth-card {
-    @apply w-full bg-white p-6 sm:p-8 lg:p-10;
+    @apply relative z-10 w-full rounded-[26px] border border-leaf-100 bg-white/95 p-6 shadow-2xl backdrop-blur-sm sm:p-8 lg:p-9;
   }
 
   .auth-card h1 {
@@ -47,25 +73,11 @@ a {
   }
 
   .auth-brand {
-    @apply inline-flex items-center gap-2 text-lg font-bold text-leaf-700;
+    @apply inline-flex items-center gap-3 text-2xl font-bold tracking-tight text-leaf-700;
   }
 
   .auth-brand img {
-    @apply h-11 w-11 object-contain;
-  }
-
-  .auth-visual {
-    @apply relative hidden min-h-[640px] overflow-hidden bg-leaf-50 lg:block;
-  }
-
-  .auth-visual::after {
-    content: '';
-    @apply pointer-events-none absolute inset-0 bg-gradient-to-r from-white/20 to-transparent;
-  }
-
-  .auth-visual img {
-    @apply absolute inset-0 h-full w-full object-cover;
-    object-position: 72% center;
+    @apply h-12 w-12 shrink-0 object-contain;
   }
 
   .auth-state-illustration {
@@ -90,7 +102,26 @@ a {
   }
 
   .auth-field input {
-    @apply min-h-11 rounded-lg border border-slate-300 bg-white px-3 py-2 text-base outline-none transition focus:border-leaf-600 focus:ring-2 focus:ring-leaf-100;
+    @apply min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-base outline-none transition focus:border-leaf-600 focus:ring-2 focus:ring-leaf-100;
+  }
+
+  .password-input-wrap {
+    @apply relative;
+  }
+
+  .password-input-wrap input {
+    @apply pr-12;
+  }
+
+  .password-toggle {
+    @apply absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-lg text-slate-600 transition hover:text-leaf-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-leaf-600;
+  }
+
+  .password-toggle svg {
+    @apply h-5 w-5 fill-none stroke-current;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
   }
 
   .auth-field input[aria-invalid='true'] {
@@ -131,5 +162,24 @@ a {
 
   .auth-alert-info {
     @apply border-blue-200 bg-blue-50 text-blue-800;
+  }
+
+  @keyframes auth-glow-spin {
+    to {
+      --auth-glow-angle: 360deg;
+    }
+  }
+
+  @media (min-width: 640px) {
+    .auth-card-frame {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .auth-card-frame::before {
+      background: rgb(22 163 74 / 0.55);
+      animation: none;
+    }
   }
 }

@@ -1,48 +1,43 @@
-# Prompt 18.1 — Integrate Existing HealthyHub Assets
+# Prompt 18.1 — Unified Authentication Visual Design
 
-## Mục tiêu
+## Kết quả
 
-Nâng cấp riêng visual layer của Authentication Frontend V1 bằng các asset đã có trong repository. Không thay đổi authentication logic, API call, route, backend, policy hoặc OpenAPI.
+Authentication frontend đã được thống nhất thành một visual identity duy nhất. `/login`, `/register`, `/forgot-password`, `/reset-password`, `/verify-email` và các trạng thái Authentication liên quan đều dùng `assets/banners/Authentication Banner.png` làm background toàn vùng, với form/state đặt trong card sáng bán trong suốt.
 
-## Asset đã tích hợp
+## Thay đổi visual
 
-| Màn hình/trạng thái | Asset |
-| --- | --- |
-| Login | `assets/banners/login-banner.png` |
-| Register | `assets/banners/register-banner.png` |
-| Forgot Password | `assets/banners/Hero Illustration.png` |
-| Auth branding | `assets/logos/Logo Symbol.png` |
-| Loading/verification | `assets/illustrations/loading.png` |
-| Register/reset/verify success | `assets/illustrations/success.png` |
-| Invalid/expired token | `assets/illustrations/maintenance.png` |
+- Bỏ layout split FORM | IMAGE và thay bằng background `cover` responsive.
+- Card rộng tối đa 460px, bo góc lớn, shadow mềm và blur nhẹ; căn center-left từ tablet/desktop, căn giữa trên mobile.
+- Giữ vùng mascot/key visual bên phải thoáng trên màn hình lớn.
+- Đưa `Logo Symbol.png` và HealthyHub wordmark lớn hơn vào card.
+- Giữ `loading.png`, `success.png`, `maintenance.png` cho trạng thái phù hợp và lazy-load các illustration này.
+- Cho public navigation wrap trên mobile để tránh tràn ngang mà không đổi link hoặc routing.
 
-Các asset khác trong danh sách Prompt 18.1 không được chèn khi không phù hợp ngữ cảnh Authentication, tránh trang bị dư hình ảnh hoặc sai mục đích.
+## Asset cleanup
 
-## Thay đổi giao diện
-
-- Auth card dùng layout split-screen trên desktop và form một cột trên mobile.
-- Login/Register/Forgot/Reset có visual panel phù hợp với từng flow.
-- Loading, success và invalid-token state sử dụng illustration thay cho trạng thái chỉ có text.
-- Logo Symbol được đưa vào brand link của Authentication card.
-- Banner và state illustration dùng lazy loading.
-- Giữ label, alt text, keyboard navigation, responsive behavior và Tailwind styling.
+Các import `login-banner.png`, `register-banner.png` và `Hero Illustration.png` đã được gỡ khỏi Authentication frontend. Không asset nào bị thêm, xóa, đổi tên hoặc chỉnh sửa nội dung.
 
 ## Phạm vi giữ nguyên
 
-- Không thay Authentication state/session/refresh logic.
-- Không sửa API client hoặc endpoint call.
-- Không sửa routing.
-- Không chạm backend/database/migration.
-- Không thêm, tạo hoặc đổi tên asset.
+- Authentication logic và session/refresh behavior.
+- API client, endpoint calls và routing.
+- Backend, database, migration, policy và OpenAPI.
+- Form validation, labels, keyboard access và safe error handling.
+
+## Responsive verification
+
+- Desktop: `/login` tại 1440px.
+- Tablet: `/register` tại 820px.
+- Mobile: `/forgot-password` tại 390px.
+- Related states: `/reset-password` và `/verify-email` tại 1024px.
+
+Các route trực tiếp đều render background thống nhất, card không che mascot/key visual và form/state vẫn đọc được ở breakpoint tương ứng.
 
 ## Verification
 
 - Frontend lint: pass.
 - Frontend typecheck: pass.
-- Frontend tests: 6 files / 18 tests pass.
+- Frontend tests: blocked before collection by the installed jsdom dependency chain on Node 18 (`html-encoding-sniffer` CommonJS → ESM-only `@exodus/bytes`); 0 tests loaded. The same 6 files / 18 tests passed in the preceding Prompt 18 verification.
 - `npm run build:web`: pass.
+- Full `npm run build`: pass.
 - `git diff --check`: pass.
-
-## Kết quả
-
-Authentication Frontend giữ nguyên hành vi Prompt 18, đồng thời sử dụng đúng bộ nhận diện và illustration HealthyHub hiện có với layout responsive.

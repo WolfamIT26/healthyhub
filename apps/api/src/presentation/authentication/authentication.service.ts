@@ -54,7 +54,7 @@ export class AuthenticationService {
   async register(input: RegisterDto): Promise<RegisterResult> {
     const normalizedEmail = this.crypto.normalizeEmail(input.email);
     this.rateLimit.enforce('register', normalizedEmail, undefined, 5, 15 * 60 * 1000);
-    if (!this.crypto.assertPasswordAllowed(input.password)) this.passwordPolicyFailed();
+    if (!this.crypto.assertPasswordAllowed(input.password, normalizedEmail)) this.passwordPolicyFailed();
     if (await this.repository.emailExists(normalizedEmail)) {
       throw new AuthenticationException(
         HttpStatus.CONFLICT,
@@ -212,7 +212,25 @@ export class AuthenticationService {
     const reference = this.crypto.digest(input.token);
     const request = await this.repository.findPasswordReset(reference);
     const now = new Date();
-    if (!request || !(await this.repository.consumePasswordReset(reference, now))) {
+    if (!request) {
+      throw new AuthenticationException(
+        HttpStatus.UNAUTHORIZED,
+        'AUTH.AUTHENTICATION.RESET_TOKEN_INVALID',
+        'AUTH',
+        'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.',
+      );
+    }
+    const account = await this.repository.findAccountById(request.userAccountId);
+    if (!account || !this.crypto.assertPasswordAllowed(input.newPassword, account.normalizedEmail)) {
+      if (account) this.passwordPolicyFailed();
+      throw new AuthenticationException(
+        HttpStatus.UNAUTHORIZED,
+        'AUTH.AUTHENTICATION.RESET_TOKEN_INVALID',
+        'AUTH',
+        'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.',
+      );
+    }
+    if (!(await this.repository.consumePasswordReset(reference, now))) {
       throw new AuthenticationException(
         HttpStatus.UNAUTHORIZED,
         'AUTH.AUTHENTICATION.RESET_TOKEN_INVALID',
@@ -266,6 +284,7 @@ export class AuthenticationService {
     if (!selected || !(await this.crypto.verifyPassword(selected.passwordHash, input.currentPassword))) {
       this.invalidCredentials();
     }
+    if (!this.crypto.assertPasswordAllowed(input.newPassword, selected.normalizedEmail)) this.passwordPolicyFailed();
     await this.repository.updatePassword(selected.id, await this.crypto.hashPassword(input.newPassword));
     await this.repository.revokeOtherSessions(selected.id, auth.sessionId, 'password_changed', new Date());
     this.audit.emit('password_changed', { userAccountId: selected.id, sessionId: auth.sessionPublicId });
@@ -368,6 +387,6 @@ export class AuthenticationService {
   }
 
   private passwordPolicyFailed(): never {
-    throw new AuthenticationException(HttpStatus.UNPROCESSABLE_ENTITY, 'VALIDATION.AUTHENTICATION.PASSWORD_POLICY_FAILED', 'VALIDATION', 'Mật khẩu phải dài 12–128 ký tự và không thuộc danh sách mật khẩu phổ biến.');
+    throw new AuthenticationException(HttpStatus.UNPROCESSABLE_ENTITY, 'VALIDATION.AUTHENTICATION.PASSWORD_POLICY_FAILED', 'VALIDATION', 'Mật khẩu phải dài 12–128 ký tự, không chứa thông tin email dễ đoán và không thuộc danh sách mật khẩu phổ biến.');
   }
 }

@@ -2,16 +2,9 @@ import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypt
 
 import { Inject, Injectable } from '@nestjs/common';
 import { hash, verify, Algorithm } from '@node-rs/argon2';
+import { getPasswordPolicyFailure } from '@healthyhub/shared-utils';
 
 import type { HealthyHubEnvironment } from '../../config/environment';
-
-const COMMON_PASSWORDS = new Set([
-  '123456789012',
-  'password1234',
-  'qwertyuiop12',
-  'letmein123456',
-  'healthyhub123',
-]);
 
 @Injectable()
 export class AuthenticationCrypto {
@@ -21,8 +14,8 @@ export class AuthenticationCrypto {
     return email.trim().normalize('NFKC').toLocaleLowerCase('en-US');
   }
 
-  assertPasswordAllowed(password: string): boolean {
-    return password.length >= 12 && password.length <= 128 && !COMMON_PASSWORDS.has(password.toLowerCase());
+  assertPasswordAllowed(password: string, email?: string): boolean {
+    return getPasswordPolicyFailure(password, email) === undefined;
   }
 
   hashPassword(password: string): Promise<string> {
