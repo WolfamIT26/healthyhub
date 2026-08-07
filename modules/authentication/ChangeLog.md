@@ -27,3 +27,9 @@
 - Added secure cookie/mobile refresh delivery, CSRF validation, RBAC foundation, account lock and audit events.
 - Added notification gateway adapter and backend security unit tests.
 - OpenAPI, `.spec`, frontend, Redis and Kafka remain unchanged.
+
+## 2026-08-07 — Login User-Agent overflow fix
+
+- Fixed `login_attempts.user_agent_family` overflow by persisting a bounded browser/client family instead of truncated raw User-Agent.
+- Added regression coverage for Chrome, Safari, Firefox, Edge, missing and abnormal User-Agent values, plus failed-login attempt persistence.
+- Kept the existing `VARCHAR(100)` migration/entity definition unchanged because specification and schema already match.

@@ -2,6 +2,8 @@
 
 ## Ready Implementation Queue / Hàng đợi triển khai
 
+- [x] Fix runtime login overflow: normalize raw User-Agent thành browser/client family trước khi ghi login attempt.
+
 - [x] Task 1 implementation: migration/entity theo physical spec đã duyệt.
 - [ ] Task 1 verification: chạy migration up/down và constraint integration khi Docker/MySQL sẵn sàng.
 - [x] Task 2: shared auth contracts theo Data Contract/OpenAPI.

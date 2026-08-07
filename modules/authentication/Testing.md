@@ -35,9 +35,10 @@ No test/code was created in this documentation phase.
 
 ## Automated verification
 
-- 7 unit test files / 19 tests pass, bao phủ Argon2id hash/verify, password policy, email normalization, keyed identifier digest, CSRF signing/tamper detection, JWT issuer/audience/signature, generic recovery, hash-only reset token, refresh reuse và logout revoke.
+- 8 unit test files / 26 tests pass, bao phủ Argon2id hash/verify, password policy, email normalization, keyed identifier digest, CSRF signing/tamper detection, JWT issuer/audience/signature, generic recovery, hash-only reset token, refresh reuse, logout revoke và User-Agent family normalization.
 - Entity, repository, seed và migration construction tests từ Prompt 16 tiếp tục chạy.
 - Typecheck, lint và Nest build được chạy bằng Node 20.
+- Regression tests cho Chrome User-Agent dài, Safari, Firefox, thiếu User-Agent, dữ liệu bất thường/rất dài và Edge precedence. Service test xác nhận failed-login attempt vẫn được ghi với `userAgentFamily: Chrome`.
 
 ## Blocked integration verification
 

@@ -31,3 +31,9 @@ Blocked: `docker compose ps` không kết nối được Docker daemon; `migrati
 ## Specification Integrity / Toàn vẹn specification
 
 Không thay đổi `.spec` hoặc `openapi`. Không thay đổi approved policy, không thêm dependency/framework, không tạo secret/token/password fixture thật.
+
+## Runtime Bug Fix — 2026-08-07
+
+Điều tra lỗi login xác nhận raw `request.headers['user-agent']` được truyền vào request context rồi cắt 120 ký tự trước khi ghi `login_attempts.user_agent_family`, trong khi entity và migration cùng quy định `VARCHAR(100)`. Đây là lỗi application mapping, không phải schema mismatch.
+
+Đã thay raw User-Agent bằng browser/client family ngắn gọn (`Chrome`, `Safari`, `Firefox`, `Edge`, `Unknown`) và giới hạn phòng vệ 32 ký tự trước persistence. Không sửa migration, Authentication policy hoặc OpenAPI; không thêm dependency.

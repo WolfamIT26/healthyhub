@@ -20,6 +20,8 @@ function setup() {
     revokeSession: vi.fn(),
     revokeAllSessions: vi.fn(),
     createPasswordReset: vi.fn(),
+    countFailedLoginAttempts: vi.fn(),
+    recordLoginAttempt: vi.fn(),
   };
   const notifications = { sendPasswordReset: vi.fn(), sendEmailVerification: vi.fn() };
   const crypto = {
@@ -27,6 +29,7 @@ function setup() {
     digest: (value: string) => `hash:${value}`,
     randomToken: () => 'opaque-token',
     safeEqual: (left: string, right: string) => left === right,
+    identifierDigest: (value: string) => `identifier:${value}`,
   };
   const audit = { emit: vi.fn() };
   const rateLimit = { enforce: vi.fn() };
@@ -92,5 +95,30 @@ describe('AuthenticationService security flows', () => {
       }),
     ).resolves.toEqual({ sessionStatus: 'revoked' });
     expect(repository.revokeSession).toHaveBeenCalledWith('20', 'user_logout', expect.any(Date));
+  });
+
+  it('keeps failed-login attempt audit working with a normalized browser family', async () => {
+    const { service, repository } = setup();
+    repository.findAccountByNormalizedEmail.mockResolvedValue(null);
+    repository.countFailedLoginAttempts.mockResolvedValue(0);
+    repository.recordLoginAttempt.mockResolvedValue({ id: 'attempt-1' });
+    const longChromeUserAgent =
+      'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 ' +
+      'Safari/537.36 '.repeat(100);
+
+    await expect(
+      service.login(
+        { email: 'unknown@example.com', password: 'incorrect-password' },
+        { ip: '127.0.0.1', userAgent: longChromeUserAgent },
+      ),
+    ).rejects.toBeInstanceOf(AuthenticationException);
+
+    expect(repository.recordLoginAttempt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: 'failed',
+        failureReason: 'invalid_credentials',
+        userAgentFamily: 'Chrome',
+      }),
+    );
   });
 });

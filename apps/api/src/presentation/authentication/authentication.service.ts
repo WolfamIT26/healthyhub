@@ -24,6 +24,7 @@ import { AuthenticationCrypto } from './authentication.crypto';
 import { AuthenticationException } from './authentication.exception';
 import { AuthenticationTokenService } from './authentication-token.service';
 import { AuthenticationRateLimitService } from './authentication-rate-limit.service';
+import { getUserAgentFamily } from './user-agent-family';
 import type {
   ChangePasswordDto,
   LoginDto,
@@ -351,7 +352,7 @@ export class AuthenticationService {
       userAccountId,
       identifierHash,
       ipHash: context.ip ? this.crypto.identifierDigest(context.ip) : null,
-      userAgentFamily: context.userAgent?.slice(0, 120),
+      userAgentFamily: getUserAgentFamily(context.userAgent),
       status,
       failureReason,
       attemptedAt,
