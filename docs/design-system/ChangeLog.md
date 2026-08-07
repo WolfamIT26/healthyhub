@@ -17,3 +17,16 @@
 - Chưa viết React, CSS, Tailwind hoặc bất kỳ code implementation nào.
 - Chưa tạo Figma hoặc UI mockup.
 
+## 2026-08-07 / Prompt 19
+
+### Added / Đã thêm
+
+- Semantic Tailwind token foundation và shared React component catalog.
+- Form, feedback, data-display, overlay và navigation primitives.
+- Button/Input/PasswordInput/Modal/Alert/Pagination automated tests.
+- Implementation guide cho usage, responsive, accessibility và Do/Don't.
+
+### Changed / Thay đổi
+
+- Authentication presentation dùng shared UI primitives, không đổi hành vi.
+- Existing EmptyState, LoadingState và Toast foundation dùng token/shared feedback.

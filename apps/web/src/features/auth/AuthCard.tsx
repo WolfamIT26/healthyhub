@@ -1,5 +1,6 @@
 import type { FormEvent, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { Alert, Button, Card, FormField, Input } from '../../components';
 import { authAssets } from './authAssets';
 
 interface AuthCardProps {
@@ -22,7 +23,7 @@ export function AuthCard({ title, description, children, footer }: AuthCardProps
       />
       <div className="auth-background-overlay" aria-hidden="true" />
       <div className="auth-card-frame">
-        <section className="auth-card" aria-labelledby="auth-title">
+        <Card surface="plain" className="auth-card" aria-labelledby="auth-title">
           <Link to="/" className="auth-brand" aria-label="HealthyHub - Về trang chủ">
             <img src={authAssets.logoSymbol} alt="" width="48" height="48" />
             <span>HealthyHub</span>
@@ -31,7 +32,7 @@ export function AuthCard({ title, description, children, footer }: AuthCardProps
           <p className="auth-description">{description}</p>
           {children}
           {footer ? <div className="auth-footer">{footer}</div> : null}
-        </section>
+        </Card>
       </div>
     </main>
   );
@@ -42,22 +43,19 @@ export function AuthForm({ onSubmit, children }: { onSubmit(event: FormEvent<HTM
 }
 
 export function AuthField({ id, label, type = 'text', value, onChange, error, autoComplete }: { id: string; label: string; type?: string; value: string; onChange(value: string): void; error?: string; autoComplete?: string }) {
-  const errorId = `${id}-error`;
   return (
-    <div className="auth-field">
-      <label htmlFor={id}>{label}</label>
-      <input id={id} name={id} type={type} value={value} onChange={(event) => onChange(event.target.value)} autoComplete={autoComplete} aria-invalid={Boolean(error)} aria-describedby={error ? errorId : undefined} />
-      {error ? <p id={errorId} className="field-error">{error}</p> : null}
-    </div>
+    <FormField id={id} label={label} error={error}>
+      <Input id={id} name={id} type={type} value={value} onChange={(event) => onChange(event.target.value)} autoComplete={autoComplete} error={Boolean(error)} aria-describedby={error ? `${id}-error` : undefined} />
+    </FormField>
   );
 }
 
 export function SubmitButton({ pending, children }: { pending: boolean; children: ReactNode }) {
-  return <button className="auth-submit" type="submit" disabled={pending}>{pending ? 'Đang xử lý…' : children}</button>;
+  return <Button className="mt-1 w-full" type="submit" loading={pending}>{children}</Button>;
 }
 
 export function FormAlert({ children, tone = 'error' }: { children: ReactNode; tone?: 'error' | 'success' | 'info' }) {
-  return <div className={`auth-alert auth-alert-${tone}`} role={tone === 'error' ? 'alert' : 'status'}>{children}</div>;
+  return <Alert className="mb-4" tone={tone}>{children}</Alert>;
 }
 
 export function StateIllustration({ src, alt }: { src: string; alt: string }) {

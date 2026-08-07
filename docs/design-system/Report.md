@@ -37,3 +37,8 @@ Bộ tài liệu bao gồm foundation guideline, token, dark mode, accessibility
 - Chưa quyết định icon package ở Prompt 12; icon source sẽ được xác nhận ở frontend phase.
 - Mobile App chưa triển khai, nên Design System chỉ chuẩn bị token và responsive rule.
 
+## Prompt 19 Implementation Report
+
+Đã triển khai shared UI foundation bằng React, TypeScript và Tailwind hiện hữu. Component được nhóm theo `ui/forms/feedback/data-display/overlays/navigation`, composition-first và không phụ thuộc Authentication/Product/Cart/Checkout/Admin business state. Authentication chỉ đổi presentation primitives; logic, API, routing và session security giữ nguyên.
+
+Không thêm dependency, không tạo/sửa/xóa/đổi tên asset. ProductCard chỉ là presentational shell. Modal/Drawer giới hạn theo viewport; controls tối thiểu 44px; focus-visible, semantic roles, aria labels và reduced-motion được tích hợp. Verification thực tế được ghi trong work summary Prompt 19.

@@ -4,7 +4,7 @@
 
 `docs/design-system` là nguồn tài liệu chính cho Design System của HealthyHub. Bộ tài liệu này chuẩn hóa nguyên tắc, token, component và trạng thái giao diện để Web và Mobile App sau này dùng cùng một chuẩn.
 
-Prompt 12 chỉ tạo tài liệu. Không viết React, không viết CSS, không tạo Figma, không tạo UI hoàn chỉnh và không sinh code.
+Prompt 12 tạo tài liệu nền; Prompt 19 đã triển khai React/Tailwind shared UI foundation tại `apps/web/src/components`. Không tạo nghiệp vụ, Figma hoặc asset mới.
 
 ## Input References / Tài liệu đầu vào
 
@@ -51,7 +51,7 @@ Prompt 12 chỉ tạo tài liệu. Không viết React, không viết CSS, khôn
 - Heading dùng song ngữ English + Vietnamese.
 - Component name dùng tiếng Anh.
 - UI label khi triển khai sau này dùng tiếng Việt.
-- Không tạo code implementation trong Design System.
+- React implementation phải dùng token/catalog trong [Implementation Guide](implementation-guide.md).
 - Mọi component phải có Purpose, Variant, Size, State, Accessibility, Responsive Rule, Usage, Do và Don't.
 
 ## Status Files / File trạng thái
@@ -60,4 +60,3 @@ Prompt 12 chỉ tạo tài liệu. Không viết React, không viết CSS, khôn
 - [Report](Report.md).
 - [Checklist](Checklist.md).
 - [ChangeLog](ChangeLog.md).
-

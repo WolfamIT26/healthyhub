@@ -59,3 +59,13 @@
 - [x] Không sinh code nghiệp vụ.
 - [x] Không thay đổi Technology Stack.
 
+## Prompt 19 Implementation Checklist
+
+- [x] Semantic color/type/spacing/radius/shadow/motion/container/breakpoint tokens
+- [x] Shared UI, form, feedback, data-display, overlay và navigation components
+- [x] Form required/helper/error/disabled/loading/success standard
+- [x] Modal/Drawer viewport bounds, Escape handling và reduced motion
+- [x] Authentication dùng shared Input/PasswordInput/Button/Alert/Card
+- [x] Button/Input/PasswordInput/Modal/Alert/Pagination tests
+- [x] Authentication regression pass
+- [x] Không thêm business logic/dependency/asset

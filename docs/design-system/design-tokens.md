@@ -35,6 +35,10 @@ Design Token là ngôn ngữ chung để chuyển quyết định thiết kế s
 - Token phải hỗ trợ dark mode bằng mapping semantic, không nhân đôi toàn bộ component.
 - Mobile App sau này được dùng cùng semantic token nhưng có thể điều chỉnh density.
 
+## Web Implementation / Triển khai Web
+
+Prompt 19 ánh xạ token vào `apps/web/tailwind.config.ts`: `primary`, `secondary`, `accent`, `success`, `warning`, `error`, `info`, `neutral`; typography `xs`–`2xl`; spacing `xs`–`xl`; radius `control/card/modal`; shadow `soft/medium/overlay`; motion `standard`; container `80rem`; breakpoint `sm/md/lg/xl/2xl`. Component dùng semantic token trước, không thêm hex trực tiếp nếu token đã tồn tại.
+
 ## Core Semantic Tokens / Token ngữ nghĩa cốt lõi
 
 | Token / Token | Light Meaning / Ý nghĩa light | Dark Meaning / Ý nghĩa dark |
@@ -49,4 +53,3 @@ Design Token là ngôn ngữ chung để chuyển quyết định thiết kế s
 | `semantic.status.warning` | Cảnh báo, thiếu dữ liệu, sắp hết hàng. | Cảnh báo trong dark mode. |
 | `semantic.status.danger` | Lỗi, hủy, xóa, khóa. | Nguy hiểm trong dark mode. |
 | `semantic.ai.assistive` | AI hỗ trợ, insight, recommendation. | AI hỗ trợ trong dark mode. |
-
