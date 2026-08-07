@@ -6,6 +6,7 @@ import { AuthCard, AuthField, AuthForm, FormAlert, SubmitButton } from '../../fe
 import { useAuth } from '../../features/auth/AuthContext';
 import { validateEmail } from '../../features/auth/authValidation';
 import type { NormalizedApiError } from '../../services/api/normalizeApiError';
+import { authAssets } from '../../features/auth/authAssets';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -42,7 +43,7 @@ export function LoginPage() {
   }
 
   return (
-    <AuthCard title="Đăng nhập" description="Chào mừng bạn quay lại HealthyHub." footer={<><Link to="/forgot-password">Quên mật khẩu?</Link><span>Chưa có tài khoản? <Link to="/register">Đăng ký</Link></span></>}>
+    <AuthCard title="Đăng nhập" description="Chào mừng bạn quay lại HealthyHub." banner={authAssets.loginBanner} bannerAlt="Trợ lý HealthyHub bảo vệ phiên đăng nhập an toàn" footer={<><Link to="/forgot-password">Quên mật khẩu?</Link><span>Chưa có tài khoản? <Link to="/register">Đăng ký</Link></span></>}>
       <AuthForm onSubmit={submit}>
         {error ? <FormAlert>{error}</FormAlert> : null}
         <AuthField id="email" label="Email" type="email" value={email} onChange={setEmail} error={errors.email} autoComplete="email" />

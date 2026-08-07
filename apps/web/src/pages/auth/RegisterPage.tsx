@@ -1,8 +1,9 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 
-import { AuthCard, AuthField, AuthForm, FormAlert, SubmitButton } from '../../features/auth/AuthCard';
+import { AuthCard, AuthField, AuthForm, FormAlert, StateIllustration, SubmitButton } from '../../features/auth/AuthCard';
 import { authApi } from '../../features/auth/authApi';
+import { authAssets } from '../../features/auth/authAssets';
 import { validateConfirmation, validateEmail, validateNewPassword } from '../../features/auth/authValidation';
 import type { NormalizedApiError } from '../../services/api/normalizeApiError';
 
@@ -37,8 +38,8 @@ export function RegisterPage() {
   }
 
   return (
-    <AuthCard title="Tạo tài khoản" description="Đăng ký tài khoản khách hàng HealthyHub." footer={<span>Đã có tài khoản? <Link to="/login">Đăng nhập</Link></span>}>
-      {success ? <FormAlert tone="success">{success}</FormAlert> : <AuthForm onSubmit={submit}>
+    <AuthCard title="Tạo tài khoản" description="Đăng ký tài khoản khách hàng HealthyHub." banner={authAssets.registerBanner} bannerAlt="Trợ lý HealthyHub chào đón thành viên mới" footer={<span>Đã có tài khoản? <Link to="/login">Đăng nhập</Link></span>}>
+      {success ? <><StateIllustration src={authAssets.successIllustration} alt="Đăng ký thành công" /><FormAlert tone="success">{success}</FormAlert></> : <AuthForm onSubmit={submit}>
         {error ? <FormAlert>{error}</FormAlert> : null}
         <AuthField id="fullName" label="Họ và tên" value={form.fullName} onChange={update('fullName')} error={errors.fullName} autoComplete="name" />
         <AuthField id="email" label="Email" type="email" value={form.email} onChange={update('email')} error={errors.email} autoComplete="email" />

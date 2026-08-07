@@ -40,3 +40,9 @@
 - Added HttpOnly-cookie-compatible credential transport, CSRF header mirroring and `X-Client-Platform: web`.
 - Added 18 frontend tests covering forms, restore, guards, refresh and safe errors.
 - Recorded backend reset-cookie mismatch and full integration fixture blocker without changing backend/OpenAPI/policy.
+
+## 2026-08-07 — Prompt 18.1 Existing Asset Integration
+
+- Integrated existing HealthyHub login/register/Hero banners, Logo Symbol and state illustrations into Authentication pages.
+- Added responsive desktop visual panels, mobile-first form layout and lazy-loaded imagery.
+- Preserved Authentication behavior, API calls, routes, accessibility and Tailwind conventions.
