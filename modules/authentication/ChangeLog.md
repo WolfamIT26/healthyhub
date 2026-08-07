@@ -63,3 +63,11 @@
 - Added one shared password-policy helper used by frontend UX and authoritative backend Register/Reset/Change flows.
 - Rejected small common-password deny-list entries and case-insensitive email-derived terms without banning `@`, `.`, or other valid symbols generally.
 - Added frontend component/form/policy tests and backend flow/policy tests; Login credential verification remains unchanged.
+
+## 2026-08-07 — Prompt 18.6 Customer vs Internal Email Verification
+
+- Allowed pending unverified Customer accounts to login/refresh with normal JWT/session issuance and `actor.isEmailVerified=false`.
+- Required verified email before Internal login and before Forgot/Reset/Change Password using one reusable backend policy.
+- Added explicit `AUTH.EMAIL_NOT_VERIFIED` handling without changing JWT/session/schema/OpenAPI.
+- Added Customer verification banner with verify, resend, temporary dismiss and development-only mail guidance.
+- Opened the existing verify-email page to authenticated Customers and added unverified Forgot Password guidance.

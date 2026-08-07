@@ -73,3 +73,13 @@ Green glow dùng pseudo-element conic-gradient phía sau card, animate góc tron
 Policy helper trong `@healthyhub/shared-utils` giữ 12–128 ký tự và no-composition, mở rộng deny-list nhỏ đúng phạm vi, đồng thời so khớp NFKC/case-insensitive với full email, local-part từ 3 ký tự, full domain và domain label từ 4 ký tự. Cách suy ra này hoạt động với Gmail/Yahoo/Outlook/Hotmail/iCloud và domain khác, không hard-code provider; `@`, `.` và special characters vẫn hợp lệ khi không tạo email-derived match.
 
 Backend là authoritative: Register truyền normalized email; Reset tra account từ token và validate trước khi consume; Change Password validate theo account email sau khi xác minh current credential. Login không áp creation policy. Không đổi JWT, refresh/cookie/CSRF/session, route guard, role/permission, schema, migration hoặc OpenAPI.
+
+## Prompt 18.6 Email Verification Policy Report — 2026-08-07
+
+Policy mới phân loại Customer là account chỉ có role `CUSTOMER`; account có bất kỳ role khác hoặc không có role được xử lý như Internal theo hướng deny-by-default. Customer pending/unverified được login, tạo session/JWT, refresh và nhận `actor.isEmailVerified=false`. Existing response dùng field `actor` thay vì `user`, nên cờ được thêm vào `ActorSummary` để không tạo response shape song song hoặc sửa OpenAPI.
+
+Internal unverified nhận `AUTH.EMAIL_NOT_VERIFIED`; login attempt được audit `email_not_verified`, không tạo session/JWT. `EmailVerificationPolicyService` là điểm enforce dùng chung cho Forgot, Reset và Change Password. Checkout, Payment, Change Email, Delete Account và Recovery endpoint chưa tồn tại; implementation không dựng chức năng ngoài scope, nhưng policy helper/test đã xác định cơ chế bắt buộc để các module đó sử dụng sau này.
+
+Frontend Customer area hiển thị sticky verification banner với verify/resend/dismiss; dismiss chỉ tồn tại trong component state nên reload hiển thị lại. `import.meta.env.DEV` bảo đảm hướng dẫn Development Tools không có trong production bundle. Verify route mở cho authenticated Customer; Forgot unverified hiển thị thông báo và link resend thay vì generic error/redirect.
+
+Không thay JWT, refresh token, CSRF, cookie, session format/lifecycle, database schema, migration hoặc OpenAPI. API 9 files/40 tests và frontend 8 files/27 tests pass trên Node 20. Integration command chạy nhưng 1 file/3 tests skipped, không khai báo pass.

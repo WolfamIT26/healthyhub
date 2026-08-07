@@ -56,7 +56,7 @@ describe('Authentication pages', () => {
   });
 
   it('registers with fullName and shows pending verification success', async () => {
-    vi.mocked(authApi.register).mockResolvedValue({ user: { id: '1', email: 'new@example.com', fullName: 'New User', roles: ['CUSTOMER'] }, verification: { status: 'pending', expiresAt: new Date().toISOString() } });
+    vi.mocked(authApi.register).mockResolvedValue({ user: { id: '1', email: 'new@example.com', fullName: 'New User', roles: ['CUSTOMER'], isEmailVerified: false }, verification: { status: 'pending', expiresAt: new Date().toISOString() } });
     renderPage(<RegisterPage />, '/register');
     await userEvent.type(screen.getByLabelText('Họ và tên'), 'New User');
     await userEvent.type(screen.getByLabelText('Email'), 'new@example.com');
@@ -84,6 +84,18 @@ describe('Authentication pages', () => {
     await userEvent.type(screen.getByLabelText('Email'), 'unknown@example.com');
     await userEvent.click(screen.getByRole('button', { name: 'Gửi hướng dẫn' }));
     expect(await screen.findByText(/Nếu email hợp lệ/)).toBeInTheDocument();
+  });
+
+  it('shows verification guidance when forgot-password is blocked', async () => {
+    vi.mocked(authApi.forgotPassword).mockRejectedValue({
+      code: 'AUTH.EMAIL_NOT_VERIFIED',
+      message: 'Tài khoản của bạn chưa được xác minh. Vui lòng xác minh Email trước.',
+    });
+    renderPage(<ForgotPasswordPage />, '/forgot-password');
+    await userEvent.type(screen.getByLabelText('Email'), 'pending@example.com');
+    await userEvent.click(screen.getByRole('button', { name: 'Gửi hướng dẫn' }));
+    expect(await screen.findByText(/Tài khoản của bạn chưa được xác minh/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Gửi lại Email xác minh' })).toHaveAttribute('href', '/verify-email');
   });
 
   it('shows invalid reset-token state when URL has no token', () => {

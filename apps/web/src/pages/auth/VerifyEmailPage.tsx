@@ -33,7 +33,7 @@ export function VerifyEmailPage() {
       setResendAccepted(true);
     } finally { setPending(false); }
   }
-  return <AuthCard title="Xác minh email" description="Hoàn tất xác minh để đăng nhập HealthyHub." footer={<Link to="/login">Đến trang đăng nhập</Link>}>
+  return <AuthCard title="Xác minh email" description="Hoàn tất xác minh để mở khóa đầy đủ chức năng HealthyHub." footer={<Link to="/login">Đến trang đăng nhập</Link>}>
     {state === 'loading' ? <><StateIllustration src={authAssets.loadingIllustration} alt="Đang xác minh email" /><FormAlert tone="info">Đang xác minh email…</FormAlert></> : null}
     {state === 'success' ? <><StateIllustration src={authAssets.successIllustration} alt="Xác minh email thành công" /><FormAlert tone="success">Email đã được xác minh thành công.</FormAlert></> : null}
     {state === 'error' ? <><StateIllustration src={authAssets.maintenanceIllustration} alt="Liên kết xác minh cần được làm mới" /><FormAlert>Liên kết xác minh không hợp lệ hoặc đã hết hạn.</FormAlert>{resendAccepted ? <FormAlert tone="success">Nếu email hợp lệ, một liên kết xác minh mới đã được gửi.</FormAlert> : <AuthForm onSubmit={resend}><AuthField id="email" label="Email" type="email" value={email} onChange={setEmail} error={emailError} autoComplete="email" /><SubmitButton pending={pending}>Gửi lại email xác minh</SubmitButton></AuthForm>}</> : null}

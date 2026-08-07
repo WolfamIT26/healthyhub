@@ -32,7 +32,7 @@ export function AppRouter() {
         <Route path="/register" element={<GuestOnlyRoute><RegisterPage /></GuestOnlyRoute>} />
         <Route path="/forgot-password" element={<GuestOnlyRoute><ForgotPasswordPage /></GuestOnlyRoute>} />
         <Route path="/reset-password" element={<GuestOnlyRoute><ResetPasswordPage /></GuestOnlyRoute>} />
-        <Route path="/verify-email" element={<GuestOnlyRoute><VerifyEmailPage /></GuestOnlyRoute>} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
       </Route>
       <Route element={<CustomerLayout />}>
         <Route

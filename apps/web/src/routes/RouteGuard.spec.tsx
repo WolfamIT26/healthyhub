@@ -19,7 +19,7 @@ describe('Authentication route guards', () => {
   });
 
   it('redirects an authenticated user away from guest-only routes', () => {
-    vi.mocked(useAuth).mockReturnValue({ ...baseAuth, status: 'authenticated', actor: { id: '1', email: 'a@b.com', fullName: 'A', roles: ['CUSTOMER'] } });
+    vi.mocked(useAuth).mockReturnValue({ ...baseAuth, status: 'authenticated', actor: { id: '1', email: 'a@b.com', fullName: 'A', roles: ['CUSTOMER'], isEmailVerified: true } });
     render(<MemoryRouter initialEntries={['/login']}><Routes><Route path="/login" element={<GuestOnlyRoute><p>Login</p></GuestOnlyRoute>} /><Route path="/customer" element={<p>Customer route</p>} /></Routes></MemoryRouter>);
     expect(screen.getByText('Customer route')).toBeInTheDocument();
   });

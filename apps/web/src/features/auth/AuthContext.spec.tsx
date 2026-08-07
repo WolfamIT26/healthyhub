@@ -23,7 +23,7 @@ describe('AuthProvider session restore', () => {
     });
     mocks.session.mockResolvedValue({
       session: { id: 'session', status: 'active', issuedAt: new Date().toISOString(), expiresAt: new Date().toISOString() },
-      actor: { id: '1', email: 'user@example.com', fullName: 'Restored User', roles: ['CUSTOMER'] },
+      actor: { id: '1', email: 'user@example.com', fullName: 'Restored User', roles: ['CUSTOMER'], isEmailVerified: true },
       permissions: [], permissionsVersion: 1,
     });
     render(<AuthProvider><Probe /></AuthProvider>);

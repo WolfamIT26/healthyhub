@@ -102,3 +102,18 @@
 - [x] Giữ nguyên header navigation, route/link/menu
 - [x] Kiểm tra trực tiếp 5 Authentication routes ở các breakpoint yêu cầu
 - [x] Không thay Authentication logic, API, validation, route guard, backend hoặc asset
+
+# Prompt 18.6 Email Verification Policy Checklist
+
+- [x] Pending Customer login thành công, có JWT/session và `isEmailVerified=false`
+- [x] Customer pending refresh/session policy được cho phép
+- [x] Internal unverified bị `AUTH.EMAIL_NOT_VERIFIED`, không cấp JWT/session
+- [x] Verified Customer/Internal được sử dụng bình thường
+- [x] Forgot, Reset và Change Password bắt buộc verified email qua helper dùng chung
+- [x] Checkout/Payment/Change Email/Delete/Recovery được ghi contract dùng helper khi endpoint tồn tại
+- [x] Banner Customer unverified có verify, resend, dismiss tạm và hiện lại sau reload/remount
+- [x] Development-only mail provider guidance không xuất hiện production
+- [x] `/verify-email` truy cập được khi Customer đã authenticated
+- [x] Không sửa JWT, refresh, cookie, CSRF, session architecture, schema, migration hoặc OpenAPI
+- [x] API 9 files/40 tests và frontend 8 files/27 tests pass
+- [ ] Integration database: 1 file/3 tests skipped do môi trường

@@ -13,9 +13,9 @@
 | Task 2 shared contracts | Complete; build/typecheck pass |
 | Repository/data-access foundation | Complete for Prompt 17 |
 | Seed foundation | Complete; unit idempotency contract pass |
-| Backend automated tests | 8 unit files / 26 tests pass; 3 MySQL tests skipped by environment |
+| Backend automated tests | 9 unit files / 40 tests pass; 3 MySQL tests skipped by environment |
 | Backend security/runtime | Complete; database integration verification blocked |
-| Frontend Authentication V1 | Complete; 6 files / 18 tests pass |
+| Frontend Authentication V1 | Complete; 8 files / 27 tests pass |
 
 ## Blocker / Vướng mắc
 
@@ -23,4 +23,4 @@ Web route `/login` và credentialed CORS preflight với API local đã smoke-te
 
 ## Last Updated / Cập nhật cuối
 
-2026-08-07 — Prompt 18 Authentication Frontend Implementation.
+2026-08-07 — Prompt 18.6 Customer vs Internal Email Verification Policy.

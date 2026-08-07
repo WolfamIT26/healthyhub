@@ -37,10 +37,11 @@ NestJS runtime nằm tại `apps/api/src/presentation/authentication` và triể
 
 - Argon2id: 19 MiB, time cost 2, parallelism 1; password 12–128 Unicode và denylist cục bộ.
 - Prompt 18.3: Register, Reset Password và Change Password dùng chung password-policy helper. Ngoài length/no-composition và deny-list nhỏ, backend từ chối password chứa full email, local-part, full domain hoặc domain label có ý nghĩa (không phân biệt hoa thường). Reset tra account từ token và kiểm tra policy trước khi consume token; Login không áp creation policy.
+- Prompt 18.6: `EmailVerificationPolicyService` phân loại Customer-only và Internal. Customer pending/unverified được login, refresh và nhận `actor.isEmailVerified=false`; Internal unverified bị `AUTH.EMAIL_NOT_VERIFIED` và không tạo session/JWT. Forgot/Reset/Change Password gọi cùng verified-email policy. Checkout/Payment/Change Email/Delete/Recovery chưa có endpoint trong repository và phải gắn helper này khi được triển khai.
 - Access JWT 15 phút với `sub`, `sid`, `roles`, `permissionsVersion`, issuer/audience.
 - Refresh opaque 256-bit, chỉ lưu SHA-256, rotation theo generation và phát hiện reuse.
 - Web dùng `__Host-hh_refresh` HttpOnly/Secure/SameSite=Lax và signed double-submit CSRF; mobile dùng `X-Refresh-Token`.
 - Login lock: 5 lần thất bại trong 15 phút, khóa 15 phút; identifier/IP được HMAC trước khi lưu.
-- Forgot/resend luôn trả accepted để chống account enumeration.
+- Resend vẫn trả accepted. Forgot trả accepted cho account verified/unknown nhưng trả `AUTH.EMAIL_NOT_VERIFIED` theo policy sản phẩm khi nhận diện account chưa verify.
 
 Notification hiện là local no-op adapter qua gateway interface. Provider email thật, distributed rate limiter và signing-key rotation là công việc vận hành tiếp theo, không làm thay đổi contract V1.

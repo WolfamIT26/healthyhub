@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { AuthNavigation } from '../../features/auth/AuthNavigation';
+import { EmailVerificationBanner } from '../../features/auth/EmailVerificationBanner';
 
 export function CustomerLayout() {
   return (
@@ -20,6 +21,7 @@ export function CustomerLayout() {
           <AuthNavigation />
         </div>
       </header>
+      <EmailVerificationBanner />
       <Outlet />
     </div>
   );

@@ -17,6 +17,7 @@ export type PermissionName = (typeof PERMISSION_NAMES)[number];
 
 export const AUTHENTICATION_ERROR_CODES = [
   'AUTH.AUTHENTICATION.INVALID_CREDENTIALS',
+  'AUTH.EMAIL_NOT_VERIFIED',
   'BUSINESS.AUTHENTICATION.ACCOUNT_LOCKED',
   'BUSINESS.AUTHENTICATION.ACCOUNT_DISABLED',
   'CONFLICT.AUTHENTICATION.EMAIL_ALREADY_EXISTS',
@@ -71,6 +72,7 @@ export interface ActorSummary {
   email: string;
   fullName: string;
   roles: RoleName[];
+  isEmailVerified: boolean;
 }
 
 export interface VerificationSummary {
