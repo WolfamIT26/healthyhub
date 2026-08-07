@@ -4,6 +4,8 @@
 
 ### Added / Đã thêm
 
+- Triển khai Authentication Frontend V1 (Prompt 18): Login/Register/Forgot/Reset/Verify, memory session restore, cookie/CSRF refresh, logout, route guards, role/permission foundation và 18 frontend tests.
+
 - Triển khai Authentication Backend V1 (Prompt 17): NestJS controller/service/DTO/guards, Argon2id, JWT, rotating refresh token, CSRF, RBAC, account lock, audit và unit tests; database integration verification đang bị chặn do MySQL/Docker không khả dụng.
 
 - Thêm Authentication/User identity TypeORM migrations, 9 entities, repository/data-access foundation và RBAC seed.

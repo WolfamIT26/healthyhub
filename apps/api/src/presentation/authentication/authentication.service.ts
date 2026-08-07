@@ -24,6 +24,8 @@ import { AuthenticationCrypto } from './authentication.crypto';
 import { AuthenticationException } from './authentication.exception';
 import { AuthenticationTokenService } from './authentication-token.service';
 import { AuthenticationRateLimitService } from './authentication-rate-limit.service';
+import { getUserAgentFamily } from './user-agent-family';
+import { EmailVerificationPolicyService } from './email-verification-policy.service';
 import type {
   ChangePasswordDto,
   LoginDto,
@@ -47,13 +49,14 @@ export class AuthenticationService {
     private readonly tokens: AuthenticationTokenService,
     private readonly audit: AuthenticationAuditService,
     private readonly rateLimit: AuthenticationRateLimitService,
+    private readonly emailVerificationPolicy: EmailVerificationPolicyService,
     @Inject('HealthyHubEnvironment') private readonly env: HealthyHubEnvironment,
   ) {}
 
   async register(input: RegisterDto): Promise<RegisterResult> {
     const normalizedEmail = this.crypto.normalizeEmail(input.email);
     this.rateLimit.enforce('register', normalizedEmail, undefined, 5, 15 * 60 * 1000);
-    if (!this.crypto.assertPasswordAllowed(input.password)) this.passwordPolicyFailed();
+    if (!this.crypto.assertPasswordAllowed(input.password, normalizedEmail)) this.passwordPolicyFailed();
     if (await this.repository.emailExists(normalizedEmail)) {
       throw new AuthenticationException(
         HttpStatus.CONFLICT,
@@ -102,13 +105,14 @@ export class AuthenticationService {
       );
     }
     const passwordValid = account ? await this.crypto.verifyPassword(account.passwordHash, input.password) : false;
-    if (!account || !passwordValid || account.userStatus === 'pending') {
+    if (!account || !passwordValid) {
       await this.recordAttempt(account?.id, identifierHash, context, 'failed', 'invalid_credentials', now);
       if (failed + 1 >= 5 && account) {
         await this.repository.setAccountStatus(account.id, 'locked', new Date(now.getTime() + 15 * 60 * 1000));
       }
       this.invalidCredentials();
     }
+    const roles = await this.repository.getRoleNames(account.id);
     if (account.userStatus === 'disabled') {
       throw new AuthenticationException(
         HttpStatus.FORBIDDEN,
@@ -121,9 +125,15 @@ export class AuthenticationService {
       await this.repository.setAccountStatus(account.id, 'active', null);
       account.userStatus = 'active';
     }
+    try {
+      this.emailVerificationPolicy.assertLoginAllowed(account, roles);
+    } catch (error) {
+      await this.recordAttempt(account.id, identifierHash, context, 'blocked', 'email_not_verified', now);
+      throw error;
+    }
     await this.recordAttempt(account.id, identifierHash, context, 'success', null, now);
     await this.repository.touchLastLogin(account.id, now);
-    const result = await this.createSession(account, context, now);
+    const result = await this.createSession(account, roles, context, now);
     this.audit.emit('login_succeeded', { userAccountId: account.id, sessionId: result.session.id });
     return result;
   }
@@ -150,7 +160,9 @@ export class AuthenticationService {
       !this.crypto.safeEqual(this.crypto.digest(rawToken), session.refreshTokenHash)
     ) this.invalidToken();
     const account = await this.repository.findAccountById(session.userAccountId);
-    if (!account || account.userStatus !== 'active') this.invalidToken();
+    if (!account) this.invalidToken();
+    const roles = await this.repository.getRoleNames(account.id);
+    if (!this.emailVerificationPolicy.canUseSession(account, roles)) this.invalidToken();
     const nextGeneration = session.refreshTokenGeneration + 1;
     const nextRaw = this.formatRefreshToken(session.sessionPublicId, nextGeneration);
     const expiresAt = new Date(now.getTime() + this.env.authentication.refreshTokenTtlSeconds * 1000);
@@ -171,7 +183,6 @@ export class AuthenticationService {
         'Refresh token đã được sử dụng lại; phiên đã bị thu hồi.',
       );
     }
-    const roles = await this.repository.getRoleNames(account.id);
     return this.authenticationResult(account, roles, session, nextRaw, expiresAt);
   }
 
@@ -191,6 +202,7 @@ export class AuthenticationService {
     this.rateLimit.enforce('forgot-password', normalized, undefined, 5, 15 * 60 * 1000);
     const account = await this.repository.findAccountByNormalizedEmail(normalized);
     if (account && account.userStatus !== 'disabled') {
+      this.emailVerificationPolicy.assertVerified(account);
       const raw = this.crypto.randomToken();
       const now = new Date();
       const expiresAt = new Date(now.getTime() + this.env.authentication.resetTokenTtlSeconds * 1000);
@@ -211,7 +223,26 @@ export class AuthenticationService {
     const reference = this.crypto.digest(input.token);
     const request = await this.repository.findPasswordReset(reference);
     const now = new Date();
-    if (!request || !(await this.repository.consumePasswordReset(reference, now))) {
+    if (!request) {
+      throw new AuthenticationException(
+        HttpStatus.UNAUTHORIZED,
+        'AUTH.AUTHENTICATION.RESET_TOKEN_INVALID',
+        'AUTH',
+        'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.',
+      );
+    }
+    const account = await this.repository.findAccountById(request.userAccountId);
+    if (account) this.emailVerificationPolicy.assertVerified(account);
+    if (!account || !this.crypto.assertPasswordAllowed(input.newPassword, account.normalizedEmail)) {
+      if (account) this.passwordPolicyFailed();
+      throw new AuthenticationException(
+        HttpStatus.UNAUTHORIZED,
+        'AUTH.AUTHENTICATION.RESET_TOKEN_INVALID',
+        'AUTH',
+        'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.',
+      );
+    }
+    if (!(await this.repository.consumePasswordReset(reference, now))) {
       throw new AuthenticationException(
         HttpStatus.UNAUTHORIZED,
         'AUTH.AUTHENTICATION.RESET_TOKEN_INVALID',
@@ -265,13 +296,15 @@ export class AuthenticationService {
     if (!selected || !(await this.crypto.verifyPassword(selected.passwordHash, input.currentPassword))) {
       this.invalidCredentials();
     }
+    this.emailVerificationPolicy.assertVerified(selected);
+    if (!this.crypto.assertPasswordAllowed(input.newPassword, selected.normalizedEmail)) this.passwordPolicyFailed();
     await this.repository.updatePassword(selected.id, await this.crypto.hashPassword(input.newPassword));
     await this.repository.revokeOtherSessions(selected.id, auth.sessionId, 'password_changed', new Date());
     this.audit.emit('password_changed', { userAccountId: selected.id, sessionId: auth.sessionPublicId });
     return { passwordChanged: true, otherSessionsRevoked: true };
   }
 
-  private async createSession(account: any, context: AuthenticationRequestContext, now: Date) {
+  private async createSession(account: any, roles: any, context: AuthenticationRequestContext, now: Date) {
     const sessionPublicId = randomUUID();
     const familyId = randomUUID();
     const raw = this.formatRefreshToken(sessionPublicId, 1);
@@ -285,7 +318,6 @@ export class AuthenticationService {
       issuedAt: now,
       expiresAt,
     });
-    const roles = await this.repository.getRoleNames(account.id);
     return this.authenticationResult(account, roles, session, raw, expiresAt);
   }
 
@@ -310,7 +342,13 @@ export class AuthenticationService {
   }
 
   private actor(account: any, roles: any): ActorSummary {
-    return { id: account.id, email: account.email, fullName: account.displayName, roles };
+    return {
+      id: account.id,
+      email: account.email,
+      fullName: account.displayName,
+      roles,
+      isEmailVerified: Boolean(account.emailVerifiedAt),
+    };
   }
 
   private sessionSummary(session: any) {
@@ -351,7 +389,7 @@ export class AuthenticationService {
       userAccountId,
       identifierHash,
       ipHash: context.ip ? this.crypto.identifierDigest(context.ip) : null,
-      userAgentFamily: context.userAgent?.slice(0, 120),
+      userAgentFamily: getUserAgentFamily(context.userAgent),
       status,
       failureReason,
       attemptedAt,
@@ -367,6 +405,6 @@ export class AuthenticationService {
   }
 
   private passwordPolicyFailed(): never {
-    throw new AuthenticationException(HttpStatus.UNPROCESSABLE_ENTITY, 'VALIDATION.AUTHENTICATION.PASSWORD_POLICY_FAILED', 'VALIDATION', 'Mật khẩu phải dài 12–128 ký tự và không thuộc danh sách mật khẩu phổ biến.');
+    throw new AuthenticationException(HttpStatus.UNPROCESSABLE_ENTITY, 'VALIDATION.AUTHENTICATION.PASSWORD_POLICY_FAILED', 'VALIDATION', 'Mật khẩu phải dài 12–128 ký tự, không chứa thông tin email dễ đoán và không thuộc danh sách mật khẩu phổ biến.');
   }
 }

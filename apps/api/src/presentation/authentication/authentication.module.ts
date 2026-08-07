@@ -23,6 +23,7 @@ import {
 import { AuthenticationService } from './authentication.service';
 import { AuthenticationTokenService } from './authentication-token.service';
 import { AuthenticationRateLimitService } from './authentication-rate-limit.service';
+import { EmailVerificationPolicyService } from './email-verification-policy.service';
 
 const environmentProvider = {
   provide: 'HealthyHubEnvironment',
@@ -45,6 +46,7 @@ const environmentProvider = {
     AuthenticationTokenService,
     AuthenticationService,
     AuthenticationRateLimitService,
+    EmailVerificationPolicyService,
     AccessTokenGuard,
     RefreshCsrfGuard,
     RolesGuard,

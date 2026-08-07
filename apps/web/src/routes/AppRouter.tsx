@@ -8,6 +8,13 @@ import { CustomerHomePage } from '../pages/CustomerHomePage';
 import { HomePage } from '../pages/HomePage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { RouteGuard } from './RouteGuard';
+import { GuestOnlyRoute } from './RouteGuard';
+import { LoginPage } from '../pages/auth/LoginPage';
+import { RegisterPage } from '../pages/auth/RegisterPage';
+import { ForgotPasswordPage } from '../pages/auth/ForgotPasswordPage';
+import { ResetPasswordPage } from '../pages/auth/ResetPasswordPage';
+import { VerifyEmailPage } from '../pages/auth/VerifyEmailPage';
+import { ForbiddenPage } from '../pages/ForbiddenPage';
 
 export function AppRouter() {
   return (
@@ -21,6 +28,11 @@ export function AppRouter() {
             </RouteGuard>
           }
         />
+        <Route path="/login" element={<GuestOnlyRoute><LoginPage /></GuestOnlyRoute>} />
+        <Route path="/register" element={<GuestOnlyRoute><RegisterPage /></GuestOnlyRoute>} />
+        <Route path="/forgot-password" element={<GuestOnlyRoute><ForgotPasswordPage /></GuestOnlyRoute>} />
+        <Route path="/reset-password" element={<GuestOnlyRoute><ResetPasswordPage /></GuestOnlyRoute>} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
       </Route>
       <Route element={<CustomerLayout />}>
         <Route
@@ -43,6 +55,7 @@ export function AppRouter() {
         />
       </Route>
       <Route path="/404" element={<NotFoundPage />} />
+      <Route path="/403" element={<ForbiddenPage />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>
   );

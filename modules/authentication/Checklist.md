@@ -61,3 +61,59 @@
 - [x] Structured audit events và notification gateway stub
 - [x] Unit test, typecheck, lint, build
 - [ ] MySQL migration + HTTP integration verification (environment blocked)
+
+# Prompt 18 Checklist
+
+- [x] Login/Register/Forgot/Reset/Verify UI theo UI Contract
+- [x] `fullName`, confirm-password client-only và password policy validation
+- [x] Memory-only access token; refresh token không vào JS storage
+- [x] Credentialed Axios, web client header, CSRF cookie mirror
+- [x] Single-flight refresh và one-retry protection
+- [x] Session restore, logout, session-expired state
+- [x] Guest/protected/customer/admin guards và permission foundation
+- [x] Vietnamese safe error mapping, 401/403/network/rate-limit handling
+- [x] Responsive/accessibility styles và labels
+- [x] 6 frontend test files / 18 tests pass
+- [x] Web/API HTTP+CORS smoke test
+- [ ] Full verified-account integration flow (test fixture/notification delivery blocked)
+
+# Prompt 18.1 Unified Visual Checklist
+
+- [x] Chỉ dùng `Authentication Banner.png` cho mọi standalone Authentication page/state
+- [x] Thay split layout bằng floating translucent card responsive, tối đa 460px
+- [x] Card center-left trên tablet/desktop và không che mascot/key visual bên phải
+- [x] Logo Symbol và HealthyHub wordmark lớn hơn nằm trong card
+- [x] State illustrations giữ đúng ngữ cảnh và lazy-load
+- [x] Gỡ import login/register/Hero banner cũ, không xóa hoặc đổi tên asset
+- [x] Giữ nguyên Authentication logic, API, route, backend, database, policy và OpenAPI
+- [x] Kiểm tra trực tiếp đủ 5 route ở desktop/tablet/mobile
+- [ ] Chạy lại 6 files/18 frontend tests sau khi xử lý xung đột jsdom ESM trên Node 18
+
+# Prompt 18.2 Centered Card Checklist
+
+- [x] Card căn giữa ngang và dọc bằng flex ở mọi breakpoint
+- [x] Register dài vẫn căn giữa hợp lý và page scroll khi viewport thấp
+- [x] Card responsive tối đa 460px, mobile cách viewport khoảng 16px
+- [x] Animated green conic-gradient glow nhẹ, không che nội dung
+- [x] `prefers-reduced-motion` tắt animation và giữ viền xanh tĩnh
+- [x] Banner dùng `object-fit: contain`, giữ nguyên tỷ lệ và không crop artwork
+- [x] Khoảng trống từ `contain` dùng gradient gần màu banner
+- [x] Hero tự lấy phần viewport còn lại sau header, không hardcode header height
+- [x] Giữ nguyên header navigation, route/link/menu
+- [x] Kiểm tra trực tiếp 5 Authentication routes ở các breakpoint yêu cầu
+- [x] Không thay Authentication logic, API, validation, route guard, backend hoặc asset
+
+# Prompt 18.6 Email Verification Policy Checklist
+
+- [x] Pending Customer login thành công, có JWT/session và `isEmailVerified=false`
+- [x] Customer pending refresh/session policy được cho phép
+- [x] Internal unverified bị `AUTH.EMAIL_NOT_VERIFIED`, không cấp JWT/session
+- [x] Verified Customer/Internal được sử dụng bình thường
+- [x] Forgot, Reset và Change Password bắt buộc verified email qua helper dùng chung
+- [x] Checkout/Payment/Change Email/Delete/Recovery được ghi contract dùng helper khi endpoint tồn tại
+- [x] Banner Customer unverified có verify, resend, dismiss tạm và hiện lại sau reload/remount
+- [x] Development-only mail provider guidance không xuất hiện production
+- [x] `/verify-email` truy cập được khi Customer đã authenticated
+- [x] Không sửa JWT, refresh, cookie, CSRF, session architecture, schema, migration hoặc OpenAPI
+- [x] API 9 files/40 tests và frontend 8 files/27 tests pass
+- [ ] Integration database: 1 file/3 tests skipped do môi trường

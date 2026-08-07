@@ -34,4 +34,6 @@ Email verification implementation is included across Tasks 3–5 and 12–15 bec
 - Task 1: code/migration/entity/unit metadata tests complete; MySQL migration run/revert blocked by unavailable Docker daemon.
 - Task 2: complete; shared-types build/typecheck/lint pass.
 - Prompt 16 repository/seed foundation: complete at data-access level.
-- Tasks 3–18: not started except documentation updates specific to Prompt 16.
+- Tasks 3–12: backend và frontend implementation complete; MySQL/full verified-account integration verification còn blocked.
+- Prompt 18 frontend: 6 test files/18 tests pass; web route và API credentialed CORS smoke test pass.
+- Tasks 13–18: unit coverage đã mở rộng; integration/E2E/security review/module lock còn theo blocker và acceptance tương ứng.

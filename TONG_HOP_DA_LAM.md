@@ -1,5 +1,9 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## Authentication Frontend V1 — Prompt 18
+
+Đã triển khai 5 màn hình Authentication, API client, access token memory-only, HttpOnly refresh cookie + CSRF, session restore, single-flight refresh, logout, guest/protected/role guards và 18 frontend tests. HTTP smoke test Web/API+CORS đạt; full verified-account flow bị chặn do chưa có notification test delivery/verified fixture.
+
 File này tổng hợp toàn bộ framework hiện tại của dự án HealthyHub, không chỉ phần mới bổ sung.
 
 Nội dung bao gồm: mục tiêu, công nghệ, cấu trúc source, hệ thống AI, tài liệu, gateway, module, bảo mật, planning, design system và danh sách toàn bộ file hiện có.

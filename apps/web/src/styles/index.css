@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@property --auth-glow-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 :root {
   color-scheme: light;
   font-family:
@@ -23,4 +29,157 @@ body {
 button,
 a {
   -webkit-tap-highlight-color: transparent;
+}
+
+@layer components {
+  .auth-page {
+    @apply relative isolate flex w-full flex-1 items-center justify-center overflow-hidden bg-gradient-to-br from-[#f7f6dd] via-[#eff4cf] to-[#dce8a9] px-4 py-8 sm:py-10;
+  }
+
+  .auth-background {
+    @apply absolute inset-0 -z-20 h-full w-full object-contain object-center;
+  }
+
+  .auth-background-overlay {
+    @apply absolute inset-0 -z-10 bg-white/10;
+  }
+
+  .auth-card-frame {
+    @apply relative isolate min-w-0 max-w-[460px] rounded-[26px];
+    width: calc(100vw - 2rem);
+  }
+
+  .auth-card-frame::before {
+    content: '';
+    @apply pointer-events-none absolute -inset-[2px] -z-10 rounded-[28px] opacity-80;
+    background: conic-gradient(
+      from var(--auth-glow-angle),
+      transparent 0deg 55deg,
+      rgb(22 163 74 / 0.25) 85deg,
+      rgb(21 128 61 / 0.95) 125deg,
+      rgb(74 222 128 / 0.65) 160deg,
+      transparent 205deg 360deg
+    );
+    filter: blur(5px);
+    animation: auth-glow-spin 5s linear infinite;
+  }
+
+  .auth-card {
+    @apply relative z-10 w-full rounded-[26px] border border-leaf-100 bg-white/95 p-6 shadow-2xl backdrop-blur-sm sm:p-8 lg:p-9;
+  }
+
+  .auth-card h1 {
+    @apply mt-5 text-2xl font-bold tracking-tight text-slate-950;
+  }
+
+  .auth-brand {
+    @apply inline-flex items-center gap-3 text-2xl font-bold tracking-tight text-leaf-700;
+  }
+
+  .auth-brand img {
+    @apply h-12 w-12 shrink-0 object-contain;
+  }
+
+  .auth-state-illustration {
+    @apply mb-4 h-40 w-full rounded-xl border border-leaf-100 object-cover shadow-sm;
+    object-position: center;
+  }
+
+  .auth-description {
+    @apply mb-6 mt-2 text-sm leading-6 text-slate-600;
+  }
+
+  .auth-form {
+    @apply flex flex-col gap-4;
+  }
+
+  .auth-field {
+    @apply flex flex-col gap-1.5;
+  }
+
+  .auth-field label {
+    @apply text-sm font-semibold text-slate-800;
+  }
+
+  .auth-field input {
+    @apply min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-base outline-none transition focus:border-leaf-600 focus:ring-2 focus:ring-leaf-100;
+  }
+
+  .password-input-wrap {
+    @apply relative;
+  }
+
+  .password-input-wrap input {
+    @apply pr-12;
+  }
+
+  .password-toggle {
+    @apply absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-lg text-slate-600 transition hover:text-leaf-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-leaf-600;
+  }
+
+  .password-toggle svg {
+    @apply h-5 w-5 fill-none stroke-current;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .auth-field input[aria-invalid='true'] {
+    @apply border-red-500 focus:border-red-500 focus:ring-red-100;
+  }
+
+  .field-error {
+    @apply m-0 text-sm text-red-700;
+  }
+
+  .field-hint {
+    @apply -mt-2 text-xs leading-5 text-slate-500;
+  }
+
+  .auth-submit {
+    @apply mt-1 block min-h-11 rounded-lg bg-leaf-600 px-4 py-2.5 font-semibold text-white transition hover:bg-leaf-700 focus:outline-none focus:ring-2 focus:ring-leaf-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .auth-footer {
+    @apply mt-6 flex flex-col gap-2 text-sm text-slate-600;
+  }
+
+  .auth-footer a {
+    @apply font-semibold text-leaf-700 hover:underline;
+  }
+
+  .auth-alert {
+    @apply mb-4 rounded-lg border px-4 py-3 text-sm leading-6;
+  }
+
+  .auth-alert-error {
+    @apply border-red-200 bg-red-50 text-red-800;
+  }
+
+  .auth-alert-success {
+    @apply border-leaf-200 bg-leaf-50 text-leaf-800;
+  }
+
+  .auth-alert-info {
+    @apply border-blue-200 bg-blue-50 text-blue-800;
+  }
+
+  @keyframes auth-glow-spin {
+    to {
+      --auth-glow-angle: 360deg;
+    }
+  }
+
+  @media (min-width: 640px) {
+    .auth-card-frame {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .auth-card-frame::before {
+      background: rgb(22 163 74 / 0.55);
+      animation: none;
+    }
+  }
 }
