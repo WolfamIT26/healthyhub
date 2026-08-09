@@ -7,6 +7,14 @@ import {
 
 export const PAYMENT_PROVIDER_GATEWAYS = Symbol('PAYMENT_PROVIDER_GATEWAYS');
 
+export interface PaymentProviderDecision {
+  code: 'vnpay';
+  name: 'VNPAY';
+  status: 'approved';
+  implementationPhase: 'foundation';
+  gatewayConfigured: boolean;
+}
+
 @Injectable()
 export class PaymentProviderRegistry {
   private readonly gateways: Map<string, PaymentProviderGateway>;
@@ -19,6 +27,19 @@ export class PaymentProviderRegistry {
 
   listConfiguredProviders(): readonly string[] {
     return [...this.gateways.keys()];
+  }
+
+  listApprovedProviders(): readonly PaymentProviderDecision[] {
+    return [this.getDecision('vnpay')];
+  }
+
+  getDecision(providerCode: string): PaymentProviderDecision {
+    const normalized = providerCode.trim().toLowerCase();
+    if (normalized !== 'vnpay') throw new PaymentProviderNotConfiguredError(normalized || 'unknown');
+    return {
+      code: 'vnpay', name: 'VNPAY', status: 'approved', implementationPhase: 'foundation',
+      gatewayConfigured: this.gateways.has('vnpay'),
+    };
   }
 
   resolve(providerCode: string): PaymentProviderGateway {

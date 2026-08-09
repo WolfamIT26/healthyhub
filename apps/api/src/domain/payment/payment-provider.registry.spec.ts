@@ -5,10 +5,14 @@ import { PaymentProviderNotConfiguredError } from './payment-provider.gateway';
 import { PaymentProviderRegistry } from './payment-provider.registry';
 
 describe('PaymentProviderRegistry', () => {
-  it('exposes no configured online provider and rejects unsupported selection', () => {
+  it('approves VNPAY foundation but fails closed until its adapter is configured', () => {
     const registry = new PaymentProviderRegistry([]);
     expect(registry.listConfiguredProviders()).toEqual([]);
+    expect(registry.getDecision('vnpay')).toEqual({
+      code: 'vnpay', name: 'VNPAY', status: 'approved', implementationPhase: 'foundation', gatewayConfigured: false,
+    });
     expect(() => registry.resolve('vnpay')).toThrow(PaymentProviderNotConfiguredError);
+    expect(() => registry.getDecision('unsupported')).toThrow(PaymentProviderNotConfiguredError);
   });
 
   it('defines an adapter contract without producing fake provider success', async () => {

@@ -2,7 +2,7 @@
 
 ## Provider Decision
 
-**PENDING USER DECISION.** Repository và user chưa approve provider; không adapter/SDK/secret nào được thêm.
+**APPROVED: VNPAY cho HealthyHub V1.** Quyết định này mở khóa foundation cấu hình, registry và dedupe persistence. Adapter/kết nối thật, ký request, xác minh IPN và tạo payment URL thuộc Prompt 27.2; chưa được triển khai tại đây.
 
 ## Provider decision matrix
 
@@ -46,3 +46,5 @@ Payment service returns a policy effect; it does not directly mutate arbitrary O
 - Create attempt uses one internal attempt/idempotency reference; retry reuses it.
 - Webhook dedupe key is `(provider,eventId)`. Raw payload is not retained; only SHA-256 payload hash may be stored.
 - Reference, amount and currency must equal authoritative Payment before transition.
+- Browser Return URL chỉ phục vụ điều hướng/UX và không được cập nhật trạng thái thanh toán. IPN đã xác minh hoặc provider query mới là server authority.
+- Event persistence dùng khóa duy nhất `(tenant_id, provider, provider_event_id)`, chỉ lưu SHA-256 payload hash, không lưu raw payload/signature.

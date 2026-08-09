@@ -1,7 +1,7 @@
 import type { PaymentStatus } from './payment-lifecycle.policy';
 import type { VerifiedPaymentWebhook } from './payment-provider.gateway';
 
-export type WebhookProcessingStatus = 'received' | 'processed' | 'rejected' | 'failed';
+export type WebhookProcessingStatus = 'received' | 'processing' | 'processed' | 'rejected' | 'failed';
 export interface PaymentWebhookEventRecord {
   id: string;
   provider: string;

@@ -7,3 +7,8 @@
 - Unique `(provider,eventId)` dedupe and payload hash; never store raw credentials/card data.
 - Reject reference/amount/currency mismatch and illegal lifecycle regression.
 - Browser return only queries/displays current server status.
+# Prompt 27.1A
+
+- VNPAY is the approved HealthyHub V1 online payment provider.
+- Provider events require durable deduplication before Prompt 27.2 may apply webhook business effects.
+- Browser return is non-authoritative; no real provider call is part of this prompt.

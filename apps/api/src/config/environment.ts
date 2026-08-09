@@ -54,6 +54,17 @@ export interface HealthyHubEnvironment {
     synchronize: boolean;
     logging: boolean;
   };
+  payment: {
+    provider: 'not_configured' | 'vnpay';
+    vnpay: {
+      tmnCode: string;
+      hashSecret: string;
+      paymentUrl: string;
+      apiUrl: string;
+      returnUrl: string;
+      ipnUrl: string;
+    };
+  };
 }
 
 export function getValidatedEnvironment(source: NodeJS.ProcessEnv): HealthyHubEnvironment {
@@ -130,12 +141,40 @@ export function getValidatedEnvironment(source: NodeJS.ProcessEnv): HealthyHubEn
       synchronize: parseBoolean(source.TYPEORM_SYNCHRONIZE, false),
       logging: parseBoolean(source.TYPEORM_LOGGING, false),
     },
+    payment: {
+      provider: parsePaymentProvider(source.PAYMENT_PROVIDER),
+      vnpay: {
+        tmnCode: source.VNPAY_TMN_CODE ?? '',
+        hashSecret: source.VNPAY_HASH_SECRET ?? '',
+        paymentUrl: source.VNPAY_PAYMENT_URL ?? '',
+        apiUrl: source.VNPAY_API_URL ?? '',
+        returnUrl: source.VNPAY_RETURN_URL ?? '',
+        ipnUrl: source.VNPAY_IPN_URL ?? '',
+      },
+    },
   };
 
+  validatePaymentConfiguration(env);
   validateProductionSafety(env);
   validateTypeOrmSafety(env);
 
   return env;
+}
+
+function parsePaymentProvider(value: string | undefined): 'not_configured' | 'vnpay' {
+  const provider = (value ?? 'not_configured').trim().toLowerCase();
+  if (provider === 'not_configured' || provider === 'vnpay') return provider;
+  throw new Error(`PAYMENT_PROVIDER không được hỗ trợ: ${provider}`);
+}
+
+function validatePaymentConfiguration(env: HealthyHubEnvironment): void {
+  if (env.payment.provider !== 'vnpay') return;
+  const required = Object.entries(env.payment.vnpay);
+  const missing = required.filter(([, value]) => !value).map(([name]) => name);
+  if (missing.length > 0) throw new Error(`Thiếu cấu hình VNPAY: ${missing.join(', ')}.`);
+  for (const [name, value] of required.filter(([name]) => name.endsWith('Url'))) {
+    try { new URL(value); } catch { throw new Error(`Cấu hình VNPAY ${name} phải là URL hợp lệ.`); }
+  }
 }
 
 export function createResponseMetadata(env: HealthyHubEnvironment, requestDurationMs?: number) {
