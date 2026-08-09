@@ -7,6 +7,7 @@ import { ErrorBoundary } from './components/foundation/ErrorBoundary';
 import { ToastProvider } from './components/foundation/ToastProvider';
 import { AuthProvider } from './features/auth/AuthContext';
 import { WishlistProvider } from './features/wishlist/WishlistContext';
+import { CartProvider } from './features/cart/CartContext';
 import './styles/index.css';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
@@ -15,7 +16,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <ToastProvider>
         <BrowserRouter>
           <AuthProvider>
-            <WishlistProvider><App /></WishlistProvider>
+            <WishlistProvider><CartProvider><App /></CartProvider></WishlistProvider>
           </AuthProvider>
         </BrowserRouter>
       </ToastProvider>

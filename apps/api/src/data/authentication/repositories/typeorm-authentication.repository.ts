@@ -23,6 +23,7 @@ import type {
   RecordLoginAttemptInput,
   RotateSessionInput,
 } from './authentication.repository';
+import { CustomerProfileEntity } from '../../customer/entities';
 
 @Injectable()
 export class TypeOrmAuthenticationRepository implements AuthenticationRepository {
@@ -69,6 +70,22 @@ export class TypeOrmAuthenticationRepository implements AuthenticationRepository
         permissionsVersion: 1,
       }),
     );
+  }
+
+  async createCustomerProfile(userAccountId: string, fullName: string, email: string, phone: string | null): Promise<void> {
+    const customers = this.dataSource.getRepository(CustomerProfileEntity);
+    await customers.save(customers.create({
+      tenantId: '1',
+      userAccountId,
+      customerCode: `CUS-${userAccountId.padStart(10, '0')}`,
+      fullName,
+      contactInfo: { email, ...(phone ? { phone } : {}) },
+      customerStatus: 'active',
+      consentState: 'unknown',
+      marketingOptInStatus: 'not_opted_in',
+      createdBy: userAccountId,
+      updatedBy: userAccountId,
+    }));
   }
 
   async assignRole(userAccountId: string, role: RoleName, assignedAt: Date): Promise<void> {

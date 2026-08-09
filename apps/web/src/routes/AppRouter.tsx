@@ -19,6 +19,7 @@ import { ComingSoonPage } from '../pages/ComingSoonPage';
 import { ProductCatalogPage } from '../pages/ProductCatalogPage';
 import { ProductDetailPage } from '../pages/ProductDetailPage';
 import { WishlistPage } from '../pages/WishlistPage';
+import { CartPage } from '../pages/CartPage';
 
 export function AppRouter() {
   return (
@@ -40,6 +41,8 @@ export function AppRouter() {
         <Route path="/products" element={<ProductCatalogPage />} />
         <Route path="/products/:slug" element={<ProductDetailPage />} />
         <Route path="/wishlist" element={<RouteGuard area="customer"><WishlistPage /></RouteGuard>} />
+        <Route path="/cart" element={<RouteGuard area="customer"><CartPage /></RouteGuard>} />
+        <Route path="/checkout" element={<RouteGuard area="customer"><ComingSoonPage title="Checkout" /></RouteGuard>} />
         <Route path="/promotions" element={<ComingSoonPage title="Khuyến mãi" />} />
         <Route path="/blog/*" element={<ComingSoonPage title="Blog HealthyHub" />} />
         <Route path="/ai" element={<ComingSoonPage title="Trợ lý AI" />} />

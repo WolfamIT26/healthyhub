@@ -3357,16 +3357,15 @@ paths:
         Xem giỏ hàng hiện tại
 
         Ghi chú quyền: Cart owner.
-        Xác thực: Guest token hoặc Customer JWT.
+        Xác thực: Customer JWT trong Cart V1 server persistence.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
         Idempotency: không bắt buộc cho thao tác đọc.
       tags:
         - "Cart"
       security:
-        - {}
         - BearerAuth: []
       x-permission: "Cart owner"
-      x-auth-level: "Guest token hoặc Customer JWT"
+      x-auth-level: "Customer JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
       x-idempotency-required: false
       x-source: ".spec/api/domains/cart.md"
@@ -3374,14 +3373,9 @@ paths:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/PageSizeParam"
-        - $ref: "#/components/parameters/QParam"
-        - $ref: "#/components/parameters/SortParam"
-        - $ref: "#/components/parameters/FilterParam"
       responses:
         "200":
-          $ref: "#/components/responses/PaginatedOk"
+          $ref: "./responses/common.yaml#/CartOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -3402,16 +3396,15 @@ paths:
         Thêm sản phẩm vào giỏ
 
         Ghi chú quyền: Cart owner.
-        Xác thực: Guest token hoặc Customer JWT.
+        Xác thực: Customer JWT trong Cart V1 server persistence.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
         Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
       tags:
         - "Cart"
       security:
-        - {}
         - BearerAuth: []
       x-permission: "Cart owner"
-      x-auth-level: "Guest token hoặc Customer JWT"
+      x-auth-level: "Customer JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
       x-idempotency-required: true
       x-source: ".spec/api/domains/cart.md"
@@ -3425,13 +3418,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GenericCommandRequest"
-            examples:
-              default:
-                $ref: "#/components/examples/GenericCommandRequest"
+              $ref: "./schemas/cart.yaml#/CartAddItemRequest"
       responses:
         "201":
-          $ref: "#/components/responses/Created"
+          $ref: "./responses/common.yaml#/CartCreated"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -3454,16 +3444,15 @@ paths:
         Cập nhật số lượng item
 
         Ghi chú quyền: Cart owner.
-        Xác thực: Guest token hoặc Customer JWT.
+        Xác thực: Customer JWT trong Cart V1 server persistence.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
         Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
       tags:
         - "Cart"
       security:
-        - {}
         - BearerAuth: []
       x-permission: "Cart owner"
-      x-auth-level: "Guest token hoặc Customer JWT"
+      x-auth-level: "Customer JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
       x-idempotency-required: true
       x-source: ".spec/api/domains/cart.md"
@@ -3478,13 +3467,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GenericCommandRequest"
-            examples:
-              default:
-                $ref: "#/components/examples/GenericCommandRequest"
+              $ref: "./schemas/cart.yaml#/CartUpdateItemRequest"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/CartOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -3508,16 +3494,15 @@ paths:
         Xóa item khỏi giỏ
 
         Ghi chú quyền: Cart owner.
-        Xác thực: Guest token hoặc Customer JWT.
+        Xác thực: Customer JWT trong Cart V1 server persistence.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
         Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
       tags:
         - "Cart"
       security:
-        - {}
         - BearerAuth: []
       x-permission: "Cart owner"
-      x-auth-level: "Guest token hoặc Customer JWT"
+      x-auth-level: "Customer JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
       x-idempotency-required: true
       x-source: ".spec/api/domains/cart.md"
@@ -3529,7 +3514,7 @@ paths:
         - $ref: "#/components/parameters/IdempotencyKeyHeader"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/CartOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":

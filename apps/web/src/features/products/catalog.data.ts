@@ -85,7 +85,7 @@ export const catalogProducts: ProductPresentationModel[] = seeds.map((seed, inde
   const detail = productDetailData[slug];
   const galleryLabels = detail?.galleryLabels ?? ['Hình minh họa'];
   return {
-    id: `product-${index + 1}`,
+    id: String(index + 1),
     slug,
     sku: `HH-${String(index + 1).padStart(4, '0')}`,
     name,

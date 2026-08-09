@@ -54,6 +54,10 @@ Mỗi file tổng hợp nên có:
 - [Prompt 22 - Product Detail V1](2026-08-09-02-prompt-22-product-detail-v1.md).
 - [Prompt 23 - Search & Product Discovery V1](2026-08-09-03-prompt-23-search-product-discovery-v1.md).
 - [Prompt 24 - Wishlist V1](2026-08-09-04-prompt-24-wishlist-v1.md).
+- [Prompt 25 - Shopping Cart V1](2026-08-09-05-prompt-25-shopping-cart-v1.md).
+- [Prompt 25.5 - Cart Persistence Audit](2026-08-09-06-prompt-25-5-cart-persistence-audit.md).
+- [Prompt 25.6 - Cart Dependency Enablement](2026-08-09-07-prompt-25-6-cart-dependency-enablement.md).
+- [Prompt 25.7 - Cart Server Persistence](2026-08-09-08-prompt-25-7-cart-server-persistence.md).
 
 ## Usage Rule / Quy tắc sử dụng
 

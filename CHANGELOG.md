@@ -1,5 +1,62 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.13.0] - 2026-08-09
+
+### Added / Đã thêm
+
+- Thêm MySQL Cart/CartItem persistence, transactional repository và Customer-only Cart API.
+- Thêm Cart-specific OpenAPI request/read model, authoritative Product price/Inventory availability và exact subtotal.
+- Thêm development commerce seed idempotent cùng MySQL concurrency/ownership/reload integration coverage.
+
+### Changed / Đã cập nhật
+
+- CartProvider chuyển từ transient memory sang server-backed fetch/add/update/remove; Header count và Cart page dùng server response.
+- Product Catalog presentation IDs được căn chỉnh với approved BIGINT Product IDs.
+
+### Notes / Ghi chú
+
+- Cart Persistence: Server-side implemented.
+- Guest Cart/merge, Coupon, Checkout, Inventory reservation/mutation, Order và Payment chưa triển khai.
+
+## [0.12.0] - 2026-08-09
+
+### Added / Đã thêm
+
+- Thêm Product, Inventory và CustomerProfile MySQL/TypeORM foundation tối thiểu để Cart dùng server authority.
+- Thêm internal `ProductCommerceReader`, `InventoryAvailabilityReader`, `CustomerOwnerResolver` và unit/MySQL integration coverage.
+- Authentication Register tạo CustomerProfile theo lifecycle đã approved.
+
+### Notes / Ghi chú
+
+- Migration đã chạy thật và không còn pending; ba Cart dependency chuyển READY.
+- Không triển khai Cart persistence, public CRUD API, Inventory mutation/reservation, Customer UI hoặc sửa OpenAPI.
+- Không thêm development seed; integration fixture tối thiểu được dọn sau test.
+
+## [0.11.1] - 2026-08-09
+
+### Documentation / Tài liệu
+
+- Audit Prompt 25.5 xác nhận Cart server persistence bị chặn bởi Product server authority, Inventory availability và CustomerProfile ownership mapping chưa tồn tại.
+- Thêm `modules/cart/Decision.md`, cập nhật Cart Report và không tuyên bố Cart persistence Complete.
+
+### Notes / Ghi chú
+
+- Không tạo partial migration/API, không hard-code Product/price/stock và không sửa Product/Authentication contract ngoài phạm vi.
+
+## [0.11.0] - 2026-08-09
+
+### Added / Đã thêm
+
+- Thêm Shopping Cart frontend foundation tại `/cart`, protected cho authenticated Customer.
+- Thêm actor-scoped transient CartProvider, AddToCartButton, CartSummary, quantity/remove/stock/empty states và Checkout verification gate.
+- Tích hợp Cart vào Product Catalog, Product Detail, Customer navigation và thêm 12 Cart tests.
+
+### Notes / Ghi chú
+
+- Cart persistence chưa triển khai vì executable contract còn generic và Product/Inventory/Coupon/Customer persistence dependencies chưa tồn tại.
+- Không dùng localStorage/sessionStorage, không fake API/Checkout success và không sửa backend/database/migration/OpenAPI.
+- Browser visual verification bị local approval session revoked nên trạng thái visual là BLOCKED.
+
 ## [0.10.0] - 2026-08-09
 
 ### Added / Đã thêm

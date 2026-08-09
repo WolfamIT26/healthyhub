@@ -7,13 +7,14 @@ import { useAuth } from '../auth/AuthContext';
 import { ProductDetailPage } from '../../pages/ProductDetailPage';
 import { PublicLayout } from '../../shared/layouts/PublicLayout';
 import { WishlistProvider } from '../wishlist/WishlistContext';
+import { CartProvider } from '../cart/CartContext';
 
 vi.mock('../auth/AuthContext', () => ({ useAuth: vi.fn() }));
 
 const guestAuth = { status: 'guest' as const, actor: null, current: null, login: vi.fn(), logout: vi.fn(), hasRole: vi.fn(), hasPermission: vi.fn() };
 
 function renderDetail(slug = 'oat-milk-original', node = <ProductDetailPage />) {
-  return render(<MemoryRouter initialEntries={[`/products/${slug}`]}><WishlistProvider><Routes><Route path="/products/:slug" element={node} /></Routes></WishlistProvider></MemoryRouter>);
+  return render(<MemoryRouter initialEntries={[`/products/${slug}`]}><WishlistProvider><CartProvider><Routes><Route path="/products/:slug" element={node} /></Routes></CartProvider></WishlistProvider></MemoryRouter>);
 }
 
 describe('Product Detail V1', () => {
@@ -59,17 +60,16 @@ describe('Product Detail V1', () => {
   it('disables commerce actions and quantity when the product is out of stock', () => {
     renderDetail('coconut-yogurt-mango');
     expect(screen.getByText('Tình trạng: Hết hàng')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Hết hàng' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Thêm Sữa chua dừa vị xoài vào giỏ hàng' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Thêm Sữa chua dừa vị xoài vào yêu thích' })).toBeEnabled();
     expect(screen.getByLabelText('Số lượng')).toBeDisabled();
     expect(screen.queryByLabelText('Thư viện hình sản phẩm')).not.toBeInTheDocument();
   });
 
-  it('keeps Add to Cart as a disabled foundation for sellable products', async () => {
+  it('integrates the Customer Cart action for sellable products', async () => {
     renderDetail();
-    const addToCart = screen.getByRole('button', { name: 'Thêm vào giỏ · Sắp ra mắt' });
-    expect(addToCart).toBeDisabled();
-    expect(addToCart).toHaveAttribute('aria-describedby', 'commerce-foundation-note');
+    const addToCart = screen.getByRole('button', { name: 'Thêm Sữa yến mạch nguyên bản vào giỏ hàng' });
+    expect(addToCart).toBeEnabled();
     await userEvent.click(screen.getByRole('button', { name: 'Tăng số lượng' }));
     expect(screen.getByLabelText('Số lượng')).toHaveValue(2);
   });
@@ -105,7 +105,7 @@ describe('Product Detail V1', () => {
     ['unverified customer', { ...guestAuth, status: 'authenticated' as const, actor: { id: '2', email: 'pending@example.com', fullName: 'Pending', roles: ['CUSTOMER'] as Array<'CUSTOMER'>, isEmailVerified: false } }],
   ])('renders the public detail for %s state', (_label, auth) => {
     vi.mocked(useAuth).mockReturnValue(auth);
-    render(<MemoryRouter initialEntries={['/products/oat-milk-original']}><WishlistProvider><Routes><Route element={<PublicLayout />}><Route path="/products/:slug" element={<ProductDetailPage />} /></Route></Routes></WishlistProvider></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/products/oat-milk-original']}><WishlistProvider><CartProvider><Routes><Route element={<PublicLayout />}><Route path="/products/:slug" element={<ProductDetailPage />} /></Route></Routes></CartProvider></WishlistProvider></MemoryRouter>);
     expect(screen.getByRole('heading', { level: 1, name: 'Sữa yến mạch nguyên bản' })).toBeInTheDocument();
   });
 });

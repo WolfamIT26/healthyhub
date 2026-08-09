@@ -9,6 +9,7 @@ import { WishlistPage } from '../../pages/WishlistPage';
 import { RouteGuard } from '../../routes/RouteGuard';
 import { useAuth } from '../auth/AuthContext';
 import { WishlistProvider } from './WishlistContext';
+import { CartProvider } from '../cart/CartContext';
 
 vi.mock('../auth/AuthContext', () => ({ useAuth: vi.fn() }));
 
@@ -17,7 +18,7 @@ const customerAuth = { ...guestAuth, status: 'authenticated' as const, actor: { 
 const unverifiedAuth = { ...customerAuth, actor: { ...customerAuth.actor, id: 'customer-2', isEmailVerified: false } };
 
 function renderFlow(entry = '/products') {
-  return render(<MemoryRouter initialEntries={[entry]}><WishlistProvider><Link className="sr-only" to="/wishlist">Mở Wishlist test</Link><Routes><Route path="/products" element={<ProductCatalogPage />} /><Route path="/products/:slug" element={<ProductDetailPage />} /><Route path="/wishlist" element={<RouteGuard area="customer"><WishlistPage /></RouteGuard>} /><Route path="/login" element={<p>Trang đăng nhập</p>} /></Routes></WishlistProvider></MemoryRouter>);
+  return render(<MemoryRouter initialEntries={[entry]}><WishlistProvider><CartProvider><Link className="sr-only" to="/wishlist">Mở Wishlist test</Link><Routes><Route path="/products" element={<ProductCatalogPage />} /><Route path="/products/:slug" element={<ProductDetailPage />} /><Route path="/wishlist" element={<RouteGuard area="customer"><WishlistPage /></RouteGuard>} /><Route path="/login" element={<p>Trang đăng nhập</p>} /></Routes></CartProvider></WishlistProvider></MemoryRouter>);
 }
 
 describe('Wishlist V1 frontend foundation', () => {

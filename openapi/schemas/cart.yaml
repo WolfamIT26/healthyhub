@@ -1,0 +1,67 @@
+CartAddItemRequest:
+  type: object
+  additionalProperties: false
+  required: [productId, quantity]
+  properties:
+    productId:
+      type: string
+      pattern: "^[1-9][0-9]*$"
+      description: "BIGINT Product identifier. Price/stock/owner are never accepted from the client."
+    quantity:
+      type: integer
+      minimum: 1
+      maximum: 9999
+CartUpdateItemRequest:
+  type: object
+  additionalProperties: false
+  required: [quantity]
+  properties:
+    quantity:
+      type: integer
+      minimum: 1
+      maximum: 9999
+CartItem:
+  type: object
+  additionalProperties: false
+  required: [id, productId, slug, name, thumbnail, quantity, unitPrice, lineTotal, currency, availability, availableQuantity]
+  properties:
+    id: { type: string }
+    productId: { type: string }
+    slug: { type: string }
+    name: { type: string }
+    thumbnail: { type: [string, "null"] }
+    quantity: { type: integer, minimum: 1 }
+    unitPrice: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+    lineTotal: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+    currency: { type: string, const: VND }
+    availability:
+      type: string
+      enum: [AVAILABLE, LOW_STOCK, INSUFFICIENT_STOCK, OUT_OF_STOCK, UNAVAILABLE, INVALID_QUANTITY]
+    availableQuantity: { type: [integer, "null"], minimum: 0 }
+Cart:
+  type: object
+  additionalProperties: false
+  required: [id, status, validationStatus, itemCount, items, subtotal, currency, isValid, updatedAt]
+  properties:
+    id: { type: string }
+    status: { type: string, const: active }
+    validationStatus: { type: string, enum: [valid, invalid, not_validated] }
+    itemCount: { type: integer, minimum: 0 }
+    items: { type: array, items: { $ref: "#/CartItem" } }
+    subtotal: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+    currency: { type: string, const: VND }
+    isValid: { type: boolean }
+    updatedAt: { type: string, format: date-time }
+CartResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data: { $ref: "#/Cart" }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }

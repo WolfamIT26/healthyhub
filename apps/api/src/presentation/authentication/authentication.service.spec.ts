@@ -27,6 +27,8 @@ function setup() {
     updatePassword: vi.fn(),
     revokeOtherSessions: vi.fn(),
     createAccount: vi.fn(),
+    createCustomerProfile: vi.fn(),
+    assignRole: vi.fn(),
     emailExists: vi.fn(),
     countFailedLoginAttempts: vi.fn(),
     recordLoginAttempt: vi.fn(),
@@ -177,6 +179,19 @@ describe('AuthenticationService security flows', () => {
 
     expect(crypto.assertPasswordAllowed).toHaveBeenCalledWith('Secure-phamviet-2026', 'phamviet@gmail.com');
     expect(repository.createAccount).not.toHaveBeenCalled();
+  });
+
+  it('creates the approved CustomerProfile mapping during Customer registration', async () => {
+    const { service, repository, notifications } = setup();
+    repository.emailExists.mockResolvedValue(false);
+    repository.createAccount.mockResolvedValue({ id: '42', email: 'customer@example.com', displayName: 'Customer', phone: null });
+    repository.createEmailVerification.mockResolvedValue({ id: 'verification-1' });
+    notifications.sendEmailVerification.mockResolvedValue(undefined);
+
+    await service.register({ email: 'customer@example.com', password: 'Strong-Password-2026!', fullName: 'Customer' });
+
+    expect(repository.assignRole).toHaveBeenCalledWith('42', 'CUSTOMER', expect.any(Date));
+    expect(repository.createCustomerProfile).toHaveBeenCalledWith('42', 'Customer', 'customer@example.com', null);
   });
 
   it('enforces the account email policy before consuming a reset token', async () => {

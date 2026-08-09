@@ -7,6 +7,7 @@ import { useAuth } from '../auth/AuthContext';
 import { ProductCatalogPage } from '../../pages/ProductCatalogPage';
 import { PublicLayout } from '../../shared/layouts/PublicLayout';
 import { WishlistProvider } from '../wishlist/WishlistContext';
+import { CartProvider } from '../cart/CartContext';
 
 vi.mock('../auth/AuthContext', () => ({ useAuth: vi.fn() }));
 
@@ -18,7 +19,7 @@ function LocationProbe() {
 }
 
 function renderCatalog(entry = '/products', node = <ProductCatalogPage />) {
-  return render(<MemoryRouter initialEntries={[entry]}><WishlistProvider><Routes><Route path="/products" element={<>{node}<LocationProbe /></>} /><Route path="/products/:slug" element={<><p>Trang chi tiết foundation</p><LocationProbe /></>} /></Routes></WishlistProvider></MemoryRouter>);
+  return render(<MemoryRouter initialEntries={[entry]}><WishlistProvider><CartProvider><Routes><Route path="/products" element={<>{node}<LocationProbe /></>} /><Route path="/products/:slug" element={<><p>Trang chi tiết foundation</p><LocationProbe /></>} /></Routes></CartProvider></WishlistProvider></MemoryRouter>);
 }
 
 describe('Product Catalog V1', () => {
@@ -129,7 +130,7 @@ describe('Product Catalog V1', () => {
     ['customer', { ...guestAuth, status: 'authenticated' as const, actor: { id: '1', email: 'customer@example.com', fullName: 'Customer', roles: ['CUSTOMER'] as Array<'CUSTOMER'>, isEmailVerified: true } }],
   ])('renders the public catalog for %s state', (_label, auth) => {
     vi.mocked(useAuth).mockReturnValue(auth);
-    render(<MemoryRouter initialEntries={['/products']}><WishlistProvider><Routes><Route element={<PublicLayout />}><Route path="/products" element={<ProductCatalogPage />} /></Route></Routes></WishlistProvider></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/products']}><WishlistProvider><CartProvider><Routes><Route element={<PublicLayout />}><Route path="/products" element={<ProductCatalogPage />} /></Route></Routes></CartProvider></WishlistProvider></MemoryRouter>);
     expect(screen.getByRole('heading', { level: 1, name: 'Khám phá sản phẩm healthy' })).toBeInTheDocument();
     expect(screen.getByText('24 sản phẩm')).toBeInTheDocument();
   });

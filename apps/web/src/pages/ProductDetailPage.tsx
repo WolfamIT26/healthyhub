@@ -5,6 +5,7 @@ import { Alert, Badge, Breadcrumb, buttonClassName, Button, Card, Divider, Error
 import { catalogProducts } from '../features/products/catalog.data';
 import { dietaryTagLabels, stockStatusLabels, type ProductMediaPresentation, type ProductPresentationModel } from '../features/products/product.types';
 import { WishlistButton } from '../features/wishlist/WishlistButton';
+import { AddToCartButton } from '../features/cart/AddToCartButton';
 
 type ProductDetailStatus = 'loading' | 'success' | 'error';
 const moneyFormatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 });
@@ -59,7 +60,7 @@ function ProductDetailContent({ product, products }: { product: ProductPresentat
               </div>
               <p id="commerce-foundation-note" className="mt-3 text-sm leading-6 text-neutral-600">Cart chưa được triển khai. Wishlist hiện dùng frontend foundation và không có server persistence.</p>
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                <Button type="button" disabled aria-describedby="commerce-foundation-note">{outOfStock ? 'Hết hàng' : 'Thêm vào giỏ · Sắp ra mắt'}</Button>
+                <AddToCartButton productId={product.id} productName={product.name} quantity={quantity} disabled={outOfStock} />
                 <WishlistButton productId={product.id} productName={product.name} />
               </div>
             </Card>

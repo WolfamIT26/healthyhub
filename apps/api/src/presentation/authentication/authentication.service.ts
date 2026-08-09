@@ -74,6 +74,7 @@ export class AuthenticationService {
       phone: input.phone?.trim() || null,
     });
     await this.repository.assignRole(account.id, 'CUSTOMER', now);
+    await this.repository.createCustomerProfile(account.id, account.displayName, account.email, account.phone);
     const verification = await this.createVerification(account.id, account.email, now);
     this.audit.emit('register_succeeded', { userAccountId: account.id });
     return {

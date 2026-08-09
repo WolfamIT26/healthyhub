@@ -10,6 +10,8 @@ import { createTypeOrmOptions } from './database/typeorm.config';
 import { GatewayRegistryModule } from './gateways/gateway-registry.module';
 import { HealthModule } from './presentation/health/health.module';
 import { AuthenticationModule } from './presentation/authentication/authentication.module';
+import { CommerceDependenciesModule } from './domain/commerce-dependencies/commerce-dependencies.module';
+import { CartModule } from './presentation/cart/cart.module';
 
 const runtimeEnvironment = process.env.APP_ENV ?? process.env.NODE_ENV ?? 'development';
 
@@ -27,6 +29,8 @@ const runtimeEnvironment = process.env.APP_ENV ?? process.env.NODE_ENV ?? 'devel
     HealthModule,
     GatewayRegistryModule,
     AuthenticationModule,
+    CommerceDependenciesModule,
+    CartModule,
   ],
   providers: [AppLoggerService],
 })

@@ -1,5 +1,13 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## Cart Persistence Audit — Prompt 25.5
+
+Đã audit và dừng đúng boundary: Cart server persistence BLOCKED vì chưa có Product server price/sellable authority, Inventory availability source và CustomerProfile mapping từ authenticated user. Không tạo migration/API nửa vời, không hard-code Product/stock/price và không ghi Prompt 25.5 Complete.
+
+## HealthyHub Shopping Cart V1 — Prompt 25
+
+Đã triển khai Cart frontend foundation tại `/cart`: Customer guard, guest login prompt, transient add/merge/update/remove, quantity validation, stock state, CartSummary estimate và Checkout email-verification gate. Cart persistence chưa triển khai vì executable contract/dependencies còn gap; không dùng browser storage, fake API hoặc fake Checkout success.
+
 ## HealthyHub Wishlist V1 — Prompt 24
 
 Đã triển khai Wishlist frontend foundation tại `/wishlist`: Customer guard, guest login prompt, memory-only add/remove/deduplicate, unverified Customer access, empty/list states, Product Catalog/Product Detail heart action và Customer navigation. Server persistence chưa triển khai vì Wishlist executable contract còn dùng generic schema và Product/Customer persistence dependencies chưa tồn tại; không dùng browser storage hay fake API.
@@ -1071,3 +1079,10 @@ tests/performance/.gitkeep
 # Authentication Backend V1 — Prompt 17
 
 Đã triển khai backend Authentication V1 trong `apps/api`: 10 operation theo OpenAPI, Argon2id, JWT 15 phút, refresh opaque rotation/reuse detection, cookie/CSRF cho web, header cho mobile, lockout, RBAC guard, reset/change password, session revocation, audit và notification gateway stub. Unit/typecheck/lint/build hoàn tất; xác minh tích hợp MySQL bị chặn bởi môi trường.
+
+# Cart Dependency Enablement — Prompt 25.6
+
+Đã triển khai và kiểm chứng MySQL cho Product price/sellable authority, Inventory availability authority và CustomerProfile ownership mapping. Ba internal reader/resolver đã READY cho Prompt 25.7; Authentication Register tạo CustomerProfile. Không triển khai Cart persistence, Product/Admin CRUD, Inventory mutation, Customer UI hoặc thay đổi OpenAPI.
+# Cart Server Persistence — Prompt 25.7
+
+Đã chuyển Cart V1 sang MySQL server persistence: Customer ownership, Add/merge/update/remove transactional, Product price và Inventory availability authoritative, reload/logout-login giữ Cart, account isolation và server-backed Header count. Migration, development seed idempotent, API/frontend tests và MySQL integration đã hoàn tất. Không triển khai Checkout, Coupon, Inventory reservation, Order hoặc Payment.

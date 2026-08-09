@@ -4,6 +4,14 @@
 
 Cart API quản lý giỏ hàng cho guest và customer, thêm/sửa/xóa item, áp dụng coupon và tính lại price summary. Backend không tin total do client gửi.
 
+## Executable V1 Decision — Prompt 25.7
+
+- Server persistence executable hiện hỗ trợ Customer JWT cho GET Cart và Add/Update/Delete item.
+- Guest token/merge, coupon và validate action giữ trong contract roadmap nhưng chưa executable vì transport/dependency tương ứng chưa approved.
+- Add request chỉ nhận `productId` BIGINT dạng string và `quantity` 1–9999; Update chỉ nhận `quantity`.
+- Response Cart-specific trả server-authoritative Product price, Inventory availability, line total và subtotal.
+- Owner derive từ authenticated CustomerProfile; không nhận owner identity hoặc price/stock/total từ client.
+
 ## Endpoint List / Danh sách endpoint
 
 | Method / Method | URI / URI | Purpose / Mục tiêu | Auth / Xác thực | Permission / Quyền |
@@ -127,4 +135,3 @@ Không áp dụng.
 ## AI Endpoint / Endpoint AI
 
 AI recommendation từ cart context thuộc AI API, Cart API không gọi AI trực tiếp.
-

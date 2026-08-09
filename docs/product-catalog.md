@@ -2,7 +2,7 @@
 
 ## Phạm vi
 
-Route `/products` cung cấp Catalog presentation chạy hoàn toàn ở frontend. Product backend, Cart, Wishlist persistence/API runtime, Review API và AI Search runtime chưa được triển khai.
+Route `/products` cung cấp Catalog presentation chạy hoàn toàn ở frontend. Product backend, Cart/Wishlist persistence API, Review API và AI Search runtime chưa được triển khai; Cart/Wishlist chỉ có transient frontend foundation.
 
 ## Product model và dữ liệu
 
@@ -28,7 +28,7 @@ Parser cũng đọc `q` và `categoryId` từ link cũ; URL mới luôn được
 - Search submit bằng Enter, trim/giới hạn 100 ký tự và có nút clear.
 - Pagination mặc định 20, hỗ trợ 12/20/40/60 và reset page khi query thay đổi.
 - Có Product Skeleton, EmptyState, ErrorState + Retry và success grid.
-- CTA chỉ mở route Product Detail foundation; không thêm vào giỏ hay giả lập mua thành công.
+- ProductCard có Product Detail, transient Add to Cart và Wishlist actions qua feature components; không giả API hay mua hàng thành công.
 
 ## Accessibility và responsive
 

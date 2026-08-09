@@ -52,5 +52,6 @@ const environmentProvider = {
     RolesGuard,
     PermissionsGuard,
   ],
+  exports: [AccessTokenGuard, RolesGuard],
 })
 export class AuthenticationModule {}

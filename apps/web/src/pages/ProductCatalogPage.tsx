@@ -8,6 +8,7 @@ import { ProductFilters } from '../features/products/ProductFilters';
 import { ProductSearch } from '../features/products/ProductSearch';
 import { dietaryTagLabels, stockStatusLabels, type CatalogQuery, type ProductPresentationModel } from '../features/products/product.types';
 import { WishlistButton } from '../features/wishlist/WishlistButton';
+import { AddToCartButton } from '../features/cart/AddToCartButton';
 
 type CatalogStatus = 'loading' | 'success' | 'error';
 
@@ -94,7 +95,7 @@ export function ProductCatalogPage({ products = catalogProducts, status = 'succe
 
 function CatalogProductCard({ product }: { product: ProductPresentationModel }) {
   const badge = product.discountPercent ? `Giảm ${product.discountPercent}%` : product.featured ? 'Nổi bật' : undefined;
-  return <ProductCard name={product.name} category={`${product.category.name} · ${product.brand.name}`} price={moneyFormatter.format(product.price)} originalPrice={product.originalPrice ? moneyFormatter.format(product.originalPrice) : undefined} imageUrl={product.thumbnail ?? undefined} imageFallback={product.visualFallback} badge={badge ? <Badge tone={product.discountPercent ? 'warning' : 'success'}>{badge}</Badge> : undefined} details={<><span aria-label={`${product.rating} trên 5 sao`}>★ {product.rating.toFixed(1)}</span><span>({product.reviewCount} đánh giá)</span><span className={product.stockStatus === 'out_of_stock' ? 'font-semibold text-error-dark' : product.stockStatus === 'low_stock' ? 'font-semibold text-warning-dark' : 'font-semibold text-success-dark'}>{stockStatusLabels[product.stockStatus]}</span></>} action={<div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2"><Link to={`/products/${product.slug}`} aria-label={`Xem chi tiết ${product.name}`} className={buttonClassName({ variant: 'outline', className: 'w-full' })}>Xem chi tiết</Link><WishlistButton compact productId={product.id} productName={product.name} /></div>} />;
+  return <ProductCard name={product.name} category={`${product.category.name} · ${product.brand.name}`} price={moneyFormatter.format(product.price)} originalPrice={product.originalPrice ? moneyFormatter.format(product.originalPrice) : undefined} imageUrl={product.thumbnail ?? undefined} imageFallback={product.visualFallback} badge={badge ? <Badge tone={product.discountPercent ? 'warning' : 'success'}>{badge}</Badge> : undefined} details={<><span aria-label={`${product.rating} trên 5 sao`}>★ {product.rating.toFixed(1)}</span><span>({product.reviewCount} đánh giá)</span><span className={product.stockStatus === 'out_of_stock' ? 'font-semibold text-error-dark' : product.stockStatus === 'low_stock' ? 'font-semibold text-warning-dark' : 'font-semibold text-success-dark'}>{stockStatusLabels[product.stockStatus]}</span></>} action={<div className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-2"><Link to={`/products/${product.slug}`} aria-label={`Xem chi tiết ${product.name}`} className={buttonClassName({ variant: 'outline', className: 'w-full' })}>Xem chi tiết</Link><AddToCartButton compact productId={product.id} productName={product.name} disabled={product.stockStatus === 'out_of_stock'} /><WishlistButton compact productId={product.id} productName={product.name} /></div>} />;
 }
 
 function ActiveFilters({ query, onChange, onClear }: { query: CatalogQuery; onChange(patch: Partial<CatalogQuery>): void; onClear(): void }) {
