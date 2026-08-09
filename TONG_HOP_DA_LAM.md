@@ -1,5 +1,13 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## HealthyHub Product Detail V1 — Prompt 22
+
+Đã triển khai `/products/:slug` bằng Product model Prompt 21: slug resolution, accessible gallery, product/pricing/stock summary, dietary tags, nutrition, ingredients/allergen, description, quantity/action foundation, review/AI preview và related products. Cart/Wishlist luôn disabled minh bạch, không localStorage hay giả lập thành công. Có loading, found, not-found và error/retry states cùng 12 Product Detail tests.
+
+## HealthyHub Product Catalog V1 — Prompt 21
+
+Đã triển khai `/products` ở presentation layer với Product model dùng chung, 24 sản phẩm typed, search/filter/sort/pagination đồng bộ URL, desktop sidebar, mobile Drawer, active filter chips và loading/empty/error/success states. Homepage Featured Products đã chuyển sang cùng nguồn catalog. Không triển khai Product backend/detail sâu, Cart, Checkout, Wishlist, Review API hoặc AI runtime. Frontend hiện có 49 tests.
+
 ## HealthyHub Homepage V1 — Prompt 20
 
 Đã triển khai Homepage storefront theo UI Contract và Shared UI Foundation: header responsive, hero/search, category, featured product, giá trị HealthyHub, AI preview, lifestyle, promotion, blog và footer. Dữ liệu hiện là typed presentation data, các module chưa có runtime dùng route foundation minh bạch; không thêm Product/Cart/AI business logic. Guest/auth header và banner Customer chưa xác minh tiếp tục dùng Authentication context hiện tại. Frontend hiện có 37 tests.

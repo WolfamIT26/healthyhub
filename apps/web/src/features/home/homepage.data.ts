@@ -1,21 +1,12 @@
 import aiMascot from '../../../../../assets/logos/AI Mascot.png';
 import heroIllustration from '../../../../../assets/banners/Hero Illustration.png';
+import { catalogProducts } from '../products/catalog.data';
 
 export interface HomepageCategory {
   id: string;
   name: string;
   description: string;
   icon: string;
-}
-
-export interface HomepageProduct {
-  id: string;
-  name: string;
-  category: string;
-  price: string;
-  originalPrice?: string;
-  badge?: string;
-  visual: string;
 }
 
 export interface HomepageAiFeature {
@@ -43,12 +34,7 @@ export const homepageCategories: HomepageCategory[] = [
   { id: 'ready-meals', name: 'Bữa ăn tiện lợi', description: 'Nhanh gọn cho ngày bận rộn', icon: '🥗' },
 ];
 
-export const featuredProducts: HomepageProduct[] = [
-  { id: 'oat-milk', name: 'Sữa yến mạch nguyên bản', category: 'Sữa hạt', price: '69.000 ₫', badge: 'Nổi bật', visual: '🥛' },
-  { id: 'granola', name: 'Granola hạt và trái cây', category: 'Ngũ cốc', price: '119.000 ₫', originalPrice: '139.000 ₫', badge: 'Ưu đãi', visual: '🥣' },
-  { id: 'mixed-nuts', name: 'Hạt dinh dưỡng phối trộn', category: 'Snack healthy', price: '89.000 ₫', badge: 'Được yêu thích', visual: '🥜' },
-  { id: 'chia-pudding', name: 'Chia pudding vị xoài', category: 'Bữa ăn tiện lợi', price: '55.000 ₫', visual: '🥭' },
-];
+export const featuredProducts = catalogProducts.filter((product) => product.featured).slice(0, 4);
 
 export const aiFeatures: HomepageAiFeature[] = [
   { id: 'profile-advisor', name: 'AI Profile Advisor', description: 'Gợi ý cách bắt đầu dựa trên nhu cầu bạn chia sẻ.' },

@@ -10,6 +10,8 @@ import {
   homepageCategories,
 } from '../features/home/homepage.data';
 
+const moneyFormatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 });
+
 function SectionHeading({ id, eyebrow, title, description, action }: { id?: string; eyebrow: string; title: string; description?: string; action?: ReactNode }) {
   return (
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -36,7 +38,7 @@ export function HomePage() {
       return;
     }
     setSearchError('');
-    navigate(`/products?q=${encodeURIComponent(normalized.slice(0, 100))}`);
+    navigate(`/products?search=${encodeURIComponent(normalized.slice(0, 100))}`);
   }
 
   return (
@@ -80,7 +82,7 @@ export function HomePage() {
         <SectionHeading id="categories-title" eyebrow="Danh mục" title="Bắt đầu từ điều bạn quan tâm" description="Các nhóm dưới đây là dữ liệu trình bày V1 và sẵn sàng thay bằng catalog public khi module Product được triển khai." />
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
           {homepageCategories.map((category) => (
-            <Link key={category.id} to={`/products?categoryId=${category.id}`} className="group rounded-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+            <Link key={category.id} to={`/products?category=${category.id}`} className="group rounded-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
               <Card className="h-full p-4 transition-standard group-hover:-translate-y-1 group-hover:border-primary-100 group-hover:shadow-medium motion-reduce:group-hover:translate-y-0">
                 <span className="text-3xl" aria-hidden="true">{category.icon}</span>
                 <h3 className="mt-3 font-bold text-neutral-950">{category.name}</h3>
@@ -96,7 +98,7 @@ export function HomePage() {
           <SectionHeading id="products-title" eyebrow="Gợi ý hôm nay" title="Sản phẩm nổi bật" description="Minh họa giao diện bằng dữ liệu trình bày, chưa kết nối Product API hay giỏ hàng." action={<Link to="/products" className={buttonClassName({ variant: 'ghost' })}>Xem tất cả <span aria-hidden="true">→</span></Link>} />
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {featuredProducts.map((product) => (
-              <ProductCard key={product.id} name={product.name} category={product.category} price={product.price} originalPrice={product.originalPrice} imageFallback={product.visual} badge={product.badge ? <Badge tone={product.badge === 'Ưu đãi' ? 'warning' : 'success'}>{product.badge}</Badge> : undefined} action={<Link to={`/products/${product.id}`} className={buttonClassName({ variant: 'outline', className: 'w-full' })}>Xem sản phẩm</Link>} />
+              <ProductCard key={product.id} name={product.name} category={product.category.name} price={moneyFormatter.format(product.price)} originalPrice={product.originalPrice ? moneyFormatter.format(product.originalPrice) : undefined} imageFallback={product.visualFallback} badge={<Badge tone={product.discountPercent ? 'warning' : 'success'}>{product.discountPercent ? `Giảm ${product.discountPercent}%` : 'Nổi bật'}</Badge>} action={<Link to={`/products/${product.slug}`} className={buttonClassName({ variant: 'outline', className: 'w-full' })}>Xem sản phẩm</Link>} />
             ))}
           </div>
         </div>

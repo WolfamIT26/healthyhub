@@ -1,5 +1,42 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.8.0] - 2026-08-09
+
+### Added / Đã thêm
+
+- Triển khai Product Detail V1 tại `/products/:slug`, resolve bằng slug từ Product Catalog presentation data.
+- Thêm media gallery keyboard-accessible, price/stock/action summary, dietary attributes, nutrition table, ingredients/allergen, description, review/AI foundation và related products.
+- Thêm loading, not-found, error/retry states và 12 Product Detail tests.
+
+### Changed / Đã cập nhật
+
+- Mở rộng Product presentation model với typed media, nutrition, ingredients, allergen, storage/use note và long description optional.
+- Thay route Product Detail placeholder bằng trang presentation thật; Cart/Wishlist vẫn disabled và không persistence.
+
+### Notes / Ghi chú
+
+- Không triển khai Product backend, Cart/Wishlist persistence, Review API, AI runtime hoặc recommendation engine.
+- Browser visual verification tiếp tục bị môi trường phê duyệt cục bộ chặn; không đánh dấu viewport visual là pass.
+
+## [0.7.0] - 2026-08-09
+
+### Added / Đã thêm
+
+- Triển khai Product Catalog V1 tại `/products` với typed Product presentation model và 24 bản ghi catalog presentation tập trung.
+- Thêm search, category/brand/price/dietary/availability filter, sort, page size, pagination và active chips đồng bộ URL.
+- Thêm desktop filter sidebar, mobile filter Drawer, Product Skeleton, EmptyState, ErrorState/Retry và 12 Catalog tests.
+
+### Changed / Đã cập nhật
+
+- Homepage Featured Products chuyển sang dùng chung Product model/data với Catalog.
+- ProductCard hỗ trợ rating/review/stock details mà không thêm Cart hoặc Product business logic.
+- Route `/products` thay Product placeholder; `/products/:slug` vẫn là Product Detail foundation.
+
+### Notes / Ghi chú
+
+- Không gọi Product API chưa triển khai; không sửa backend, Authentication, database, migration hoặc OpenAPI.
+- Frontend lint/typecheck và 49 tests đạt. Browser visual verification bị môi trường phê duyệt cục bộ chặn và không được tuyên bố pass.
+
 ## [0.6.0] - 2026-08-07
 
 ### Added / Đã thêm
