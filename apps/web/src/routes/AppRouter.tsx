@@ -20,6 +20,7 @@ import { ProductCatalogPage } from '../pages/ProductCatalogPage';
 import { ProductDetailPage } from '../pages/ProductDetailPage';
 import { WishlistPage } from '../pages/WishlistPage';
 import { CartPage } from '../pages/CartPage';
+import { CheckoutPage } from '../pages/CheckoutPage';
 
 export function AppRouter() {
   return (
@@ -33,16 +34,65 @@ export function AppRouter() {
             </RouteGuard>
           }
         />
-        <Route path="/login" element={<GuestOnlyRoute><LoginPage /></GuestOnlyRoute>} />
-        <Route path="/register" element={<GuestOnlyRoute><RegisterPage /></GuestOnlyRoute>} />
-        <Route path="/forgot-password" element={<GuestOnlyRoute><ForgotPasswordPage /></GuestOnlyRoute>} />
-        <Route path="/reset-password" element={<GuestOnlyRoute><ResetPasswordPage /></GuestOnlyRoute>} />
+        <Route
+          path="/login"
+          element={
+            <GuestOnlyRoute>
+              <LoginPage />
+            </GuestOnlyRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <GuestOnlyRoute>
+              <RegisterPage />
+            </GuestOnlyRoute>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <GuestOnlyRoute>
+              <ForgotPasswordPage />
+            </GuestOnlyRoute>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <GuestOnlyRoute>
+              <ResetPasswordPage />
+            </GuestOnlyRoute>
+          }
+        />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/products" element={<ProductCatalogPage />} />
         <Route path="/products/:slug" element={<ProductDetailPage />} />
-        <Route path="/wishlist" element={<RouteGuard area="customer"><WishlistPage /></RouteGuard>} />
-        <Route path="/cart" element={<RouteGuard area="customer"><CartPage /></RouteGuard>} />
-        <Route path="/checkout" element={<RouteGuard area="customer"><ComingSoonPage title="Checkout" /></RouteGuard>} />
+        <Route
+          path="/wishlist"
+          element={
+            <RouteGuard area="customer">
+              <WishlistPage />
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <RouteGuard area="customer">
+              <CartPage />
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/checkout"
+          element={
+            <RouteGuard area="customer">
+              <CheckoutPage />
+            </RouteGuard>
+          }
+        />
         <Route path="/promotions" element={<ComingSoonPage title="Khuyến mãi" />} />
         <Route path="/blog/*" element={<ComingSoonPage title="Blog HealthyHub" />} />
         <Route path="/ai" element={<ComingSoonPage title="Trợ lý AI" />} />

@@ -1,5 +1,5 @@
 # Checkout Status
 
-**DEPENDENCIES READY — Prompt 26.2 unlocked; Checkout UI not yet implemented.**
+**COMPLETE — Functional and persistence verification passed; browser visual verification BLOCKED.**
 
-Shipping Authority, Payment Method Foundation and Order Creation Boundary are all executable.
+`/checkout` now uses server Cart, authoritative Shipping quote and the real idempotent Order boundary. COD remains pending and success is rendered only from a persisted Order response.

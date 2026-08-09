@@ -1,5 +1,12 @@
 # Checkout Decisions — Prompt 26
 
+## Prompt 26.2 integration decisions
+
+- Giữ single-page Checkout theo UI Contract.
+- Không tạo Payment method discovery endpoint ngoài authoritative OpenAPI. Frontend chỉ trình bày COD được typed Order contract cho phép; backend `PaymentMethodReader` vẫn authoritative khi confirm.
+- Quote `manual`/fee/reference qua approved `POST /shipping/quotes` và revalidate lần nữa trong Order creation.
+- Giữ Cart active/count sau success vì chưa có approved converted/closed transition.
+
 ## Decision
 
 **DEPENDENCIES READY — Shipping, Payment and Order executable.**

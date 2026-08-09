@@ -62,6 +62,7 @@ Mỗi file tổng hợp nên có:
 - [Prompt 26.1 - Checkout Dependency Enablement](2026-08-09-10-prompt-26-1-checkout-dependency-enablement.md).
 - [Prompt 26.1A - Shipping Authority Foundation](2026-08-09-11-prompt-26-1a-shipping-authority-foundation.md).
 - [Prompt 26.1B - Order Creation Boundary](2026-08-09-12-prompt-26-1b-order-creation-boundary.md).
+- [Prompt 26.2 - Checkout V1](2026-08-09-13-prompt-26-2-checkout-v1.md).
 
 ## Usage Rule / Quy tắc sử dụng
 

@@ -1,5 +1,5 @@
-# Checkout Dependency Testing
+# Checkout Testing
 
-Order unit tests cover verified/unverified/internal actors, ownership, Cart/Product/Inventory/Shipping/Payment validation, exact totals, snapshots and idempotency. MySQL integration covers real persistence, same-key retry, Customer isolation and transaction rollback.
+Frontend tests cover unverified policy, authoritative Cart load, empty Cart, address validation, COD/manual rendering, Shipping quote/fee, summary, loading/double submit, persisted success, failure and same-key retry. Existing RouteGuard regression covers Guest/Internal denial.
 
-Checkout form/browser/end-to-end behavior remains for Prompt 26.2.
+Backend Order/MySQL integration continues to prove owner, Order/Item/Payment/Shipment/address persistence, totals, idempotency and rollback. Browser visual verification is **BLOCKED** because the in-app browser execution connection is unavailable; this is not a functional test failure.

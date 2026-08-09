@@ -9,5 +9,8 @@
 - [x] Order persistence, immutable snapshot, transaction và idempotency executable.
 - [x] MySQL integration chứng minh persistence, isolation, retry và rollback.
 - [x] OpenAPI `POST /orders` có typed contract và Customer JWT-only.
-- [ ] Checkout frontend/backend implementation.
-- [ ] Checkout integration và browser verification.
+- [x] Checkout frontend và Shipping quote integration thật.
+- [x] Confirm gọi idempotent Order persistence, không fake success.
+- [x] Guest/Internal/Unverified policy và Cart invalid states.
+- [x] Automated Checkout/Cart/Order/Authentication regression.
+- [ ] Browser visual verification — BLOCKED bởi in-app browser connection unavailable.

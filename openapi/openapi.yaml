@@ -4830,17 +4830,16 @@ paths:
       description: |
         Tính phí/ước lượng giao hàng
 
-        Ghi chú quyền: Public/owner.
-        Xác thực: Public hoặc Customer JWT.
+        Ghi chú quyền: Verified Customer / Cart owner.
+        Xác thực: Customer JWT.
         Rate limit: Áp dụng rate limit chặt cho gateway/provider integration.
         Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
       tags:
         - "Shipping"
       security:
-        - {}
         - BearerAuth: []
-      x-permission: "Public/owner"
-      x-auth-level: "Public hoặc Customer JWT"
+      x-permission: "Verified Customer / Cart owner"
+      x-auth-level: "Customer JWT"
       x-rate-limit-note: "Áp dụng rate limit chặt cho gateway/provider integration."
       x-idempotency-required: true
       x-source: ".spec/api/domains/shipping.md"
@@ -4854,13 +4853,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ShippingQuoteRequest"
-            examples:
-              default:
-                $ref: "#/components/examples/ShippingQuoteRequest"
+              $ref: "./schemas/checkout.yaml#/ShippingQuoteRequest"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          description: "Authoritative Shipping quote."
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/checkout.yaml#/ShippingQuoteResponseEnvelope"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":

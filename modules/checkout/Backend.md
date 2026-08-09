@@ -1,5 +1,5 @@
 # Checkout Backend Status
 
-**Dependencies executable; Checkout orchestration chưa triển khai.**
+**Checkout integration executable.**
 
-Đã có COD-only `PaymentMethodReader`, stateless `ShippingQuoteService` và transactional `OrderCreationService`/`POST /orders`. Order lưu Payment/Shipment selection snapshot ở trạng thái pending; không có gateway/capture hoặc fulfillment. Prompt 26.2 sẽ tích hợp Checkout UI với boundary này.
+`POST /shipping/quotes` hiện là Customer-only endpoint, derive authoritative Cart và yêu cầu verified account trước khi trả manual quote. `POST /orders` tiếp tục revalidate toàn bộ và lưu Payment/Shipment selection snapshot ở trạng thái pending. Không có gateway/capture, fulfillment hoặc Inventory mutation.

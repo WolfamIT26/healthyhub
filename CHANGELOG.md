@@ -1,5 +1,17 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.13.5] - 2026-08-09
+
+### Added / Đã thêm
+
+- Thêm Checkout V1 thật tại `/checkout`, server Shipping quote integration, COD confirmation và persisted Order success.
+- Thêm stable idempotency retry, responsive/accessibility states và Checkout frontend tests.
+
+### Notes / Ghi chú
+
+- Không clear Cart/count, capture Payment, fulfill Shipment hoặc mutate Inventory.
+- Browser visual verification BLOCKED riêng; automated và MySQL persistence verification không bị ảnh hưởng.
+
 ## [0.13.4] - 2026-08-09
 
 ### Added / Đã thêm

@@ -1,16 +1,11 @@
-# HealthyHub Checkout V1 — Dependency Readiness
+# HealthyHub Checkout V1
 
 ## Status
 
-**DEPENDENCIES READY — Prompt 26.2 unlocked.**
+**COMPLETE — Visual Browser Verification Blocked.**
 
-| Boundary | Status |
-| --- | --- |
-| Cart/Product/Inventory/Customer authority | READY |
-| Shipping Authority | READY |
-| COD Payment Method Foundation | READY |
-| Order Creation Boundary | READY |
+`/checkout` is a real single-page Customer flow. It reloads the server Cart, gates unverified accounts, validates recipient input, requests an authoritative manual Shipping quote, presents COD, and confirms through `POST /orders` with a stable idempotency key.
 
-Order creation now persists a real immutable commerce snapshot atomically and enforces Customer ownership, email verification, server-side Cart/Product/Inventory/Shipping/Payment revalidation, exact totals and idempotency.
+The success state is based only on the persisted Order response. Cart remains active after success because no authoritative lifecycle transition has been approved. No online payment, capture, fulfillment or inventory mutation is implemented.
 
-Checkout UI is deliberately not part of Prompt 26.1B. `/checkout` remains ComingSoon until Prompt 26.2. Payment capture, Shipment fulfillment and Inventory mutation remain out of scope. Cart stays active pending an approved lifecycle transition.
+Automated and MySQL persistence verification passed. Browser visual verification is separately blocked by the unavailable in-app browser execution connection.

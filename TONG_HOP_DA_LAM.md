@@ -1,5 +1,9 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## Checkout V1 — Prompt 26.2
+
+Đã thay `/checkout` ComingSoon bằng Checkout thật: server Cart summary, recipient/address validation, authoritative Shipping quote, COD, confirmation dialog, stable idempotency retry và success chỉ từ Order persisted. Không clear Cart/count hoặc triển khai capture/fulfillment/inventory mutation. Automated/MySQL pass; browser visual verification BLOCKED do kết nối browser trong ứng dụng không khả dụng.
+
 ## Order Creation Boundary — Prompt 26.1B
 
 Đã triển khai `POST /orders` cho verified Customer với persistence MySQL atomically, immutable OrderItem/address/payment/shipping snapshots, server-authoritative Cart/Product/Inventory/Shipping/COD revalidation và idempotency chống duplicate. COD và Shipment giữ `pending`; không capture Payment, fulfillment, mutate Inventory hoặc Cart. Ba Checkout dependency đều READY, Prompt 26.2 đã được mở khóa nhưng Checkout UI chưa triển khai.

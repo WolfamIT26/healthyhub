@@ -9,10 +9,7 @@ import { CartService } from './cart.service';
 @Module({
   imports: [AuthenticationModule, CommerceDependenciesModule],
   controllers: [CartController],
-  providers: [
-    { provide: CART_REPOSITORY, useClass: TypeOrmCartRepository },
-    CartService,
-  ],
-  exports: [CART_REPOSITORY],
+  providers: [{ provide: CART_REPOSITORY, useClass: TypeOrmCartRepository }, CartService],
+  exports: [CART_REPOSITORY, CartService],
 })
 export class CartModule {}
