@@ -1,5 +1,9 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## HealthyHub Search & Product Discovery V1 — Prompt 23
+
+Đã chuẩn hóa `ProductSearch` dùng chung cho Homepage, public header/mobile menu và Product Catalog; autocomplete dựa trên Product typed data với product/category/brand/dietary/text query, keyboard navigation và URL state. Search không lưu history theo UI Contract/privacy decision, không thêm backend hoặc AI runtime. Browser visual verification bị chặn do local approval session đã revoked.
+
 ## HealthyHub Product Detail V1 — Prompt 22
 
 Đã triển khai `/products/:slug` bằng Product model Prompt 21: slug resolution, accessible gallery, product/pricing/stock summary, dietary tags, nutrition, ingredients/allergen, description, quantity/action foundation, review/AI preview và related products. Cart/Wishlist luôn disabled minh bạch, không localStorage hay giả lập thành công. Có loading, found, not-found và error/retry states cùng 12 Product Detail tests.

@@ -47,7 +47,7 @@ describe('Homepage V1', () => {
     render(<MemoryRouter initialEntries={['/']}><Routes><Route path="/" element={<HomePage />} /><Route path="/products" element={<p>Kết quả sản phẩm</p>} /></Routes></MemoryRouter>);
     await userEvent.click(screen.getByRole('button', { name: 'Tìm kiếm' }));
     expect(screen.getByRole('alert')).toHaveTextContent('Hãy nhập tên sản phẩm');
-    await userEvent.type(screen.getByRole('searchbox', { name: 'Tìm kiếm sản phẩm' }), '  sữa hạt  ');
+    await userEvent.type(screen.getByRole('combobox', { name: 'Tìm kiếm sản phẩm từ trang chủ' }), '  sữa hạt  ');
     await userEvent.click(screen.getByRole('button', { name: 'Tìm kiếm' }));
     expect(screen.getByText('Kết quả sản phẩm')).toBeInTheDocument();
   });
@@ -61,6 +61,16 @@ describe('Homepage V1', () => {
     await userEvent.click(menuButton);
     expect(screen.getByRole('navigation', { name: 'Điều hướng mobile' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Đóng menu' })).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('searches from the mobile header and closes the menu', async () => {
+    render(<MemoryRouter initialEntries={['/']}><Routes><Route element={<PublicLayout />}><Route index element={<p>Nội dung trang chủ</p>} /><Route path="products" element={<p>Trang catalog search</p>} /></Route></Routes></MemoryRouter>);
+    await userEvent.click(screen.getByRole('button', { name: 'Mở menu' }));
+    const mobileNavigation = screen.getByRole('navigation', { name: 'Điều hướng mobile' });
+    await userEvent.type(within(mobileNavigation).getByRole('combobox', { name: 'Tìm kiếm sản phẩm từ menu' }), '  granola  ');
+    await userEvent.click(within(mobileNavigation).getByRole('button', { name: 'Tìm' }));
+    expect(await screen.findByText('Trang catalog search')).toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'Điều hướng mobile' })).not.toBeInTheDocument();
   });
 
   it('reflects authenticated state and keeps the unverified Customer banner', () => {

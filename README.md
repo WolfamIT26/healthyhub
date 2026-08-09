@@ -76,6 +76,9 @@ Requirement → Architecture → Database Design → API Design → Frontend Des
 - OpenAPI Specification: [openapi/README.md](openapi/README.md).
 - UI Contract Specification: [.spec/ui-contract/README.md](.spec/ui-contract/README.md).
 - Design System: [docs/design-system/README.md](docs/design-system/README.md).
+- Search & Product Discovery V1: [docs/search-discovery.md](docs/search-discovery.md).
+- Product Catalog V1: [docs/product-catalog.md](docs/product-catalog.md).
+- Product Detail V1: [docs/product-detail.md](docs/product-detail.md).
 - Development Standards: [docs/development-standards/README.md](docs/development-standards/README.md).
 - Implementation Foundation: [docs/implementation-foundation/README.md](docs/implementation-foundation/README.md).
 - Tổng hợp sau mỗi lần làm: [docs/work-summaries/README.md](docs/work-summaries/README.md).

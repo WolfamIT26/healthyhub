@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
-import { Badge, Breadcrumb, buttonClassName, Button, Card, Drawer, EmptyState, ErrorState, Pagination, ProductCard, SearchInput, Select, Skeleton } from '../components';
+import { Badge, Breadcrumb, buttonClassName, Button, Card, Drawer, EmptyState, ErrorState, Pagination, ProductCard, Select, Skeleton } from '../components';
 import { catalogProducts, productBrands, productCategories } from '../features/products/catalog.data';
 import { catalogQueryToParams, countActiveFilters, filterAndSortProducts, parseCatalogQuery } from '../features/products/catalog.utils';
 import { ProductFilters } from '../features/products/ProductFilters';
+import { ProductSearch } from '../features/products/ProductSearch';
 import { dietaryTagLabels, stockStatusLabels, type CatalogQuery, type ProductPresentationModel } from '../features/products/product.types';
 
 type CatalogStatus = 'loading' | 'success' | 'error';
@@ -34,13 +35,6 @@ export function ProductCatalogPage({ products = catalogProducts, status = 'succe
     setSearchParams(catalogQueryToParams({ ...query, ...patch, page: resetPage ? 1 : (patch.page ?? query.page) }));
   }
 
-  function submitSearch(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const normalized = searchDraft.trim().slice(0, 100);
-    if (!normalized && !query.search) return;
-    updateQuery({ search: normalized });
-  }
-
   function clearFilters() {
     setSearchDraft('');
     setSearchParams(catalogQueryToParams({ ...parseCatalogQuery(new URLSearchParams()), limit: query.limit }));
@@ -56,11 +50,7 @@ export function ProductCatalogPage({ products = catalogProducts, status = 'succe
             <h1 className="mt-2 text-3xl font-bold tracking-tight text-neutral-950 sm:text-4xl">Khám phá sản phẩm healthy</h1>
             <p className="mt-3 leading-7 text-neutral-600">Tìm kiếm, lọc và so sánh thông tin trình bày. Catalog V1 chưa kết nối Product API hoặc giỏ hàng.</p>
           </div>
-          <form className="mt-6 flex max-w-3xl flex-col gap-2 sm:flex-row" role="search" onSubmit={submitSearch}>
-            <label className="sr-only" htmlFor="catalog-search">Tìm kiếm sản phẩm</label>
-            <SearchInput id="catalog-search" value={searchDraft} maxLength={100} placeholder="Tên sản phẩm, thương hiệu…" className="sm:flex-1" onChange={(event) => setSearchDraft(event.target.value)} onClear={() => { setSearchDraft(''); updateQuery({ search: '' }); }} />
-            <Button type="submit">Tìm sản phẩm</Button>
-          </form>
+          <ProductSearch className="mt-6 max-w-3xl" value={searchDraft} onValueChange={setSearchDraft} onSubmit={(search) => updateQuery({ search })} onClear={() => updateQuery({ search: '' })} label="Tìm kiếm trong danh mục sản phẩm" buttonLabel="Tìm sản phẩm" />
         </div>
       </div>
 
@@ -91,7 +81,7 @@ export function ProductCatalogPage({ products = catalogProducts, status = 'succe
           <aside className="hidden lg:block" aria-label="Bộ lọc sản phẩm"><Card className="sticky top-4"><h2 className="mb-5 text-lg font-bold text-neutral-950">Bộ lọc {activeFilterCount ? `(${activeFilterCount})` : ''}</h2><ProductFilters query={query} onChange={updateQuery} onClear={clearFilters} /></Card></aside>
           <section aria-labelledby="catalog-results-title" className="min-w-0">
             <h2 id="catalog-results-title" className="sr-only">Kết quả sản phẩm</h2>
-            {status === 'loading' ? <CatalogSkeleton /> : status === 'error' ? <ErrorState title="Không thể tải danh sách sản phẩm" description="Nguồn dữ liệu tạm thời chưa sẵn sàng. Bộ lọc hiện tại vẫn được giữ lại." action={<Button type="button" onClick={onRetry}>Thử lại</Button>} /> : pageItems.length === 0 ? <EmptyState title="Không tìm thấy sản phẩm" description="Hãy thử từ khóa khác hoặc xóa bớt bộ lọc đang áp dụng." action={<Button type="button" onClick={clearFilters}>Xóa bộ lọc</Button>} /> : <><div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">{pageItems.map((product) => <CatalogProductCard key={product.id} product={product} />)}</div>{totalPages > 1 ? <div className="mt-10"><Pagination page={currentPage} pageCount={totalPages} onPageChange={(page) => updateQuery({ page }, false)} label="Phân trang sản phẩm" /></div> : null}</>}
+            {status === 'loading' ? <CatalogSkeleton /> : status === 'error' ? <ErrorState title="Không thể tải danh sách sản phẩm" description="Nguồn dữ liệu tạm thời chưa sẵn sàng. Bộ lọc hiện tại vẫn được giữ lại." action={<Button type="button" onClick={onRetry}>Thử lại</Button>} /> : pageItems.length === 0 ? <EmptyState title="Không tìm thấy sản phẩm" description="Hãy thử từ khóa khác hoặc xóa bớt bộ lọc đang áp dụng." action={<div className="flex flex-wrap justify-center gap-2"><Button type="button" onClick={clearFilters}>Xóa bộ lọc</Button><Link to="/products" className={buttonClassName({ variant: 'outline' })}>Xem tất cả sản phẩm</Link></div>} /> : <><div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">{pageItems.map((product) => <CatalogProductCard key={product.id} product={product} />)}</div>{totalPages > 1 ? <div className="mt-10"><Pagination page={currentPage} pageCount={totalPages} onPageChange={(page) => updateQuery({ page }, false)} label="Phân trang sản phẩm" /></div> : null}</>}
           </section>
         </div>
       </div>

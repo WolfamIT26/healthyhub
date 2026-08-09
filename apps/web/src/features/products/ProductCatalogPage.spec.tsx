@@ -36,7 +36,7 @@ describe('Product Catalog V1', () => {
 
   it('searches, syncs the URL and clears search', async () => {
     renderCatalog();
-    const search = screen.getByRole('searchbox', { name: 'Tìm kiếm sản phẩm' });
+    const search = screen.getByRole('combobox', { name: 'Tìm kiếm trong danh mục sản phẩm' });
     await userEvent.type(search, 'sữa hạnh nhân');
     await userEvent.click(screen.getByRole('button', { name: 'Tìm sản phẩm' }));
     await waitFor(() => expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products?search=s%E1%BB%AFa+h%E1%BA%A1nh+nh%C3%A2n'));
@@ -44,6 +44,15 @@ describe('Product Catalog V1', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Xóa nội dung tìm kiếm' }));
     await waitFor(() => expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products'));
     expect(screen.getByText('24 sản phẩm')).toBeInTheDocument();
+  });
+
+  it('preserves filters and resets page when a new search is submitted', async () => {
+    renderCatalog('/products?category=plant-milk&page=2');
+    const search = screen.getByRole('combobox', { name: 'Tìm kiếm trong danh mục sản phẩm' });
+    await userEvent.type(search, 'sữa');
+    await userEvent.click(screen.getByRole('button', { name: 'Tìm sản phẩm' }));
+    await waitFor(() => expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products?search=s%E1%BB%AFa&category=plant-milk'));
+    expect(screen.getByLabelText('URL hiện tại')).not.toHaveTextContent('page=2');
   });
 
   it('filters by category and dietary tag with URL synchronization', async () => {

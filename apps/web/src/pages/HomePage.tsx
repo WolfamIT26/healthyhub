@@ -1,7 +1,7 @@
-import { useState, type FormEvent, type ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
-import { Badge, buttonClassName, Button, Card, ProductCard, SearchInput } from '../components';
+import { Badge, buttonClassName, Card, ProductCard } from '../components';
 import {
   aiFeatures,
   featuredProducts,
@@ -9,6 +9,7 @@ import {
   homepageAssets,
   homepageCategories,
 } from '../features/home/homepage.data';
+import { ProductSearch } from '../features/products/ProductSearch';
 
 const moneyFormatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 });
 
@@ -26,20 +27,7 @@ function SectionHeading({ id, eyebrow, title, description, action }: { id?: stri
 }
 
 export function HomePage() {
-  const navigate = useNavigate();
   const [keyword, setKeyword] = useState('');
-  const [searchError, setSearchError] = useState('');
-
-  function submitSearch(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const normalized = keyword.trim();
-    if (!normalized) {
-      setSearchError('Hãy nhập tên sản phẩm bạn muốn tìm.');
-      return;
-    }
-    setSearchError('');
-    navigate(`/products?search=${encodeURIComponent(normalized.slice(0, 100))}`);
-  }
 
   return (
     <main className="flex-1 overflow-hidden bg-white">
@@ -66,14 +54,7 @@ export function HomePage() {
               <Link to="/products" className={buttonClassName({ size: 'lg', className: 'w-full sm:w-auto' })}>Khám phá sản phẩm</Link>
               <Link to="/ai" className={buttonClassName({ variant: 'outline', size: 'lg', className: 'w-full border-white/70 bg-white/95 sm:w-auto' })}>Khám phá AI</Link>
             </div>
-            <form className="mt-8 max-w-xl rounded-card bg-white/95 p-3 text-neutral-950 shadow-medium" onSubmit={submitSearch} role="search" noValidate>
-              <label htmlFor="home-search" className="sr-only">Tìm kiếm sản phẩm</label>
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <SearchInput id="home-search" value={keyword} maxLength={100} placeholder="Bạn đang tìm sản phẩm nào?" onChange={(event) => { setKeyword(event.target.value); setSearchError(''); }} className="sm:flex-1" aria-describedby={searchError ? 'home-search-error' : undefined} error={Boolean(searchError)} />
-                <Button type="submit">Tìm kiếm</Button>
-              </div>
-              {searchError ? <p id="home-search-error" className="mt-2 text-sm text-error-dark" role="alert">{searchError}</p> : null}
-            </form>
+            <div className="mt-8 max-w-xl rounded-card bg-white/95 p-3 text-neutral-950 shadow-medium"><ProductSearch value={keyword} onValueChange={setKeyword} label="Tìm kiếm sản phẩm từ trang chủ" placeholder="Bạn đang tìm sản phẩm nào?" showEmptyError /></div>
           </div>
         </div>
       </section>

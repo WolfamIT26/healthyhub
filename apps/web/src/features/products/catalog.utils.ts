@@ -1,5 +1,7 @@
 import type { CatalogQuery, CatalogSort, DietaryTag, ProductPresentationModel, ProductStockStatus } from './product.types';
 import { productBrands, productCategories } from './catalog.data';
+import { dietaryTagLabels } from './product.types';
+import { normalizeSearchQuery } from './search.utils';
 
 const allowedSorts: CatalogSort[] = ['featured', 'newest', 'price-asc', 'price-desc', 'best-selling', 'rating'];
 const allowedDietary: DietaryTag[] = ['low-sugar', 'sugar-free', 'high-protein', 'vegan', 'vegetarian', 'lactose-free', 'gluten-free', 'organic'];
@@ -20,7 +22,7 @@ export function parseCatalogQuery(params: URLSearchParams): CatalogQuery {
   const category = params.get('category') ?? params.get('categoryId') ?? '';
   const brand = params.get('brand') ?? '';
   return {
-    search: (params.get('search') ?? params.get('q') ?? '').trim().slice(0, 100),
+    search: normalizeSearchQuery(params.get('search') ?? params.get('q') ?? ''),
     category: productCategories.some((item) => item.id === category) ? category : '',
     brand: productBrands.some((item) => item.id === brand) ? brand : '',
     dietary: (params.get('dietary') ?? '').split(',').filter((value): value is DietaryTag => allowedDietary.includes(value as DietaryTag)),
@@ -49,9 +51,9 @@ export function catalogQueryToParams(query: CatalogQuery) {
 }
 
 export function filterAndSortProducts(products: ProductPresentationModel[], query: CatalogQuery) {
-  const keyword = query.search.toLocaleLowerCase('vi-VN');
+  const keyword = normalizeSearchQuery(query.search).toLocaleLowerCase('vi-VN');
   const filtered = products.filter((product) => {
-    const searchable = `${product.name} ${product.sku} ${product.slug} ${product.shortDescription} ${product.brand.name}`.toLocaleLowerCase('vi-VN');
+    const searchable = `${product.name} ${product.category.name} ${product.brand.name} ${product.shortDescription} ${product.dietaryTags.map((tag) => dietaryTagLabels[tag]).join(' ')}`.toLocaleLowerCase('vi-VN');
     return (!keyword || searchable.includes(keyword))
       && (!query.category || product.category.id === query.category)
       && (!query.brand || product.brand.id === query.brand)

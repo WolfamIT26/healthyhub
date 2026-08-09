@@ -1,9 +1,11 @@
-import { useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { webEnv } from '../../config/env';
 import { AuthNavigation } from '../../features/auth/AuthNavigation';
 import { EmailVerificationBanner } from '../../features/auth/EmailVerificationBanner';
+import { ProductSearch } from '../../features/products/ProductSearch';
+import { normalizeSearchQuery } from '../../features/products/search.utils';
 import logoSymbol from '../../../../../assets/logos/Logo Symbol.png';
 import { IconButton } from '../../components';
 
@@ -16,6 +18,18 @@ const publicLinks = [
 
 export function PublicLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [headerSearch, setHeaderSearch] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.pathname === '/products') setHeaderSearch(normalizeSearchQuery(new URLSearchParams(location.search).get('search') ?? ''));
+  }, [location.pathname, location.search]);
+
+  function submitHeaderSearch(search: string) {
+    navigate(`/products?search=${encodeURIComponent(search)}`);
+  }
+
   return (
     <div className="flex min-h-screen min-h-[100dvh] flex-col bg-slate-50 text-slate-950">
       <header className="relative z-50 shrink-0 border-b border-neutral-200 bg-white">
@@ -27,10 +41,11 @@ export function PublicLayout() {
           <nav aria-label="Điều hướng chính" className="hidden items-center gap-1 text-sm font-semibold text-neutral-700 lg:flex">
             {publicLinks.map((item) => <NavLink key={item.to} end={item.end} className={({ isActive }) => `inline-flex min-h-11 items-center rounded-control px-3 transition-standard focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive ? 'bg-primary-50 text-primary-700' : 'hover:bg-neutral-100'}`} to={item.to}>{item.label}</NavLink>)}
           </nav>
+          <ProductSearch compact className="hidden w-72 xl:block" value={headerSearch} onValueChange={setHeaderSearch} onSubmit={submitHeaderSearch} label="Tìm kiếm sản phẩm từ header" buttonLabel="Tìm" />
           <div className="hidden lg:block"><AuthNavigation /></div>
           <div className="lg:hidden"><IconButton label={menuOpen ? 'Đóng menu' : 'Mở menu'} aria-expanded={menuOpen} aria-controls="public-mobile-menu" onClick={() => setMenuOpen((value) => !value)}><span className="text-xl" aria-hidden="true">{menuOpen ? '×' : '☰'}</span></IconButton></div>
         </div>
-        {menuOpen ? <div id="public-mobile-menu" className="absolute left-0 right-0 top-full border-b border-neutral-200 bg-white p-4 shadow-medium lg:hidden"><nav aria-label="Điều hướng mobile" className="container flex flex-col gap-1 p-0">{publicLinks.map((item) => <NavLink key={item.to} end={item.end} to={item.to} onClick={() => setMenuOpen(false)} className={({ isActive }) => `flex min-h-11 items-center rounded-control px-3 font-semibold ${isActive ? 'bg-primary-50 text-primary-700' : 'text-neutral-700 hover:bg-neutral-100'}`}>{item.label}</NavLink>)}<div className="mt-2 border-t border-neutral-200 pt-3"><AuthNavigation onNavigate={() => setMenuOpen(false)} /></div></nav></div> : null}
+        {menuOpen ? <div id="public-mobile-menu" className="absolute left-0 right-0 top-full border-b border-neutral-200 bg-white p-4 shadow-medium lg:hidden"><nav aria-label="Điều hướng mobile" className="container flex flex-col gap-1 p-0"><ProductSearch className="mb-3" value={headerSearch} onValueChange={setHeaderSearch} onSubmit={submitHeaderSearch} onNavigate={() => setMenuOpen(false)} label="Tìm kiếm sản phẩm từ menu" buttonLabel="Tìm" />{publicLinks.map((item) => <NavLink key={item.to} end={item.end} to={item.to} onClick={() => setMenuOpen(false)} className={({ isActive }) => `flex min-h-11 items-center rounded-control px-3 font-semibold ${isActive ? 'bg-primary-50 text-primary-700' : 'text-neutral-700 hover:bg-neutral-100'}`}>{item.label}</NavLink>)}<div className="mt-2 border-t border-neutral-200 pt-3"><AuthNavigation onNavigate={() => setMenuOpen(false)} /></div></nav></div> : null}
       </header>
       <EmailVerificationBanner />
       <Outlet />

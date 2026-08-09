@@ -1,5 +1,24 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.9.0] - 2026-08-09
+
+### Added / Đã thêm
+
+- Thêm `ProductSearch` dùng chung tại Homepage, public header/mobile menu và Product Catalog.
+- Thêm autocomplete tối đa 8 kết quả cho text query, product, category, brand và dietary tag; hỗ trợ combobox/listbox và điều hướng bàn phím.
+- Thêm Search & Product Discovery tests và tài liệu privacy/URL/filter behavior.
+
+### Changed / Đã cập nhật
+
+- Catalog search dùng chung query normalization, tìm theo name/category/brand/short description/dietary tag và reset page khi search mới.
+- No-result state bổ sung đường quay về toàn bộ sản phẩm; Homepage search giữ validation hiện hữu.
+
+### Notes / Ghi chú
+
+- Không lưu recent search vì UI Contract quy định search/filter form không lưu dữ liệu và query có thể nhạy cảm.
+- Không sửa backend, Product API, Authentication, database, migration, OpenAPI hay AI runtime.
+- Browser visual verification bị local approval session thu hồi nên trạng thái là `Complete — Visual Browser Verification Blocked`.
+
 ## [0.8.0] - 2026-08-09
 
 ### Added / Đã thêm
