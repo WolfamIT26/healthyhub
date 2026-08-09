@@ -1,5 +1,9 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## HealthyHub Homepage V1 — Prompt 20
+
+Đã triển khai Homepage storefront theo UI Contract và Shared UI Foundation: header responsive, hero/search, category, featured product, giá trị HealthyHub, AI preview, lifestyle, promotion, blog và footer. Dữ liệu hiện là typed presentation data, các module chưa có runtime dùng route foundation minh bạch; không thêm Product/Cart/AI business logic. Guest/auth header và banner Customer chưa xác minh tiếp tục dùng Authentication context hiện tại. Frontend hiện có 37 tests.
+
 ## Authentication Frontend V1 — Prompt 18
 
 Đã triển khai 5 màn hình Authentication, API client, access token memory-only, HttpOnly refresh cookie + CSRF, session restore, single-flight refresh, logout, guest/protected/role guards và 18 frontend tests. HTTP smoke test Web/API+CORS đạt; full verified-account flow bị chặn do chưa có notification test delivery/verified fixture.

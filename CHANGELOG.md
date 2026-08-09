@@ -1,5 +1,23 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.6.0] - 2026-08-07
+
+### Added / Đã thêm
+
+- Triển khai HealthyHub Homepage V1 theo UI Contract: Hero/search entry, category preview, featured products, value proposition, AI preview, lifestyle, promotion, blog preview và public footer.
+- Thêm typed presentation data riêng, public route foundation cho Product/Promotion/Blog/AI và 4 Homepage/navigation/auth-state regression tests.
+
+### Changed / Đã cập nhật
+
+- Public navigation chuyển sang responsive desktop/mobile, bỏ Admin khỏi public header và tiếp tục dùng Authentication context hiện tại.
+- Email Verification Banner của Customer chưa xác minh được hiển thị trên public Homepage.
+- Mở rộng ProductCard và Button style API trong Shared UI để hỗ trợ Homepage mà không thêm business logic.
+
+### Notes / Ghi chú
+
+- Không gọi endpoint chưa tồn tại; không triển khai Product, Cart, Checkout, Payment, Order hay AI runtime.
+- Responsive DOM verification không có horizontal overflow tại 390, 820, 1024 và 1440px.
+
 ## [0.5.0] - 2026-08-06
 
 ### Added / Đã thêm

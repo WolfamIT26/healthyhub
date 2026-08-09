@@ -27,6 +27,13 @@ const sizes: Record<ButtonSize, string> = {
   lg: 'min-h-12 px-5 py-3 text-base',
 };
 
+export function buttonClassName({ variant = 'primary', size = 'md', className }: { variant?: ButtonVariant; size?: ButtonSize; className?: string } = {}) {
+  return cn(
+    'inline-flex items-center justify-center gap-2 rounded-control font-semibold transition-standard focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-reduce:transition-none',
+    variants[variant], sizes[size], className,
+  );
+}
+
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   { className, variant = 'primary', size = 'md', loading = false, loadingLabel = 'Đang xử lý…', disabled, children, ...props },
   ref,
@@ -34,10 +41,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   return (
     <button
       ref={ref}
-      className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-control font-semibold transition-standard focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none',
-        variants[variant], sizes[size], className,
-      )}
+      className={cn(buttonClassName({ variant, size, className }), 'disabled:cursor-not-allowed disabled:opacity-60')}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       {...props}
