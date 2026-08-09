@@ -4,6 +4,7 @@ import type { ProductEntity } from '../../data/product/entities';
 
 export interface ProductCommerceSnapshot {
   productId: string;
+  productCode: string;
   name: string;
   slug: string;
   currentPrice: string;
@@ -23,6 +24,7 @@ export class ProductCommerceReader {
     if (!product || product.deletedAt) return null;
     return {
       productId: product.id,
+      productCode: product.productCode,
       name: product.productName,
       slug: product.slug,
       currentPrice: product.basePrice,

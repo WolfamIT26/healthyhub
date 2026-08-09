@@ -12,6 +12,9 @@ import { HealthModule } from './presentation/health/health.module';
 import { AuthenticationModule } from './presentation/authentication/authentication.module';
 import { CommerceDependenciesModule } from './domain/commerce-dependencies/commerce-dependencies.module';
 import { CartModule } from './presentation/cart/cart.module';
+import { PaymentFoundationModule } from './domain/payment/payment-foundation.module';
+import { ShippingFoundationModule } from './domain/shipping/shipping-foundation.module';
+import { OrderModule } from './presentation/order/order.module';
 
 const runtimeEnvironment = process.env.APP_ENV ?? process.env.NODE_ENV ?? 'development';
 
@@ -31,6 +34,9 @@ const runtimeEnvironment = process.env.APP_ENV ?? process.env.NODE_ENV ?? 'devel
     AuthenticationModule,
     CommerceDependenciesModule,
     CartModule,
+    PaymentFoundationModule,
+    ShippingFoundationModule,
+    OrderModule,
   ],
   providers: [AppLoggerService],
 })

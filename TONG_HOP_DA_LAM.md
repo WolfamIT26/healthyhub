@@ -1,5 +1,9 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## Order Creation Boundary — Prompt 26.1B
+
+Đã triển khai `POST /orders` cho verified Customer với persistence MySQL atomically, immutable OrderItem/address/payment/shipping snapshots, server-authoritative Cart/Product/Inventory/Shipping/COD revalidation và idempotency chống duplicate. COD và Shipment giữ `pending`; không capture Payment, fulfillment, mutate Inventory hoặc Cart. Ba Checkout dependency đều READY, Prompt 26.2 đã được mở khóa nhưng Checkout UI chưa triển khai.
+
 ## Cart Persistence Audit — Prompt 25.5
 
 Đã audit và dừng đúng boundary: Cart server persistence BLOCKED vì chưa có Product server price/sellable authority, Inventory availability source và CustomerProfile mapping từ authenticated user. Không tạo migration/API nửa vời, không hard-code Product/stock/price và không ghi Prompt 25.5 Complete.
@@ -1086,3 +1090,12 @@ tests/performance/.gitkeep
 # Cart Server Persistence — Prompt 25.7
 
 Đã chuyển Cart V1 sang MySQL server persistence: Customer ownership, Add/merge/update/remove transactional, Product price và Inventory availability authoritative, reload/logout-login giữ Cart, account isolation và server-backed Header count. Migration, development seed idempotent, API/frontend tests và MySQL integration đã hoàn tất. Không triển khai Checkout, Coupon, Inventory reservation, Order hoặc Payment.
+# Checkout Readiness Audit — Prompt 26
+
+Đã audit và dừng đúng boundary: Checkout BLOCKED vì Shipping chưa có authoritative method/fee rule, Payment chưa có approved method list và Order chưa có persistence/create/idempotency executable. Không fake fee, COD, Order hay Payment success; Cart và Authentication giữ nguyên.
+# Checkout Dependency Enablement — Prompt 26.1
+
+Đã mở khóa Payment Method Foundation ở mức COD-only (`pending`, không capture). Shipping vẫn BLOCKED vì chưa có authoritative rate/serviceability rule; Order vẫn BLOCKED vì address snapshot phụ thuộc Shipment/Shipping chưa executable. Không triển khai Checkout UI, Shipment, Order hoặc Payment gateway.
+# Shipping Authority Foundation — Prompt 26.1A
+
+Đã mở khóa Shipping Authority bằng internal method `manual`, fee authoritative `0.00 VND`, serviceability cho địa chỉ VN hợp lệ, reusable address snapshot và deterministic stateless quote. Không tạo provider/Shipment/Order/Checkout UI. Checkout còn blocker Order Creation Boundary.

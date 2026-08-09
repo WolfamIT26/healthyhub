@@ -1,5 +1,53 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.13.4] - 2026-08-09
+
+### Added / Đã thêm
+
+- Thêm transactional Order/OrderItem/Payment/Shipment/address snapshot persistence và Customer-only `POST /orders`.
+- Thêm server-authoritative totals/revalidation, hash-based idempotency, migration/unit/MySQL integration tests và typed OpenAPI Order contract.
+
+### Notes / Ghi chú
+
+- COD/Shipment bắt đầu `pending`; không capture, fulfillment hoặc mutate Inventory/Cart.
+- Checkout dependency matrix READY và Prompt 26.2 được mở khóa; Checkout UI chưa triển khai.
+
+## [0.13.3] - 2026-08-09
+
+### Added / Đã thêm
+
+- Thêm internal Shipping V1 authority: manual method, VN address validation/snapshot, deterministic quote và authoritative `0.00 VND` fee.
+- Thêm Shipping unit tests và documentation/decision cho Prompt 26.1A.
+
+### Notes / Ghi chú
+
+- Không tích hợp provider, ETA, Shipment fulfillment, Order hoặc Checkout UI.
+- Checkout còn BLOCKED duy nhất bởi Order Creation Boundary.
+
+## [0.13.2] - 2026-08-09
+
+### Added / Đã thêm
+
+- Thêm internal COD-only Payment method foundation với trạng thái `pending`, không capture và không fake paid.
+- Thêm Shipping/Payment/Order dependency reports cho Prompt 26.1.
+
+### Notes / Ghi chú
+
+- Shipping Authority và Order Creation Boundary vẫn BLOCKED; Prompt 26.2 chưa được mở khóa.
+- Không dùng `manual/0.00` storage defaults làm shipping quote rule và không tạo incomplete Order/Shipment.
+
+## [0.13.1] - 2026-08-09
+
+### Documentation / Tài liệu
+
+- Audit Prompt 26 xác nhận Checkout bị chặn bởi Shipping quote authority, approved Payment method list và Order create/idempotency chưa executable.
+- Thêm bộ tài liệu `modules/checkout`, `docs/checkout.md` và work summary.
+
+### Notes / Ghi chú
+
+- Không tạo fake shipping fee, COD/payment success, Order row hoặc Checkout form không thể hoàn tất.
+- Cart server persistence và Authentication verification policy không thay đổi.
+
 ## [0.13.0] - 2026-08-09
 
 ### Added / Đã thêm

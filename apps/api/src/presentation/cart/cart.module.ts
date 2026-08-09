@@ -13,5 +13,6 @@ import { CartService } from './cart.service';
     { provide: CART_REPOSITORY, useClass: TypeOrmCartRepository },
     CartService,
   ],
+  exports: [CART_REPOSITORY],
 })
 export class CartModule {}

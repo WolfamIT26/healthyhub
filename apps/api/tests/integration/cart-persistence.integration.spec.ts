@@ -10,14 +10,18 @@ import { CustomerProfileEntity } from '../../src/data/customer/entities';
 import * as customerEntities from '../../src/data/customer/entities';
 import { InventoryItemEntity } from '../../src/data/inventory/entities';
 import * as inventoryEntities from '../../src/data/inventory/entities';
+import * as orderEntities from '../../src/data/order/entities';
+import * as paymentEntities from '../../src/data/payment/entities';
 import { ProductEntity } from '../../src/data/product/entities';
 import * as productEntities from '../../src/data/product/entities';
+import * as shippingEntities from '../../src/data/shipping/entities';
 import { UserAccountEntity } from '../../src/data/user/entities';
 import * as userEntities from '../../src/data/user/entities';
 import { CreateUserIdentityFoundation1760000000000 } from '../../src/database/migrations/1760000000000-create-user-identity-foundation';
 import { CreateAuthenticationData1760000001000 } from '../../src/database/migrations/1760000001000-create-authentication-data';
 import { CreateCartDependencyFoundation1760000002000 } from '../../src/database/migrations/1760000002000-create-cart-dependency-foundation';
 import { CreateCartPersistence1760000003000 } from '../../src/database/migrations/1760000003000-create-cart-persistence';
+import { CreateOrderCreationFoundation1760000004000 } from '../../src/database/migrations/1760000004000-create-order-creation-foundation';
 import { createTypeOrmOptions } from '../../src/database/typeorm.config';
 import { CustomerOwnerResolver } from '../../src/domain/commerce-dependencies/customer-owner.resolver';
 import { InventoryAvailabilityReader } from '../../src/domain/commerce-dependencies/inventory-availability.reader';
@@ -33,10 +37,12 @@ describe.skipIf(!enabled)('Cart server persistence MySQL integration', () => {
     dataSource = new DataSource({
       ...createTypeOrmOptions(getValidatedEnvironment(process.env)),
       migrations: [CreateUserIdentityFoundation1760000000000, CreateAuthenticationData1760000001000,
-        CreateCartDependencyFoundation1760000002000, CreateCartPersistence1760000003000],
+        CreateCartDependencyFoundation1760000002000, CreateCartPersistence1760000003000,
+        CreateOrderCreationFoundation1760000004000],
       entities: [...Object.values(authenticationEntities), ...Object.values(cartEntities),
-        ...Object.values(customerEntities), ...Object.values(inventoryEntities),
-        ...Object.values(productEntities), ...Object.values(userEntities)],
+        ...Object.values(customerEntities), ...Object.values(inventoryEntities), ...Object.values(orderEntities),
+        ...Object.values(paymentEntities), ...Object.values(productEntities), ...Object.values(shippingEntities),
+        ...Object.values(userEntities)],
     });
     await dataSource.initialize();
   });

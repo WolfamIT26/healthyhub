@@ -26,6 +26,12 @@ CartCreated:
     application/json:
       schema:
         $ref: "../schemas/cart.yaml#/CartResponseEnvelope"
+OrderCreated:
+  description: "Order snapshot đã được tạo atomically từ Cart và authority hiện hành. COD/Shipping bắt đầu ở pending."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/order.yaml#/OrderResponseEnvelope"
 Created:
   description: "Tạo mới thành công."
   headers:

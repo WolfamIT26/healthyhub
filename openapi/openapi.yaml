@@ -3921,17 +3921,16 @@ paths:
       description: |
         Tạo đơn hàng từ checkout
 
-        Ghi chú quyền: Cart owner.
-        Xác thực: Guest token hoặc Customer JWT.
+        Ghi chú quyền: Verified Customer và là owner của active Cart.
+        Xác thực: Customer JWT.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
         Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
       tags:
         - "Order"
       security:
-        - {}
         - BearerAuth: []
-      x-permission: "Cart owner"
-      x-auth-level: "Guest token hoặc Customer JWT"
+      x-permission: "Verified Customer / Cart owner"
+      x-auth-level: "Customer JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
       x-idempotency-required: true
       x-source: ".spec/api/domains/order.md"
@@ -3945,13 +3944,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GenericCommandRequest"
-            examples:
-              default:
-                $ref: "#/components/examples/GenericCommandRequest"
+              $ref: "./schemas/order.yaml#/CreateOrderRequest"
       responses:
         "201":
-          $ref: "#/components/responses/Created"
+          $ref: "./responses/common.yaml#/OrderCreated"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":

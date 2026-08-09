@@ -52,6 +52,6 @@ const environmentProvider = {
     RolesGuard,
     PermissionsGuard,
   ],
-  exports: [AccessTokenGuard, RolesGuard],
+  exports: [AccessTokenGuard, RolesGuard, AUTHENTICATION_REPOSITORY, EmailVerificationPolicyService],
 })
 export class AuthenticationModule {}

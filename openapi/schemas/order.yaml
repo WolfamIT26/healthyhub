@@ -1,0 +1,65 @@
+OrderShippingAddressRequest:
+  type: object
+  additionalProperties: false
+  required: [recipientName, phone, countryCode, provinceCity, district, addressLine]
+  properties:
+    recipientName: { type: string, minLength: 1, maxLength: 255 }
+    phone: { type: string, pattern: "^(?:0[0-9]{9,10}|\\+84[0-9]{9,10})$" }
+    countryCode: { type: string, const: VN }
+    provinceCity: { type: string, minLength: 1, maxLength: 150 }
+    district: { type: string, minLength: 1, maxLength: 150 }
+    ward: { type: string, minLength: 1, maxLength: 150 }
+    addressLine: { type: string, minLength: 1, maxLength: 500 }
+    note: { type: [string, "null"], maxLength: 500 }
+CreateOrderRequest:
+  type: object
+  additionalProperties: false
+  required: [shippingAddress, shippingMethod, shippingQuoteReference, paymentMethod]
+  properties:
+    shippingAddress: { $ref: "#/OrderShippingAddressRequest" }
+    shippingMethod: { type: string, const: manual }
+    shippingQuoteReference: { type: string, minLength: 1, maxLength: 255 }
+    paymentMethod: { type: string, const: cod }
+OrderItem:
+  type: object
+  additionalProperties: false
+  required: [productId, productName, sku, unitPrice, quantity, lineTotal]
+  properties:
+    productId: { type: [string, "null"] }
+    productName: { type: string }
+    sku: { type: [string, "null"] }
+    unitPrice: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+    quantity: { type: integer, minimum: 1 }
+    lineTotal: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+Order:
+  type: object
+  additionalProperties: false
+  required: [orderId, orderNumber, status, paymentStatus, paymentMethod, shippingStatus, shippingMethod, items, subtotal, shippingFee, total, currency, shippingAddress, createdAt]
+  properties:
+    orderId: { type: string }
+    orderNumber: { type: string }
+    status: { type: string, const: new }
+    paymentStatus: { type: string, const: pending }
+    paymentMethod: { type: string, const: cod }
+    shippingStatus: { type: string, const: pending }
+    shippingMethod: { type: string, const: manual }
+    items: { type: array, minItems: 1, items: { $ref: "#/OrderItem" } }
+    subtotal: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+    shippingFee: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+    total: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+    currency: { type: string, const: VND }
+    shippingAddress: { type: object, additionalProperties: { type: [string, "null"] } }
+    createdAt: { type: string, format: date-time }
+OrderResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data: { $ref: "#/Order" }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }

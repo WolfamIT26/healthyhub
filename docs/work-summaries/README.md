@@ -58,6 +58,10 @@ Mỗi file tổng hợp nên có:
 - [Prompt 25.5 - Cart Persistence Audit](2026-08-09-06-prompt-25-5-cart-persistence-audit.md).
 - [Prompt 25.6 - Cart Dependency Enablement](2026-08-09-07-prompt-25-6-cart-dependency-enablement.md).
 - [Prompt 25.7 - Cart Server Persistence](2026-08-09-08-prompt-25-7-cart-server-persistence.md).
+- [Prompt 26 - Checkout Readiness Audit](2026-08-09-09-prompt-26-checkout-readiness-audit.md).
+- [Prompt 26.1 - Checkout Dependency Enablement](2026-08-09-10-prompt-26-1-checkout-dependency-enablement.md).
+- [Prompt 26.1A - Shipping Authority Foundation](2026-08-09-11-prompt-26-1a-shipping-authority-foundation.md).
+- [Prompt 26.1B - Order Creation Boundary](2026-08-09-12-prompt-26-1b-order-creation-boundary.md).
 
 ## Usage Rule / Quy tắc sử dụng
 
