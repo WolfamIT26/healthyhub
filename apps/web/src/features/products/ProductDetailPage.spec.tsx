@@ -6,13 +6,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAuth } from '../auth/AuthContext';
 import { ProductDetailPage } from '../../pages/ProductDetailPage';
 import { PublicLayout } from '../../shared/layouts/PublicLayout';
+import { WishlistProvider } from '../wishlist/WishlistContext';
 
 vi.mock('../auth/AuthContext', () => ({ useAuth: vi.fn() }));
 
 const guestAuth = { status: 'guest' as const, actor: null, current: null, login: vi.fn(), logout: vi.fn(), hasRole: vi.fn(), hasPermission: vi.fn() };
 
 function renderDetail(slug = 'oat-milk-original', node = <ProductDetailPage />) {
-  return render(<MemoryRouter initialEntries={[`/products/${slug}`]}><Routes><Route path="/products/:slug" element={node} /></Routes></MemoryRouter>);
+  return render(<MemoryRouter initialEntries={[`/products/${slug}`]}><WishlistProvider><Routes><Route path="/products/:slug" element={node} /></Routes></WishlistProvider></MemoryRouter>);
 }
 
 describe('Product Detail V1', () => {
@@ -59,7 +60,7 @@ describe('Product Detail V1', () => {
     renderDetail('coconut-yogurt-mango');
     expect(screen.getByText('Tình trạng: Hết hàng')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Hết hàng' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Yêu thích · Sắp ra mắt' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Thêm Sữa chua dừa vị xoài vào yêu thích' })).toBeEnabled();
     expect(screen.getByLabelText('Số lượng')).toBeDisabled();
     expect(screen.queryByLabelText('Thư viện hình sản phẩm')).not.toBeInTheDocument();
   });
@@ -104,7 +105,7 @@ describe('Product Detail V1', () => {
     ['unverified customer', { ...guestAuth, status: 'authenticated' as const, actor: { id: '2', email: 'pending@example.com', fullName: 'Pending', roles: ['CUSTOMER'] as Array<'CUSTOMER'>, isEmailVerified: false } }],
   ])('renders the public detail for %s state', (_label, auth) => {
     vi.mocked(useAuth).mockReturnValue(auth);
-    render(<MemoryRouter initialEntries={['/products/oat-milk-original']}><Routes><Route element={<PublicLayout />}><Route path="/products/:slug" element={<ProductDetailPage />} /></Route></Routes></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/products/oat-milk-original']}><WishlistProvider><Routes><Route element={<PublicLayout />}><Route path="/products/:slug" element={<ProductDetailPage />} /></Route></Routes></WishlistProvider></MemoryRouter>);
     expect(screen.getByRole('heading', { level: 1, name: 'Sữa yến mạch nguyên bản' })).toBeInTheDocument();
   });
 });

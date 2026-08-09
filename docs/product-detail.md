@@ -4,7 +4,7 @@
 
 ## Phạm vi
 
-Route `/products/:slug` resolve sản phẩm từ typed presentation data của Product Catalog V1. Trang không gọi Product, Cart, Wishlist, Review hay AI API.
+Route `/products/:slug` resolve sản phẩm từ typed presentation data của Product Catalog V1. Trang không gọi Product, Cart, Wishlist, Review hay AI API; Wishlist chỉ là memory-only frontend foundation.
 
 ## Nội dung
 
@@ -19,7 +19,7 @@ Route `/products/:slug` resolve sản phẩm từ typed presentation data của 
 ## Commerce và AI foundation
 
 - Quantity selector là UI state cục bộ, giới hạn 1–10 và không lưu Cart.
-- Add to Cart/Wishlist luôn disabled với giải thích rõ module chưa triển khai; sản phẩm hết hàng hiển thị “Hết hàng”.
+- Add to Cart luôn disabled; Wishlist action dùng frontend foundation và giải thích rõ chưa có server persistence. Sản phẩm hết hàng vẫn có thể được đưa vào Wishlist.
 - Hỏi AI/So sánh dẫn tới route foundation kèm slug, không chạy AI runtime.
 
 ## Model

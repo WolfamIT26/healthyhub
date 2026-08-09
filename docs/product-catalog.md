@@ -2,7 +2,7 @@
 
 ## Phạm vi
 
-Route `/products` cung cấp Catalog presentation chạy hoàn toàn ở frontend. Product backend, Cart, Wishlist, Review API và AI Search runtime chưa được triển khai.
+Route `/products` cung cấp Catalog presentation chạy hoàn toàn ở frontend. Product backend, Cart, Wishlist persistence/API runtime, Review API và AI Search runtime chưa được triển khai.
 
 ## Product model và dữ liệu
 

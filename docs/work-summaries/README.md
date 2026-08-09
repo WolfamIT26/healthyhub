@@ -53,6 +53,7 @@ Mỗi file tổng hợp nên có:
 - [Prompt 21 - Product Catalog V1](2026-08-09-01-prompt-21-product-catalog-v1.md).
 - [Prompt 22 - Product Detail V1](2026-08-09-02-prompt-22-product-detail-v1.md).
 - [Prompt 23 - Search & Product Discovery V1](2026-08-09-03-prompt-23-search-product-discovery-v1.md).
+- [Prompt 24 - Wishlist V1](2026-08-09-04-prompt-24-wishlist-v1.md).
 
 ## Usage Rule / Quy tắc sử dụng
 

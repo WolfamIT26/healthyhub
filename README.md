@@ -77,6 +77,7 @@ Requirement → Architecture → Database Design → API Design → Frontend Des
 - UI Contract Specification: [.spec/ui-contract/README.md](.spec/ui-contract/README.md).
 - Design System: [docs/design-system/README.md](docs/design-system/README.md).
 - Search & Product Discovery V1: [docs/search-discovery.md](docs/search-discovery.md).
+- Wishlist V1: [docs/wishlist.md](docs/wishlist.md).
 - Product Catalog V1: [docs/product-catalog.md](docs/product-catalog.md).
 - Product Detail V1: [docs/product-detail.md](docs/product-detail.md).
 - Development Standards: [docs/development-standards/README.md](docs/development-standards/README.md).

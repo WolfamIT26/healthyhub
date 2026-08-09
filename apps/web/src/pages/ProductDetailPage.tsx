@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Alert, Badge, Breadcrumb, buttonClassName, Button, Card, Divider, ErrorState, IconButton, ProductCard, Skeleton } from '../components';
 import { catalogProducts } from '../features/products/catalog.data';
 import { dietaryTagLabels, stockStatusLabels, type ProductMediaPresentation, type ProductPresentationModel } from '../features/products/product.types';
+import { WishlistButton } from '../features/wishlist/WishlistButton';
 
 type ProductDetailStatus = 'loading' | 'success' | 'error';
 const moneyFormatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 });
@@ -56,10 +57,10 @@ function ProductDetailContent({ product, products }: { product: ProductPresentat
                 <input id="product-quantity" className="h-11 w-16 rounded-control border border-neutral-300 bg-white text-center font-semibold" type="number" min="1" max="10" value={quantity} disabled={outOfStock} onChange={(event) => setQuantity(Math.min(10, Math.max(1, Math.floor(Number(event.target.value) || 1))))} />
                 <IconButton label="Tăng số lượng" disabled={outOfStock || quantity >= 10} onClick={() => setQuantity((value) => Math.min(10, value + 1))}>+</IconButton>
               </div>
-              <p id="commerce-foundation-note" className="mt-3 text-sm leading-6 text-neutral-600">Cart và Wishlist chưa được triển khai. Các nút dưới đây chỉ thể hiện UI foundation và không lưu dữ liệu.</p>
+              <p id="commerce-foundation-note" className="mt-3 text-sm leading-6 text-neutral-600">Cart chưa được triển khai. Wishlist hiện dùng frontend foundation và không có server persistence.</p>
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 <Button type="button" disabled aria-describedby="commerce-foundation-note">{outOfStock ? 'Hết hàng' : 'Thêm vào giỏ · Sắp ra mắt'}</Button>
-                <Button type="button" variant="outline" disabled aria-describedby="commerce-foundation-note">Yêu thích · Sắp ra mắt</Button>
+                <WishlistButton productId={product.id} productName={product.name} />
               </div>
             </Card>
           </div>

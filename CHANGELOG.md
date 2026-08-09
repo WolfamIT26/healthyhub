@@ -1,5 +1,19 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.10.0] - 2026-08-09
+
+### Added / Đã thêm
+
+- Thêm Wishlist frontend foundation tại `/wishlist`, protected cho authenticated Customer bằng RouteGuard hiện có.
+- Thêm memory-only WishlistProvider, accessible WishlistButton, empty/list state và 8 Wishlist tests.
+- Tích hợp Wishlist action vào Product Catalog, Product Detail và Customer navigation.
+
+### Notes / Ghi chú
+
+- Wishlist persistence chưa triển khai: executable backend contract còn thiếu typed schemas và Product/Customer persistence dependencies chưa tồn tại.
+- Không dùng localStorage/sessionStorage, không fake API success và không sửa backend/database/migration/OpenAPI.
+- Browser visual verification bị local approval session revoked nên trạng thái visual là BLOCKED.
+
 ## [0.9.0] - 2026-08-09
 
 ### Added / Đã thêm

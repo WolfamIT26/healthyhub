@@ -18,6 +18,7 @@ import { ForbiddenPage } from '../pages/ForbiddenPage';
 import { ComingSoonPage } from '../pages/ComingSoonPage';
 import { ProductCatalogPage } from '../pages/ProductCatalogPage';
 import { ProductDetailPage } from '../pages/ProductDetailPage';
+import { WishlistPage } from '../pages/WishlistPage';
 
 export function AppRouter() {
   return (
@@ -38,6 +39,7 @@ export function AppRouter() {
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/products" element={<ProductCatalogPage />} />
         <Route path="/products/:slug" element={<ProductDetailPage />} />
+        <Route path="/wishlist" element={<RouteGuard area="customer"><WishlistPage /></RouteGuard>} />
         <Route path="/promotions" element={<ComingSoonPage title="Khuyến mãi" />} />
         <Route path="/blog/*" element={<ComingSoonPage title="Blog HealthyHub" />} />
         <Route path="/ai" element={<ComingSoonPage title="Trợ lý AI" />} />
