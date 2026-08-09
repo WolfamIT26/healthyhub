@@ -7,3 +7,4 @@
 - Order number sinh server-side bằng ngày + 96-bit random suffix và unique DB constraint.
 - Idempotency bổ sung tối thiểu hai SHA-256 hash columns trên `orders`; không lưu raw key.
 - Cart không bị mutate sau create vì lifecycle transition chưa có approved rule.
+- Prompt 27.1 mapping: verified `paid` may request `confirm_if_placed`; current physical `new` is never force-transitioned. Other Payment statuses do not mutate Order; refund requires its own approved workflow.

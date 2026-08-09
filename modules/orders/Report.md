@@ -19,6 +19,8 @@
 
 Physical Order design quy định initial/default `order_status = new`, trong khi shared enum contract liệt kê lifecycle từ `draft/placed` và không có `new`. Boundary này bám physical schema cho initial state và ghi rõ mismatch; không tự sửa authoritative specifications. Cần harmonize enum contract trước khi triển khai status transition.
 
+Prompt 27 không thay đổi mapping: COD Payment vẫn `pending`; chưa có approved Payment→Order transition cho online event.
+
 ## Verification evidence
 
 MySQL integration đã chứng minh Order/OrderItem/Payment/Shipment/address rows, owner isolation, same-key chỉ một Order và rollback không để lại header. OpenAPI Order request/response đã typed và Customer JWT-only.

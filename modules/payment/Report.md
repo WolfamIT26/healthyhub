@@ -1,14 +1,18 @@
-# Payment Method Foundation Report — Prompt 26.1
+# Payment Contract Resolution Report — Prompt 27.1
 
-## Status
+## Output matrix
 
-**READY — COD-only selection boundary.**
+| Boundary | Status |
+| --- | --- |
+| COD | **READY** |
+| Payment Persistence | **READY** for primary COD Payment; online attempts await provider implementation |
+| Payment Lifecycle | **READY** — canonical shared statuses and monotonic transition policy |
+| Order-Payment Mapping | **READY** — centralized safe effects; no arbitrary Order mutation |
+| Webhook Contract | **READY** — raw body/headers, adapter verification, normalized event, amount/currency/reference checks |
+| Webhook Deduplication | **BLOCKED** — physical spec has no provider-event table and provider event semantics are not selected |
+| Provider Decision | **PENDING USER DECISION** |
+| Online Payment Integration | **BLOCKED** |
 
-Approved physical Payment design quy định `cod` là default; `bank_transfer/online` là future. Internal `PaymentMethodReader` vì vậy chỉ expose COD:
+## Remaining unlocks
 
-- capture không bắt buộc;
-- initial payment status là `pending`;
-- không tạo paid/provider result;
-- mọi method khác bị từ chối.
-
-Không có Payment row, gateway, intent, credential hoặc capture trong Prompt 26.1.
+User must approve exactly one provider. Then verify its official onboarding/signature/replay/event-ID contract, add generic dedupe migration compatible with that contract, implement one adapter and harmonize physical `confirmed` to canonical `paid`. No provider call, SDK, secret, capture or fake webhook was added here.

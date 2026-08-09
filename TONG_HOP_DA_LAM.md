@@ -1,5 +1,13 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## Payment Contract Resolution — Prompt 27.1
+
+Đã thống nhất lifecycle Payment theo shared contract, event ordering/idempotency, Order effect mapping, browser-return rule và webhook validation/dedupe contract. Có decision matrix VNPAY/MoMo/ZaloPay/Stripe từ tài liệu chính thức nhưng chưa tự chọn provider. Online Payment vẫn BLOCKED chờ user approve provider và dedupe persistence executable; COD giữ nguyên pending.
+
+## Payment Readiness & Provider Boundary — Prompt 27
+
+Đã audit Payment và dựng gateway abstraction create/query/verify-webhook cùng registry fail-closed, tests và frontend typed boundary. COD Payment persistence vẫn lấy amount từ Order, giữ pending, không provider call. Provider chưa approved nên Online Payment, webhook verification/dedupe và Payment→Order mapping tiếp tục BLOCKED trung thực; không capture hoặc success giả.
+
 ## Checkout V1 — Prompt 26.2
 
 Đã thay `/checkout` ComingSoon bằng Checkout thật: server Cart summary, recipient/address validation, authoritative Shipping quote, COD, confirmation dialog, stable idempotency retry và success chỉ từ Order persisted. Không clear Cart/count hoặc triển khai capture/fulfillment/inventory mutation. Automated/MySQL pass; browser visual verification BLOCKED do kết nối browser trong ứng dụng không khả dụng.

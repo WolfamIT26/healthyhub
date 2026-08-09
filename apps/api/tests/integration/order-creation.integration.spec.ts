@@ -219,7 +219,13 @@ describe.skipIf(!enabled)('Order creation MySQL integration', () => {
       ).toBe(1);
       expect(
         await dataSource.getRepository(PaymentEntity).findOneByOrFail({ orderId: first.orderId }),
-      ).toMatchObject({ paymentStatus: 'pending', paidAt: null });
+      ).toMatchObject({
+        paymentMethod: 'cod',
+        paymentAmount: '250000.00',
+        paymentStatus: 'pending',
+        paidAt: null,
+        providerReference: null,
+      });
       const persistedShipment = await dataSource
         .getRepository(ShipmentEntity)
         .findOneByOrFail({ orderId: first.orderId });

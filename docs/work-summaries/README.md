@@ -63,6 +63,9 @@ Mỗi file tổng hợp nên có:
 - [Prompt 26.1A - Shipping Authority Foundation](2026-08-09-11-prompt-26-1a-shipping-authority-foundation.md).
 - [Prompt 26.1B - Order Creation Boundary](2026-08-09-12-prompt-26-1b-order-creation-boundary.md).
 - [Prompt 26.2 - Checkout V1](2026-08-09-13-prompt-26-2-checkout-v1.md).
+- [Prompt 27 - Payment Readiness & Provider Boundary](2026-08-09-14-prompt-27-payment-readiness-provider-boundary.md).
+- [Prompt 27.1 - Payment Contract Resolution](2026-08-09-15-prompt-27-1-payment-contract-resolution.md).
+- [Fix - Cart AccessTokenGuard Dependency Resolution](2026-08-09-16-fix-cart-access-token-guard-dependency.md).
 
 ## Usage Rule / Quy tắc sử dụng
 

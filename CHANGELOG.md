@@ -1,5 +1,29 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.13.7] - 2026-08-09
+
+### Added / Đã thêm
+
+- Thêm canonical Payment lifecycle policy, Order effect mapping và provider-neutral webhook validation/dedupe contracts.
+- Thêm provider decision matrix có nguồn chính thức; không ghi fee chưa được approve.
+
+### Notes / Ghi chú
+
+- Provider Decision vẫn PENDING USER DECISION; online integration BLOCKED.
+- COD không đổi; không provider call, secret, capture hoặc fake success.
+
+## [0.13.6] - 2026-08-09
+
+### Added / Đã thêm
+
+- Thêm provider-neutral Payment gateway contract, fail-closed registry, contract tests và typed frontend future boundary.
+- Thêm Payment readiness matrix, lifecycle/webhook/security decisions và work summary Prompt 27.
+
+### Notes / Ghi chú
+
+- COD persistence tiếp tục READY/pending; không provider call hoặc capture.
+- Online Payment BLOCKED bởi Provider Decision, webhook verification/dedupe và Order mapping; không fake success.
+
 ## [0.13.5] - 2026-08-09
 
 ### Added / Đã thêm
