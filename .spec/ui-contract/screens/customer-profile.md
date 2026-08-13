@@ -12,7 +12,7 @@ Giữ dữ liệu khách hàng chính xác để đặt hàng, giao hàng và ch
 
 | Route / Route | Purpose / Mục tiêu |
 | --- | --- |
-| `/account` | Hồ sơ tài khoản. |
+| `/account/profile` | Hồ sơ tài khoản. `/account` redirect về route này. |
 | `/account/addresses` | Địa chỉ nhận hàng. |
 
 ## Permission / Phân quyền
@@ -46,7 +46,7 @@ Profile fields và address fields.
 
 ## Validation / Validation
 
-Email/phone format, address required fields, owner check, field length.
+Email hiển thị read-only; full name/phone và address required fields được validate ở client và server; owner check luôn ở server.
 
 ## Search / Tìm kiếm
 
@@ -102,7 +102,7 @@ Skeleton form và address cards.
 
 ## Responsive Behavior / Hành vi responsive
 
-Mobile form một cột; desktop có thể đặt profile và address song song ở bước design sau.
+Mobile form/cards một cột; tablet có hai address cards; desktop có account navigation và content hai vùng.
 
 ## Accessibility / Khả năng tiếp cận
 
@@ -111,4 +111,3 @@ Label rõ, lỗi field dễ đọc, address action có tên cụ thể.
 ## SEO Metadata / SEO metadata
 
 Noindex vì là dữ liệu cá nhân.
-

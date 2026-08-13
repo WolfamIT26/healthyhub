@@ -32,6 +32,7 @@ Mỗi file tổng hợp nên có:
 
 ## Summary Index / Danh sách file tổng hợp
 
+- [Prompt 29 - Customer Profile & Address V1](2026-08-13-01-prompt-29-customer-profile-address-v1.md).
 - [Fix - Development Port Environment](2026-08-13-02-fix-development-port-environment.md).
 - [Prompt 28 - Customer Orders V1](2026-08-13-01-prompt-28-customer-orders-v1.md).
 - [Prompt 27.3 - VNPAY Sandbox E2E Verification](2026-08-12-01-prompt-27-3-vnpay-sandbox-e2e-verification.md).

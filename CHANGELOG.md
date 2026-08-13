@@ -1,5 +1,22 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.15.0] - 2026-08-13
+
+### Added / Đã thêm
+
+- Thêm Customer-only Profile read/update và Address Book CRUD/default/soft-delete từ MySQL.
+- Thêm responsive `/account/profile`, `/account/addresses`, account navigation và Checkout saved-address prefill.
+- Thêm typed Customer OpenAPI, migration, unit/frontend/MySQL ownership/default/immutable-snapshot coverage.
+
+### Fixed / Đã sửa
+
+- Export shared `HealthyHubEnvironment` từ Payment foundation để API bootstrap resolve PaymentService; không đổi Payment/VNPAY logic.
+
+### Notes / Ghi chú
+
+- Saved Address chỉ prefill; Order/Shipment giữ immutable snapshot và Shipping fee authority không đổi.
+- `VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
 ## [0.14.1] - 2026-08-13
 
 ### Fixed / Đã sửa

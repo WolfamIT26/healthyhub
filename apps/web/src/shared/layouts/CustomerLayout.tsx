@@ -24,6 +24,14 @@ export function CustomerLayout() {
               className={({ isActive }) =>
                 `rounded-md px-3 py-2 ${isActive ? 'bg-leaf-100 text-leaf-700' : 'hover:bg-leaf-50'}`
               }
+              to="/account/profile"
+            >
+              Tài khoản
+            </NavLink>
+            <NavLink
+              className={({ isActive }) =>
+                `rounded-md px-3 py-2 ${isActive ? 'bg-leaf-100 text-leaf-700' : 'hover:bg-leaf-50'}`
+              }
               to="/orders"
             >
               Đơn hàng của tôi

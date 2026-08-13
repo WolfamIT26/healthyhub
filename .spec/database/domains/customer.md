@@ -18,7 +18,7 @@ Lưu hồ sơ khách hàng, địa chỉ, phân nhóm và ghi chú chăm sóc đ
 | Entity | PK | Main Attributes / Thuộc tính chính | FK / Tham chiếu | Data Status |
 | --- | --- | --- | --- | --- |
 | `customer_profiles` | `id` | `tenant_id`, `customer_code`, `full_name`, `contact_info`, `customer_status`, `consent_state`, `marketing_opt_in_status` | `user_account_id` -> User nullable | active, guest, blocked, archived |
-| `customer_addresses` | `id` | `tenant_id`, `recipient_name`, `phone`, `address_text`, `is_default`, `address_status` | `customer_profile_id` | active, inactive, archived |
+| `customer_addresses` | `id` | `tenant_id`, `recipient_name`, `phone`, `country_code`, `province_city`, `district`, `ward`, `address_line`, `delivery_note`, `is_default`, `address_status` | `customer_profile_id` | active, archived |
 | `customer_segments` | `id` | `tenant_id`, `segment_type`, `segment_name`, `segment_rule`, `segment_status` | `customer_profile_id` nullable | active, inactive |
 | `support_notes` | `id` | `tenant_id`, `note_content`, `note_type`, `visibility_scope`, `noted_at` | `customer_profile_id`, `staff_profile_id` -> Staff | active, hidden |
 
@@ -56,7 +56,9 @@ Customer domain sở hữu hồ sơ và consent. Order giữ snapshot thông tin
 ## Data Validation / Validation dữ liệu
 
 - `customer_code` unique theo tenant.
-- Địa chỉ default chỉ nên có một bản active cho mỗi customer.
+- Địa chỉ default chỉ có một bản active cho mỗi customer; địa chỉ active đầu tiên tự trở thành default.
+- Address Book dùng cùng VN address contract của Shipping; không tạo danh mục province/district/ward giả khi chưa có authoritative geography source.
+- Sửa/xóa Address Book không cập nhật snapshot địa chỉ đã persist trong Order/Shipment.
 - `marketing_opt_in_status` phải được tôn trọng khi gửi notification marketing.
 
 ## Data Dictionary / Từ điển dữ liệu
@@ -66,5 +68,7 @@ Customer domain sở hữu hồ sơ và consent. Order giữ snapshot thông tin
 | `customer_code` | `customer_profiles` | Mã khách hàng nghiệp vụ. | Unique theo tenant. |
 | `contact_info` | `customer_profiles` | Email/phone liên hệ. | Bảo vệ privacy. |
 | `consent_state` | `customer_profiles` | Trạng thái đồng ý dùng dữ liệu. | Bắt buộc cho AI/marketing. |
-| `address_text` | `customer_addresses` | Địa chỉ giao hàng. | Đủ thông tin giao hàng. |
+| `country_code` | `customer_addresses` | Quốc gia giao hàng V1. | Bắt buộc `VN`. |
+| `province_city`, `district`, `ward` | `customer_addresses` | Khu vực giao hàng dạng free-text theo Shipping V1. | Province/district bắt buộc; ward nullable. |
+| `address_line`, `delivery_note` | `customer_addresses` | Địa chỉ cụ thể và ghi chú. | Address line bắt buộc; note nullable. |
 | `visibility_scope` | `support_notes` | Phạm vi xem ghi chú. | Staff/manager/admin theo quyền. |

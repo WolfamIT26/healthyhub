@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAuth } from '../features/auth/AuthContext';
 import { useCart } from '../features/cart/CartContext';
 import { checkoutApi } from '../features/checkout/checkoutApi';
+import { customerApi } from '../features/customer/customerApi';
 import { paymentApi } from '../features/payment/paymentApi';
 import { navigateToExternalUrl } from '../features/payment/paymentNavigation';
 import { CheckoutPage } from './CheckoutPage';
@@ -14,6 +15,9 @@ vi.mock('../features/auth/AuthContext', () => ({ useAuth: vi.fn() }));
 vi.mock('../features/cart/CartContext', () => ({ useCart: vi.fn() }));
 vi.mock('../features/checkout/checkoutApi', () => ({
   checkoutApi: { quoteShipping: vi.fn(), createOrder: vi.fn() },
+}));
+vi.mock('../features/customer/customerApi', () => ({
+  customerApi: { listAddresses: vi.fn() },
 }));
 vi.mock('../features/payment/paymentApi', () => ({
   paymentApi: {
@@ -82,6 +86,7 @@ describe('CheckoutPage', () => {
       available: true,
       estimatedDelivery: null,
     });
+    vi.mocked(customerApi.listAddresses).mockResolvedValue([]);
     vi.mocked(paymentApi.listMethods).mockResolvedValue([
       {
         code: 'cod',
@@ -169,6 +174,35 @@ describe('CheckoutPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Kiểm tra giao hàng' }));
     expect(await screen.findAllByText('Trường này là bắt buộc.')).toHaveLength(4);
     expect(checkoutApi.quoteShipping).not.toHaveBeenCalled();
+  });
+
+  it('prefills Checkout from the default saved address without sending an address id', async () => {
+    vi.mocked(customerApi.listAddresses).mockResolvedValue([
+      {
+        addressId: 'saved-1',
+        recipientName: 'Nguyễn Văn A',
+        phone: '0901234567',
+        countryCode: 'VN',
+        provinceCity: 'Hồ Chí Minh',
+        district: 'Quận 1',
+        ward: 'Bến Nghé',
+        addressLine: '12 Nguyễn Huệ',
+        note: null,
+        isDefault: true,
+        updatedAt: new Date().toISOString(),
+      },
+    ]);
+    renderPage();
+
+    expect(await screen.findByLabelText('Địa chỉ đã lưu')).toHaveValue('saved-1');
+    expect(screen.getByLabelText(/Địa chỉ cụ thể/)).toHaveValue('12 Nguyễn Huệ');
+    await userEvent.click(screen.getByRole('button', { name: 'Kiểm tra giao hàng' }));
+    expect(checkoutApi.quoteShipping).toHaveBeenCalledWith(
+      expect.objectContaining({ addressLine: '12 Nguyễn Huệ', countryCode: 'VN' }),
+    );
+    expect(checkoutApi.quoteShipping).not.toHaveBeenCalledWith(
+      expect.objectContaining({ addressId: expect.anything() }),
+    );
   });
 
   it('quotes Shipping, prevents duplicate confirm and only shows persisted success', async () => {

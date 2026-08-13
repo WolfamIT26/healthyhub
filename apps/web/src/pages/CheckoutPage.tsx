@@ -11,6 +11,7 @@ import {
   FormField,
   Input,
   Radio,
+  Select,
   Skeleton,
   SuccessState,
   Textarea,
@@ -19,6 +20,8 @@ import {
 import { LoadingState } from '../components/foundation/LoadingState';
 import { useAuth } from '../features/auth/AuthContext';
 import { useCart } from '../features/cart/CartContext';
+import { customerApi } from '../features/customer/customerApi';
+import type { CustomerAddress } from '../features/customer/customer.types';
 import { checkoutApi } from '../features/checkout/checkoutApi';
 import type {
   CheckoutAddress,
@@ -53,6 +56,9 @@ export function CheckoutPage() {
     note: '',
   });
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
+  const [savedAddresses, setSavedAddresses] = useState<CustomerAddress[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState('manual');
+  const [addressLoadError, setAddressLoadError] = useState(false);
   const [quote, setQuote] = useState<ShippingQuote | null>(null);
   const [paymentMethods, setPaymentMethods] = useState<readonly PaymentMethodReadModel[]>([
     {
@@ -88,9 +94,10 @@ export function CheckoutPage() {
     setPreparing(true);
     setError(null);
     try {
-      const [cartResult, paymentMethodResult] = await Promise.allSettled([
+      const [cartResult, paymentMethodResult, addressResult] = await Promise.allSettled([
         reloadCart(),
         paymentApi.listMethods(),
+        customerApi.listAddresses(),
       ]);
       if (cartResult.status === 'rejected') throw cartResult.reason;
       if (paymentMethodResult.status === 'fulfilled') {
@@ -121,6 +128,19 @@ export function CheckoutPage() {
         ]);
         setSelectedPaymentMethod('cod');
       }
+      if (addressResult.status === 'fulfilled') {
+        setSavedAddresses(addressResult.value);
+        setAddressLoadError(false);
+        const preferred =
+          addressResult.value.find((savedAddress) => savedAddress.isDefault) ??
+          addressResult.value[0];
+        if (preferred) {
+          setAddress(toCheckoutAddress(preferred));
+          setSelectedAddressId(preferred.addressId);
+        }
+      } else {
+        setAddressLoadError(true);
+      }
     } catch (loadError) {
       setError(apiError(loadError));
     } finally {
@@ -135,6 +155,7 @@ export function CheckoutPage() {
   function change(field: FieldName) {
     return (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setAddress((current) => ({ ...current, [field]: event.target.value }));
+      setSelectedAddressId('manual');
       setErrors((current) => ({ ...current, [field]: undefined }));
       setQuote(null);
       setError(null);
@@ -142,6 +163,19 @@ export function CheckoutPage() {
       setPaymentRedirectUrl(null);
       attemptKey.current = null;
     };
+  }
+
+  function selectSavedAddress(event: ChangeEvent<HTMLSelectElement>) {
+    const addressId = event.target.value;
+    setSelectedAddressId(addressId);
+    const savedAddress = savedAddresses.find((item) => item.addressId === addressId);
+    if (savedAddress) setAddress(toCheckoutAddress(savedAddress));
+    setErrors({});
+    setQuote(null);
+    setError(null);
+    setOrder(null);
+    setPaymentRedirectUrl(null);
+    attemptKey.current = null;
   }
 
   async function review(event: FormEvent) {
@@ -337,6 +371,33 @@ export function CheckoutPage() {
           <Card>
             <h2 className="text-xl font-bold">Thông tin người nhận</h2>
             <p className="mt-1 text-sm text-neutral-600">Email tài khoản: {auth.actor.email}</p>
+            {savedAddresses.length ? (
+              <FormField
+                id="checkout-saved-address"
+                label="Địa chỉ đã lưu"
+                helperText="Địa chỉ chỉ được dùng để điền form. Order lưu snapshot riêng khi đặt hàng."
+                className="mt-5"
+              >
+                <Select
+                  id="checkout-saved-address"
+                  value={selectedAddressId}
+                  onChange={selectSavedAddress}
+                >
+                  <option value="manual">Nhập địa chỉ khác</option>
+                  {savedAddresses.map((savedAddress) => (
+                    <option key={savedAddress.addressId} value={savedAddress.addressId}>
+                      {savedAddress.isDefault ? 'Mặc định — ' : ''}
+                      {savedAddress.recipientName}, {savedAddress.addressLine},{' '}
+                      {savedAddress.district}
+                    </option>
+                  ))}
+                </Select>
+              </FormField>
+            ) : addressLoadError ? (
+              <Alert tone="warning" className="mt-5">
+                Không tải được sổ địa chỉ. Bạn vẫn có thể nhập địa chỉ giao hàng bên dưới.
+              </Alert>
+            ) : null}
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <CheckoutField
                 field="recipientName"
@@ -509,6 +570,19 @@ export function CheckoutPage() {
       />
     </CheckoutShell>
   );
+}
+
+function toCheckoutAddress(address: CustomerAddress): CheckoutAddress {
+  return {
+    recipientName: address.recipientName,
+    phone: address.phone,
+    countryCode: 'VN',
+    provinceCity: address.provinceCity,
+    district: address.district,
+    ward: address.ward ?? '',
+    addressLine: address.addressLine,
+    note: address.note ?? '',
+  };
 }
 
 function CheckoutShell({ children }: { children: React.ReactNode }) {

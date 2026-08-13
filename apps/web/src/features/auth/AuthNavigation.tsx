@@ -32,6 +32,13 @@ export function AuthNavigation({ onNavigate }: { onNavigate?: () => void } = {})
         <>
           <Link
             className="inline-flex min-h-11 items-center rounded-control px-3 font-semibold hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            to="/account/profile"
+            onClick={onNavigate}
+          >
+            Tài khoản
+          </Link>
+          <Link
+            className="inline-flex min-h-11 items-center rounded-control px-3 font-semibold hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             to="/orders"
             onClick={onNavigate}
           >

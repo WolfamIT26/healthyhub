@@ -61,13 +61,15 @@ Customer API quản lý hồ sơ khách hàng, địa chỉ, phân khúc, lịch
 
 ## Request Contract / Contract request
 
-- Profile update dùng command input chỉ chứa field customer được phép sửa.
-- Address request gồm thông tin nhận hàng cần validate.
+- Profile update chỉ nhận `fullName`, `phone`; bắt buộc `X-Idempotency-Key`. Email/customerId/role/consent/audit field bị từ chối.
+- Address create/update dùng `recipientName`, `phone`, `countryCode=VN`, `provinceCity`, `district`, optional `ward`, `addressLine`, optional `note`, optional `isDefault`.
+- Mutation Address bắt buộc `X-Idempotency-Key`; create dedupe theo owner/key/payload hash.
 - Segment update cần action reason.
 
 ## Response Contract / Contract response
 
-- Profile response trả customer detail cho owner.
+- Profile response chỉ trả `fullName`, read-only `email`, `phone`, `updatedAt`.
+- Address response chỉ trả `addressId`, shipping fields an toàn, `isDefault`, `updatedAt`; không trả customerProfileId/audit/idempotency hash.
 - Admin customer detail trả customer summary, segment, order summary và loyalty summary theo quyền.
 - Không trả credential hoặc auth token.
 
@@ -76,7 +78,11 @@ Customer API quản lý hồ sơ khách hàng, địa chỉ, phân khúc, lịch
 - `NOT_FOUND.CUSTOMER.CUSTOMER_NOT_FOUND`
 - `BUSINESS.CUSTOMER.SEGMENT_NOT_ALLOWED`
 - `PERMISSION.CUSTOMER.OWNER_REQUIRED`
-- `VALIDATION.COMMON.INVALID_INPUT`
+- `NOT_FOUND.CUSTOMER.PROFILE_NOT_FOUND`
+- `NOT_FOUND.CUSTOMER.ADDRESS_NOT_FOUND`
+- `VALIDATION.CUSTOMER.INVALID_INPUT`
+- `VALIDATION.CUSTOMER.IDEMPOTENCY_KEY_INVALID`
+- `CONFLICT.CUSTOMER.IDEMPOTENCY_KEY_REUSED`
 
 ## Validation Rule / Quy tắc validation
 
@@ -123,7 +129,8 @@ Export customer data chỉ cho admin có quyền và theo privacy policy, chưa 
 
 ## Idempotency / Chống gửi lặp
 
-- Address delete nên idempotent.
+- Address create được dedupe theo hash của key và payload; raw key không persist.
+- Profile/address update là desired-state; Address delete idempotent.
 - Segment update theo desired state nên idempotent.
 
 ## Webhook / Webhook
@@ -133,4 +140,3 @@ Không áp dụng.
 ## AI Endpoint / Endpoint AI
 
 AI có thể dùng customer summary qua AI API nếu actor có quyền. Customer API không tạo AI endpoint riêng.
-

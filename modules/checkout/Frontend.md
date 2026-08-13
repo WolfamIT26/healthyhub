@@ -8,4 +8,5 @@
 - One idempotency key per submit attempt is reused after network failure and double submission is disabled.
 - For VNPAY, frontend calls payment intent after Order persistence and redirects to sandbox URL returned by backend.
 - Success uses the persisted Order response. Cart/count are not cleared because Cart lifecycle remains undecided.
+- Prompt 29 loads owner Address Book, selects the default for prefill, supports manual fallback and never sends saved address ID as Order authority.
 - Prompt 28 thêm link từ COD success tới `/orders/:orderId`; trang detail tự reload Order từ server.

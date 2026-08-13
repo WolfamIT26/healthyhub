@@ -1,5 +1,13 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## Customer Profile & Address V1 — Prompt 29
+
+Đã triển khai `/account/profile` và `/account/addresses` từ MySQL thật: Profile chỉ sửa full name/phone, Authentication email read-only; Address Book có CRUD, một default active, soft delete, create dedupe và owner isolation. Checkout dùng saved Address để prefill nhưng Order/Shipment luôn lưu snapshot riêng, nên sửa/xóa địa chỉ không đổi lịch sử. Typed OpenAPI giữ 196 operations; unit/frontend/MySQL/build/security/docs checks PASS. Browser Visual Verification **NOT RUN** vì runtime không expose in-app Browser/Node REPL connector; direct routes và server-state reload checks PASS.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
+File tổng hợp riêng: `docs/work-summaries/2026-08-13-01-prompt-29-customer-profile-address-v1.md`.
+
 ## Development Port Environment Fix — 2026-08-13
 
 Đã sửa đường nạp environment để `.env.development` tại workspace root thật sự điều khiển
