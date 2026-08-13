@@ -29,9 +29,17 @@ Mọi bảng dùng `id BIGINT UNSIGNED NOT NULL`, `tenant_id BIGINT UNSIGNED NOT
 | `customer_addresses` | `customer_profile_id` | `BIGINT UNSIGNED` | No | None | FK Customer. |
 | `customer_addresses` | `recipient_name` | `VARCHAR(255)` | No | None | Người nhận. |
 | `customer_addresses` | `phone` | `VARCHAR(32)` | No | None | Số nhận hàng. |
-| `customer_addresses` | `address_text` | `TEXT` | No | None | Địa chỉ đầy đủ. |
+| `customer_addresses` | `country_code` | `CHAR(2)` | No | `VN` | Shipping V1 chỉ nhận Việt Nam. |
+| `customer_addresses` | `province_city` | `VARCHAR(150)` | No | None | Tỉnh/thành dạng free-text. |
+| `customer_addresses` | `district` | `VARCHAR(150)` | No | None | Quận/huyện dạng free-text. |
+| `customer_addresses` | `ward` | `VARCHAR(150)` | Yes | `NULL` | Phường/xã tùy chọn. |
+| `customer_addresses` | `address_line` | `VARCHAR(500)` | No | None | Số nhà/tên đường. |
+| `customer_addresses` | `delivery_note` | `VARCHAR(500)` | Yes | `NULL` | Ghi chú giao hàng. |
 | `customer_addresses` | `is_default` | `TINYINT(1)` | No | `0` | Default address. |
-| `customer_addresses` | `address_status` | `VARCHAR(32)` | No | `active` | active, inactive, archived. |
+| `customer_addresses` | `address_status` | `VARCHAR(32)` | No | `active` | active, archived. |
+| `customer_addresses` | `idempotency_key_hash` | `CHAR(64)` | Yes | `NULL` | Hash key tạo địa chỉ; không lưu raw key. |
+| `customer_addresses` | `request_hash` | `CHAR(64)` | Yes | `NULL` | Phát hiện key reuse khác payload. |
+| `customer_addresses` | `active_default_customer_id` | `BIGINT UNSIGNED` | Yes | Generated | Customer ID khi row active/default/chưa xóa, ngược lại NULL. |
 | `customer_segments` | `customer_profile_id` | `BIGINT UNSIGNED` | Yes | `NULL` | Nullable nếu segment definition. |
 | `customer_segments` | `segment_type` | `VARCHAR(64)` | No | None | manual, rule, vip future. |
 | `customer_segments` | `segment_name` | `VARCHAR(150)` | No | None | Tên nhóm. |
@@ -49,7 +57,7 @@ Mọi bảng dùng `id BIGINT UNSIGNED NOT NULL`, `tenant_id BIGINT UNSIGNED NOT
 | Table | PK | FK | Unique Constraint | Check Constraint | Index |
 | --- | --- | --- | --- | --- | --- |
 | `customer_profiles` | `id` | `user_account_id` -> `user_accounts.id` | `(tenant_id, customer_code)`, `(tenant_id, user_account_id)` | `customer_status/consent_state` allowed | `idx_customers_status_created`, `idx_customers_email_phone_generated` |
-| `customer_addresses` | `id` | `customer_profile_id` | One active default per customer by migration rule | `is_default` 0/1 | `idx_customer_addresses_customer_status` |
+| `customer_addresses` | `id` | `customer_profile_id` RESTRICT | `(active_default_customer_id)`, `(tenant_id, customer_profile_id, idempotency_key_hash)` | `country_code = VN`, `is_default` 0/1, status active/archived | `idx_customer_addresses_customer_status` |
 | `customer_segments` | `id` | `customer_profile_id` | `(tenant_id, customer_profile_id, segment_type, segment_name)` | `segment_status` allowed | `idx_customer_segments_type_status` |
 | `support_notes` | `id` | `customer_profile_id`, `staff_profile_id` | None | `visibility_scope` allowed | `idx_support_notes_customer_time`, `idx_support_notes_staff_time` |
 

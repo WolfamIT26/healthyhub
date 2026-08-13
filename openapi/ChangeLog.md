@@ -1,5 +1,11 @@
 # OpenAPI ChangeLog / Lịch sử thay đổi OpenAPI
 
+## 2026-08-13 - Customer Profile & Address V1
+
+- Replaced generic Customer self schemas with typed Profile/Address contracts.
+- Removed generic pagination/filter parameters from owner Profile/Address reads.
+- Kept the operation inventory at 196 across 23 domains.
+
 ## 2026-08-12 - VNPAY Sandbox Verification Contract
 
 - Documented required signed Return/IPN query parameters.

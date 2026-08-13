@@ -14,8 +14,18 @@ describe('Authentication route guards', () => {
 
   it('redirects a guest away from a protected route', () => {
     vi.mocked(useAuth).mockReturnValue({ ...baseAuth, status: 'guest' });
-    render(<MemoryRouter initialEntries={['/customer']}><Routes><Route path="/customer" element={<RouteGuard area="customer"><p>Protected</p></RouteGuard>} /><Route path="/login" element={<p>Login route</p>} /></Routes></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/account/profile']}><Routes><Route path="/account/profile" element={<RouteGuard area="customer"><p>Protected</p></RouteGuard>} /><Route path="/login" element={<p>Login route</p>} /></Routes></MemoryRouter>);
     expect(screen.getByText('Login route')).toBeInTheDocument();
+  });
+
+  it('redirects an Internal account away from Customer account routes', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      ...baseAuth,
+      status: 'authenticated',
+      hasRole: vi.fn(() => false),
+    });
+    render(<MemoryRouter initialEntries={['/account/addresses']}><Routes><Route path="/account/addresses" element={<RouteGuard area="customer"><p>Addresses</p></RouteGuard>} /><Route path="/403" element={<p>Forbidden route</p>} /></Routes></MemoryRouter>);
+    expect(screen.getByText('Forbidden route')).toBeInTheDocument();
   });
 
   it('redirects an authenticated user away from guest-only routes', () => {

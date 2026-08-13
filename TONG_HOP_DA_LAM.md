@@ -1,5 +1,13 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## Customer Profile & Address V1 — Prompt 29
+
+Đã triển khai `/account/profile` và `/account/addresses` từ MySQL thật: Profile chỉ sửa full name/phone, Authentication email read-only; Address Book có CRUD, một default active, soft delete, create dedupe và owner isolation. Checkout dùng saved Address để prefill nhưng Order/Shipment luôn lưu snapshot riêng, nên sửa/xóa địa chỉ không đổi lịch sử. Typed OpenAPI giữ 196 operations; unit/frontend/MySQL/build/security/docs checks PASS. Browser Visual Verification **NOT RUN** vì runtime không expose in-app Browser/Node REPL connector; direct routes và server-state reload checks PASS.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
+File tổng hợp riêng: `docs/work-summaries/2026-08-13-01-prompt-29-customer-profile-address-v1.md`.
+
 ## VNPAY Sandbox E2E Verification — Prompt 27.3
 
 Đã audit official VNPAY contract và sửa các lỗi trực tiếp: checksum URL encoding, read-only Return, authoritative IPN, terminal/reference/Order-Payment-attempt amount validation, status mapping, attempt resolution, locked transaction, provider-event concurrency/dedupe, QueryDr timeout và Docker/OpenAPI config. Automated unit/frontend/MySQL verification PASS; database đã kiểm tra Order/OrderItem/Payment/PaymentAttempt/Shipment/address/provider-event và COD regression. Sandbox E2E/IPN thật vẫn **BLOCKED — SANDBOX CREDENTIALS REQUIRED** vì local runtime chưa có terminal/hash secret/endpoints và public HTTPS IPN callback. Không thêm credential, không fake success và không bắt đầu Prompt 28.

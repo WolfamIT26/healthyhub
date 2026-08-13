@@ -31,6 +31,7 @@ const paymentGatewayProvider = {
     { provide: PAYMENT_PROVIDER_EVENT_REPOSITORY, useClass: TypeOrmPaymentProviderEventRepository },
   ],
   exports: [
+    'HealthyHubEnvironment',
     PaymentMethodReader,
     PaymentLifecyclePolicy,
     OrderPaymentMappingPolicy,

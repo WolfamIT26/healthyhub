@@ -14,5 +14,6 @@
 - [x] Kiểm tra `operationId` không trùng.
 - [x] Đối chiếu số operation với `.spec/api/domains`.
 - [x] Mô tả đầy đủ signed VNPAY Return/IPN query parameters và callback authority.
+- [x] Typed Customer Profile/Address requests, safe responses và exact self-read parameters.
 - [ ] Sinh DTO schema chi tiết theo từng domain ở phase sau.
 - [ ] Chạy semantic OpenAPI validator chuyên dụng khi dự án có công cụ phù hợp.

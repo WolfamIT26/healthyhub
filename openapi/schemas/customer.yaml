@@ -1,0 +1,125 @@
+UpdateCustomerProfileRequest:
+  type: object
+  additionalProperties: false
+  minProperties: 1
+  properties:
+    fullName: { type: string, minLength: 1, maxLength: 255 }
+    phone:
+      type: [string, "null"]
+      maxLength: 32
+      pattern: "^(?:0[0-9]{9,10}|\\+84[0-9]{9,10})$"
+CustomerProfile:
+  type: object
+  additionalProperties: false
+  required: [fullName, email, phone, updatedAt]
+  properties:
+    fullName: { type: string }
+    email: { type: string, format: email, readOnly: true }
+    phone: { type: [string, "null"] }
+    updatedAt: { type: string, format: date-time }
+CustomerAddressFields:
+  type: object
+  required: [recipientName, phone, countryCode, provinceCity, district, addressLine]
+  properties:
+    recipientName: { type: string, minLength: 1, maxLength: 255 }
+    phone:
+      type: string
+      maxLength: 32
+      pattern: "^(?:0[0-9]{9,10}|\\+84[0-9]{9,10})$"
+    countryCode: { type: string, const: VN }
+    provinceCity: { type: string, minLength: 1, maxLength: 150 }
+    district: { type: string, minLength: 1, maxLength: 150 }
+    ward: { type: [string, "null"], minLength: 1, maxLength: 150 }
+    addressLine: { type: string, minLength: 1, maxLength: 500 }
+    note: { type: [string, "null"], maxLength: 500 }
+    isDefault: { type: boolean, default: false }
+CreateCustomerAddressRequest:
+  allOf:
+    - $ref: "#/CustomerAddressFields"
+  unevaluatedProperties: false
+UpdateCustomerAddressRequest:
+  type: object
+  additionalProperties: false
+  minProperties: 1
+  properties:
+    recipientName: { type: string, minLength: 1, maxLength: 255 }
+    phone:
+      type: string
+      maxLength: 32
+      pattern: "^(?:0[0-9]{9,10}|\\+84[0-9]{9,10})$"
+    countryCode: { type: string, const: VN }
+    provinceCity: { type: string, minLength: 1, maxLength: 150 }
+    district: { type: string, minLength: 1, maxLength: 150 }
+    ward: { type: [string, "null"], maxLength: 150 }
+    addressLine: { type: string, minLength: 1, maxLength: 500 }
+    note: { type: [string, "null"], maxLength: 500 }
+    isDefault: { type: boolean }
+CustomerAddress:
+  unevaluatedProperties: false
+  allOf:
+    - $ref: "#/CustomerAddressFields"
+    - type: object
+      required: [addressId, updatedAt]
+      properties:
+        addressId: { type: string }
+        updatedAt: { type: string, format: date-time }
+CustomerProfileResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data: { $ref: "#/CustomerProfile" }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }
+CustomerAddressResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data: { $ref: "#/CustomerAddress" }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }
+CustomerAddressListResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data:
+      type: array
+      items: { $ref: "#/CustomerAddress" }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }
+CustomerAddressDeletedResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data:
+      type: object
+      additionalProperties: false
+      required: [addressId, deleted]
+      properties:
+        addressId: { type: string }
+        deleted: { type: boolean, const: true }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }

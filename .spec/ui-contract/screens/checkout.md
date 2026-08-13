@@ -30,6 +30,8 @@ Guest limited hoặc Customer JWT theo policy.
 
 Validated cart, customer/address info, shipping quote, payment method, order summary, warnings.
 
+Saved address chỉ prefill Shipping form. Checkout không gửi `addressId` làm Order authority; Order/Shipment luôn persist immutable address snapshot từ form đã validate. Manual entry vẫn khả dụng nếu Address Book trống hoặc load lỗi.
+
 ## UI Sections / Khu vực UI
 
 Customer info, address, shipping method/quote, payment method, order summary, confirmation action.
@@ -109,4 +111,3 @@ Form field có label, lỗi gắn field, tổng tiền hiển thị text rõ, co
 ## SEO Metadata / SEO metadata
 
 Noindex vì checkout là dữ liệu cá nhân/session.
-

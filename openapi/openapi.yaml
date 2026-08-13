@@ -954,14 +954,13 @@ paths:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/PageSizeParam"
-        - $ref: "#/components/parameters/QParam"
-        - $ref: "#/components/parameters/SortParam"
-        - $ref: "#/components/parameters/FilterParam"
       responses:
         "200":
-          $ref: "#/components/responses/PaginatedOk"
+          description: "Hồ sơ Customer owner-scoped; email là read-only Authentication identity."
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/customer.yaml#/CustomerProfileResponseEnvelope"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -1003,13 +1002,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GenericCommandRequest"
-            examples:
-              default:
-                $ref: "#/components/examples/GenericCommandRequest"
+              $ref: "./schemas/customer.yaml#/UpdateCustomerProfileRequest"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          description: "Hồ sơ Customer sau cập nhật."
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/customer.yaml#/CustomerProfileResponseEnvelope"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -1048,14 +1048,13 @@ paths:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/PageSizeParam"
-        - $ref: "#/components/parameters/QParam"
-        - $ref: "#/components/parameters/SortParam"
-        - $ref: "#/components/parameters/FilterParam"
       responses:
         "200":
-          $ref: "#/components/responses/PaginatedOk"
+          description: "Danh sách địa chỉ active của Customer; địa chỉ mặc định đứng trước."
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/customer.yaml#/CustomerAddressListResponseEnvelope"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -1097,13 +1096,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GenericCommandRequest"
-            examples:
-              default:
-                $ref: "#/components/examples/GenericCommandRequest"
+              $ref: "./schemas/customer.yaml#/CreateCustomerAddressRequest"
       responses:
         "201":
-          $ref: "#/components/responses/Created"
+          description: "Địa chỉ owner-scoped đã được tạo; địa chỉ đầu tiên tự thành mặc định."
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/customer.yaml#/CustomerAddressResponseEnvelope"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -1149,13 +1149,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GenericCommandRequest"
-            examples:
-              default:
-                $ref: "#/components/examples/GenericCommandRequest"
+              $ref: "./schemas/customer.yaml#/UpdateCustomerAddressRequest"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          description: "Địa chỉ owner-scoped sau cập nhật."
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/customer.yaml#/CustomerAddressResponseEnvelope"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -1199,7 +1200,11 @@ paths:
         - $ref: "#/components/parameters/IdempotencyKeyHeader"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          description: "Xóa mềm địa chỉ; nếu xóa mặc định thì hệ thống chọn địa chỉ active còn lại."
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/customer.yaml#/CustomerAddressDeletedResponseEnvelope"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":

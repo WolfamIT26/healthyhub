@@ -18,12 +18,13 @@
 
 ## Validation Status / Trạng thái kiểm tra
 
-- YAML syntax: Passed for 8 YAML files in `openapi`.
+- YAML syntax: Passed for 9 YAML files in `openapi`.
 - `$ref` existence check: Passed for local/external references.
 - `operationId` uniqueness: Passed, 196 unique operationId.
 - API Spec endpoint count match: Passed, 196 operation from `.spec/api/domains`.
 - Secret/example scan: Passed for obvious unfinished-marker or secret patterns in `openapi`.
 - Prompt 27.3: VNPAY Return/IPN signed query parameters and authority notes documented; validation remains 196/196 operations.
+- Prompt 29: sáu Customer self operations dùng typed Profile/Address request/response, exact non-paginated reads và safe field boundary; validation vẫn 196/196 operations.
 
 ## Limitations / Giới hạn
 

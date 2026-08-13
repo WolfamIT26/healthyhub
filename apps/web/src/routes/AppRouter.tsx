@@ -23,6 +23,8 @@ import { CartPage } from '../pages/CartPage';
 import { CheckoutPage } from '../pages/CheckoutPage';
 import { PaymentReturnPage } from '../pages/PaymentReturnPage';
 import { PaymentResultPage } from '../pages/PaymentResultPage';
+import { AccountAddressesPage } from '../pages/AccountAddressesPage';
+import { AccountProfilePage } from '../pages/AccountProfilePage';
 
 export function AppRouter() {
   return (
@@ -116,6 +118,23 @@ export function AppRouter() {
         <Route path="/ai" element={<ComingSoonPage title="Trợ lý AI" />} />
       </Route>
       <Route element={<CustomerLayout />}>
+        <Route path="/account" element={<Navigate to="/account/profile" replace />} />
+        <Route
+          path="/account/profile"
+          element={
+            <RouteGuard area="customer">
+              <AccountProfilePage />
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/account/addresses"
+          element={
+            <RouteGuard area="customer">
+              <AccountAddressesPage />
+            </RouteGuard>
+          }
+        />
         <Route
           path="/customer"
           element={

@@ -1,7 +1,7 @@
-# Customer Ownership Authority Report
+# Customer Profile & Address Report / Báo cáo Customer Profile & Address
 
-**Status: READY for Cart consumption.**
+Prompt 29 đưa Customer account area lên persistence thật. Profile response ghép CustomerProfile với read-only email từ Authentication; mutation chỉ cho fullName/phone. Address Book dùng structured VN fields của Shipping V1, default uniqueness, create dedupe và soft delete.
 
-`customer_profiles.user_account_id` có unique ownership mapping và FK tới Authentication account. `CustomerOwnerResolver` chỉ nhận authenticated context, yêu cầu CUSTOMER role và trả active CustomerProfile; không nhận owner ID từ request.
+Owner derive từ JWT → active CustomerProfile; Internal bị deny, ID của owner khác trả 404. DTO/server validation từ chối customerId/email/role/audit metadata. Response không expose internal IDs/hashes.
 
-Register lifecycle đã tạo CustomerProfile. Email verification không tham gia owner resolution, nên unverified Customer vẫn dùng Cart; internal account không được map thành Customer.
+Checkout load Address Book để prefill form nhưng vẫn hỗ trợ nhập tay. Order create nhận address values hiện hữu và lưu ShippingAddress snapshot riêng; sửa/xóa saved Address không hồi tố Order cũ. Shipping fee authority và Payment/VNPAY không thay đổi.

@@ -45,6 +45,12 @@
 - Ghi rõ browser return read-only và IPN authoritative trong operation description.
 - Không thêm operation, credential, secret example hoặc provider mới.
 
+## Prompt 29 / Prompt 29
+
+- Thêm `schemas/customer.yaml` cho editable Profile, structured VN Address, list/single/delete envelopes.
+- Thay generic schemas ở sáu Customer self operations, bỏ pagination/filter khỏi hai singleton/small-list reads.
+- Giữ owner/JWT/idempotency/error boundary và operation inventory 196/196.
+
 ## Limits / Giới hạn
 
 - Chưa chạy semantic OpenAPI validator chuyên dụng vì framework hiện chưa có dependency validator và Prompt yêu cầu không cài thêm công nghệ mới.
