@@ -2,7 +2,7 @@
 
 ## Phạm vi
 
-Route `/products` cung cấp Catalog presentation chạy hoàn toàn ở frontend. Product backend, Cart/Wishlist persistence API, Review API và AI Search runtime chưa được triển khai; Cart/Wishlist chỉ có transient frontend foundation.
+Route `/products` dùng typed Product presentation data hiện hữu. Wishlist membership đã dùng server persistence/API Prompt 30 qua shared `WishlistButton`; Product catalog backend, Review API và AI Search runtime vẫn ngoài scope tài liệu này.
 
 ## Product model và dữ liệu
 

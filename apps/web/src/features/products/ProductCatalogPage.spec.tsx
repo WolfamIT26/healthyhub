@@ -10,6 +10,19 @@ import { WishlistProvider } from '../wishlist/WishlistContext';
 import { CartProvider } from '../cart/CartContext';
 
 vi.mock('../auth/AuthContext', () => ({ useAuth: vi.fn() }));
+vi.mock('../wishlist/wishlistApi', () => ({
+  wishlistApi: {
+    get: vi.fn().mockResolvedValue({
+      items: [],
+      page: 1,
+      pageSize: 60,
+      totalItems: 0,
+      totalPages: 0,
+    }),
+    add: vi.fn(),
+    remove: vi.fn(),
+  },
+}));
 
 const guestAuth = {
   status: 'guest' as const,

@@ -26,6 +26,24 @@ CartCreated:
     application/json:
       schema:
         $ref: "../schemas/cart.yaml#/CartResponseEnvelope"
+WishlistListOk:
+  description: "Wishlist owner-scoped với Product/Inventory read model hiện hành."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/wishlist.yaml#/WishlistListResponseEnvelope"
+WishlistItemCreated:
+  description: "Wishlist item đã được thêm hoặc trả lại idempotently nếu đã tồn tại."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/wishlist.yaml#/WishlistItemResponseEnvelope"
+WishlistMutationOk:
+  description: "Sản phẩm đã được loại khỏi Wishlist của Customer hiện tại."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/wishlist.yaml#/WishlistMutationResponseEnvelope"
 OrderCreated:
   description: "Order snapshot đã được tạo atomically từ Cart và authority hiện hành. COD/Shipping bắt đầu ở pending."
   content:

@@ -3775,14 +3775,17 @@ paths:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/PageSizeParam"
-        - $ref: "#/components/parameters/QParam"
-        - $ref: "#/components/parameters/SortParam"
-        - $ref: "#/components/parameters/FilterParam"
+        - name: page
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: pageSize
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 60, default: 20 }
       responses:
         "200":
-          $ref: "#/components/responses/PaginatedOk"
+          $ref: "./responses/common.yaml#/WishlistListOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -3805,7 +3808,7 @@ paths:
         Ghi chú quyền: Owner.
         Xác thực: Customer JWT.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
-        Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
+        Idempotency: duplicate Product add là no-op theo unique persistence; không yêu cầu client key.
       tags:
         - "Wishlist"
       security:
@@ -3813,25 +3816,21 @@ paths:
       x-permission: "Owner"
       x-auth-level: "Customer JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
-      x-idempotency-required: true
+      x-idempotency-required: false
       x-source: ".spec/api/domains/wishlist.md"
       parameters:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GenericCommandRequest"
-            examples:
-              default:
-                $ref: "#/components/examples/GenericCommandRequest"
+              $ref: "./schemas/wishlist.yaml#/AddWishlistItemRequest"
       responses:
         "201":
-          $ref: "#/components/responses/Created"
+          $ref: "./responses/common.yaml#/WishlistItemCreated"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -3856,7 +3855,7 @@ paths:
         Ghi chú quyền: Owner.
         Xác thực: Customer JWT.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
-        Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
+        Idempotency: item lifecycle được soft-remove; không yêu cầu client key.
       tags:
         - "Wishlist"
       security:
@@ -3864,17 +3863,16 @@ paths:
       x-permission: "Owner"
       x-auth-level: "Customer JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
-      x-idempotency-required: true
+      x-idempotency-required: false
       x-source: ".spec/api/domains/wishlist.md"
       parameters:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
         - $ref: "#/components/parameters/WishlistItemIdPath"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/WishlistMutationOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -3901,7 +3899,7 @@ paths:
         Ghi chú quyền: Owner.
         Xác thực: Customer JWT.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
-        Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
+        Idempotency: remove theo Product là no-op nếu item đã vắng; không yêu cầu client key.
       tags:
         - "Wishlist"
       security:
@@ -3909,17 +3907,16 @@ paths:
       x-permission: "Owner"
       x-auth-level: "Customer JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
-      x-idempotency-required: true
+      x-idempotency-required: false
       x-source: ".spec/api/domains/wishlist.md"
       parameters:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
         - $ref: "#/components/parameters/ProductIdPath"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/WishlistMutationOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":

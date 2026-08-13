@@ -8,7 +8,7 @@
 | Dependency | Authentication, Products, Customers |
 | Version | Version 1 |
 | Owner | Product Owner |
-| Status | Draft for business specification |
+| Status | Executable V1 — implemented in Prompt 30 |
 
 ## Overview / Tổng quan
 
@@ -20,7 +20,7 @@ Tăng khả năng quay lại mua hàng, hỗ trợ cá nhân hóa và tạo tín
 
 ## Scope / Phạm vi
 
-Trong phạm vi: lưu/xóa sản phẩm yêu thích, xem danh sách yêu thích, dùng tín hiệu cho gợi ý sau này. Ngoài phạm vi: database wishlist, API wishlist, UI wishlist.
+Trong phạm vi V1 executable: persistence private owner-only, list/add/remove, duplicate protection và UI server sync. Wishlist sharing, notification, recommendation và AI ngoài phạm vi Prompt 30.
 
 ## Requirement / Yêu cầu
 
@@ -65,7 +65,7 @@ Customer/Member/VIP quản lý wishlist của chính mình. Staff/Admin không x
 - Customer lưu và xóa sản phẩm yêu thích.
 - Wishlist không trùng sản phẩm.
 - Wishlist phản ánh trạng thái sản phẩm hiện tại.
-- Dữ liệu wishlist sẵn sàng làm tín hiệu AI nếu có consent/policy.
+- Reload/login lại cùng Customer vẫn đọc đúng membership từ server.
 
 ## Edge Cases / Trường hợp biên
 
@@ -83,5 +83,11 @@ Customer/Member/VIP quản lý wishlist của chính mình. Staff/Admin không x
 
 - Wishlist sharing.
 - Price drop notification.
-- AI recommendation từ wishlist.
+- AI recommendation từ wishlist khi có contract/consent riêng.
 
+## Persistence Authority / Authority persistence
+
+- Một default private Wishlist được tạo lazy cho active CustomerProfile.
+- Customer owner derive từ JWT; client không gửi `customerId`.
+- Membership nằm trong MySQL; Product/Inventory cung cấp tên, giá và availability hiện hành.
+- Logout chỉ clear client state, không xóa Wishlist server; account switch remount state theo actor.

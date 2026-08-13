@@ -9,6 +9,8 @@ export interface ProductCommerceSnapshot {
   slug: string;
   currentPrice: string;
   currency: 'VND';
+  publiclyVisible: boolean;
+  sellableStatus: ProductEntity['sellableStatus'];
   sellable: boolean;
 }
 
@@ -33,6 +35,8 @@ export class ProductCommerceReader {
       slug: product.slug,
       currentPrice: product.basePrice,
       currency: 'VND',
+      publiclyVisible: product.productStatus === 'active' && product.productVisibility === 'public',
+      sellableStatus: product.sellableStatus,
       sellable:
         product.productStatus === 'active' &&
         product.productVisibility === 'public' &&

@@ -17,6 +17,19 @@ import { catalogProducts } from '../products/catalog.data';
 
 vi.mock('../auth/AuthContext', () => ({ useAuth: vi.fn() }));
 vi.mock('../auth/authApi', () => ({ authApi: { resendVerification: vi.fn() } }));
+vi.mock('../wishlist/wishlistApi', () => ({
+  wishlistApi: {
+    get: vi.fn().mockResolvedValue({
+      items: [],
+      page: 1,
+      pageSize: 60,
+      totalItems: 0,
+      totalPages: 0,
+    }),
+    add: vi.fn(),
+    remove: vi.fn(),
+  },
+}));
 vi.mock('./cartApi', () => ({
   cartApi: { get: vi.fn(), add: vi.fn(), update: vi.fn(), remove: vi.fn() },
 }));

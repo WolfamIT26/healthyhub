@@ -163,7 +163,8 @@ healthyhub/
 │   ├── payment/
 │   ├── products/
 │   ├── reviews/
-│   └── users/
+│   ├── users/
+│   └── wishlist/
 ├── openapi/
 │   ├── examples/
 │   ├── parameters/

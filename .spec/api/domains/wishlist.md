@@ -49,20 +49,22 @@ Wishlist API quản lý danh sách sản phẩm khách hàng lưu để xem ho�
 
 ## Request Contract / Contract request
 
-- Add request gồm productId.
+- Add request typed chỉ gồm `productId`; `additionalProperties=false`.
 - Delete theo wishlistItemId hoặc productId.
+- API không nhận `customerId`; owner được derive từ Customer JWT qua active CustomerProfile.
 
 ## Response Contract / Contract response
 
-- Wishlist list trả product summary, stock status và addedAt.
-- Delete trả success envelope.
+- Wishlist list trả `items`, `page`, `pageSize`, `totalItems`, `totalPages`.
+- Item trả safe current Product summary, availability và `addedAt`; không trả Wishlist/customer/audit metadata nội bộ.
+- Add trả item authoritative; Delete trả `{ productId, deleted: true }` trong standard success envelope.
 
 ## Error Contract / Contract lỗi
 
-- `BUSINESS.WISHLIST.ALREADY_EXISTS`
 - `NOT_FOUND.WISHLIST.ITEM_NOT_FOUND`
 - `PERMISSION.WISHLIST.OWNER_REQUIRED`
 - `NOT_FOUND.PRODUCT.PRODUCT_NOT_FOUND`
+- Duplicate add không phải lỗi; trả item active hiện hữu.
 
 ## Validation Rule / Quy tắc validation
 
@@ -72,23 +74,25 @@ Wishlist API quản lý danh sách sản phẩm khách hàng lưu để xem ho�
 ## Business Rule / Quy tắc nghiệp vụ
 
 - Wishlist không giữ giá cố định; giá lấy từ Product khi hiển thị.
-- Product archived có thể vẫn hiện trạng thái unavailable cho owner hoặc bị ẩn tùy policy.
+- Product đã lưu nhưng không còn public/active được trả dạng `UNAVAILABLE` không kèm metadata nhạy cảm.
+- Product hết hàng vẫn được add và hiển thị `OUT_OF_STOCK`.
+- Internal account không dùng Customer Wishlist.
 
 ## Pagination / Phân trang
 
-- Wishlist list dùng page pagination nếu nhiều item, default 20.
+- Wishlist list dùng page pagination, default 20, max 60 và stable sort `savedAt DESC, id DESC`.
 
 ## Filter / Lọc
 
-- Có thể lọc theo stockStatus hoặc categoryId nếu endpoint hỗ trợ sau.
+- V1 không nhận filter chưa executable.
 
 ## Search / Tìm kiếm
 
-- Search theo product name trong wishlist nếu cần.
+- V1 không nhận search chưa executable.
 
 ## Sort / Sắp xếp
 
-- Default sort: `createdAt` desc.
+- Default sort: `savedAt` desc rồi `id` desc; client không chọn sort trong V1.
 
 ## Upload / Upload
 
@@ -104,8 +108,8 @@ Không áp dụng.
 
 ## Idempotency / Chống gửi lặp
 
-- Add item nên idempotent theo productId.
-- Delete item nên idempotent.
+- Add idempotent theo unique Wishlist/Product lifecycle và Customer row lock; không yêu cầu client idempotency key.
+- Delete theo Product là idempotent. Delete theo item không thuộc owner trả cùng 404 như item không tồn tại.
 
 ## Webhook / Webhook
 
@@ -113,5 +117,8 @@ Không áp dụng.
 
 ## AI Endpoint / Endpoint AI
 
-AI recommendation có thể dùng wishlist context qua AI API nếu customer cho phép.
+Không có AI endpoint trong V1.
 
+## Executable Decision / Quyết định đã thực thi
+
+Prompt 30 triển khai một default private Wishlist lazy-created cho mỗi Customer trên `wishlists` và `wishlist_items`. Membership là persistence authority; giá và availability luôn đọc lại từ Product/Inventory authority hiện hành. Double-click/concurrent add được serialize và DB unique constraint bảo vệ.

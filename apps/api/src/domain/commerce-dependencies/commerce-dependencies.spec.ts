@@ -25,6 +25,8 @@ describe('Cart minimum executable dependencies', () => {
       slug: 'sua-yen-mach',
       currentPrice: '69000.00',
       currency: 'VND',
+      publiclyVisible: true,
+      sellableStatus: 'sellable',
       sellable: true,
     });
     expect(repository.findById).toHaveBeenCalledWith('101');

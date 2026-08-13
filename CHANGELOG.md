@@ -1,5 +1,24 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.16.0] - 2026-08-13
+
+### Added / Đã thêm
+
+- Thêm `wishlists`/`wishlist_items`, migration và Customer-only typed list/add/remove API.
+- Thêm owner isolation, Product validation, out-of-stock/unavailable read mapping và concurrent duplicate protection.
+- Thêm Wishlist API/frontend/MySQL tests cùng OpenAPI schemas; operation inventory giữ 196.
+
+### Changed / Đã thay đổi
+
+- Chuyển `WishlistContext` từ React memory sang server source of truth; reload/login lại phục hồi dữ liệu.
+- Logout/account switch clear client state theo actor nhưng không xóa Wishlist trên server.
+
+### Notes / Ghi chú
+
+- Giữ `/wishlist`, Product Catalog/Detail heart UX và không dùng browser storage.
+- Lint/typecheck/build, 293 unit tests, 12 MySQL tests, OpenAPI/secrets/docs/format/diff checks PASS.
+- `VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
 ## [0.15.0] - 2026-08-13
 
 ### Added / Đã thêm

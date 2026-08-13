@@ -22,6 +22,7 @@ export function WishlistButton({
   const navigate = useNavigate();
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
   const saved = wishlist.has(productId);
+  const pending = wishlist.isPending(productId);
   const label = saved ? `Xóa ${productName} khỏi yêu thích` : `Thêm ${productName} vào yêu thích`;
 
   function toggle() {
@@ -29,13 +30,19 @@ export function WishlistButton({
       setLoginPromptOpen(true);
       return;
     }
-    wishlist.toggle(productId);
+    void wishlist.toggle(productId).catch(() => undefined);
   }
 
   return (
     <>
       {compact ? (
-        <IconButton label={label} aria-pressed={saved} className={className} onClick={toggle}>
+        <IconButton
+          label={label}
+          aria-pressed={saved}
+          className={className}
+          disabled={pending}
+          onClick={toggle}
+        >
           <span aria-hidden="true">{saved ? '♥' : '♡'}</span>
         </IconButton>
       ) : (
@@ -45,10 +52,11 @@ export function WishlistButton({
           aria-label={label}
           aria-pressed={saved}
           className={className}
+          disabled={pending}
           onClick={toggle}
         >
           <span aria-hidden="true">{saved ? '♥' : '♡'}</span>
-          {saved ? 'Đã yêu thích' : 'Thêm vào yêu thích'}
+          {pending ? 'Đang cập nhật...' : saved ? 'Đã yêu thích' : 'Thêm vào yêu thích'}
         </Button>
       )}
       <ConfirmDialog

@@ -4,7 +4,7 @@
 
 ## Phạm vi
 
-Route `/products/:slug` resolve sản phẩm từ typed presentation data của Product Catalog V1. Trang không gọi Product, Cart, Wishlist, Review hay AI API; Cart và Wishlist chỉ là memory-only frontend foundation.
+Route `/products/:slug` resolve sản phẩm từ typed presentation data của Product Catalog V1. Cart và Wishlist actions dùng persistence API hiện hữu; Product detail, Review và AI runtime vẫn không được giả lập trong trang.
 
 ## Nội dung
 

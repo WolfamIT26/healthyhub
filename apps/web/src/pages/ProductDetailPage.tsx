@@ -225,8 +225,8 @@ function ProductDetailContent({
                 </IconButton>
               </div>
               <p id="commerce-foundation-note" className="mt-3 text-sm leading-6 text-neutral-600">
-                Cart chưa được triển khai. Wishlist hiện dùng frontend foundation và không có server
-                persistence.
+                Giá và tồn kho được xác minh lại bởi server khi thêm vào giỏ. Wishlist được đồng bộ
+                theo tài khoản Customer.
               </p>
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 <AddToCartButton
