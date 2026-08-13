@@ -15,8 +15,13 @@ export class TypeOrmCartRepository implements CartRepository {
     });
   }
 
-  async findOrCreateActive(customerProfileId: string, actorUserAccountId: string): Promise<CartEntity> {
-    return this.dataSource.transaction((manager) => this.findOrCreateLocked(manager, customerProfileId, actorUserAccountId));
+  async findOrCreateActive(
+    customerProfileId: string,
+    actorUserAccountId: string,
+  ): Promise<CartEntity> {
+    return this.dataSource.transaction((manager) =>
+      this.findOrCreateLocked(manager, customerProfileId, actorUserAccountId),
+    );
   }
 
   listActiveItems(cartId: string): Promise<CartItemEntity[]> {
@@ -26,7 +31,13 @@ export class TypeOrmCartRepository implements CartRepository {
     });
   }
 
-  async addOrMerge(customerProfileId: string, actorUserAccountId: string, productId: string, quantity: number, maximumQuantity: number): Promise<boolean> {
+  async addOrMerge(
+    customerProfileId: string,
+    actorUserAccountId: string,
+    productId: string,
+    quantity: number,
+    maximumQuantity: number,
+  ): Promise<boolean> {
     return this.dataSource.transaction(async (manager) => {
       const cart = await this.findOrCreateLocked(manager, customerProfileId, actorUserAccountId);
       const items = manager.getRepository(CartItemEntity);
@@ -59,16 +70,30 @@ export class TypeOrmCartRepository implements CartRepository {
         await this.touchCart(manager, cart.id, actorUserAccountId);
         return true;
       }
-      await items.save(items.create({
-        tenantId: '1', cartId: cart.id, productId, quantity, itemPriceSnapshot: null,
-        itemStatus: 'active', addedAt: new Date(), createdBy: actorUserAccountId, updatedBy: actorUserAccountId,
-      }));
+      await items.save(
+        items.create({
+          tenantId: '1',
+          cartId: cart.id,
+          productId,
+          quantity,
+          itemPriceSnapshot: null,
+          itemStatus: 'active',
+          addedAt: new Date(),
+          createdBy: actorUserAccountId,
+          updatedBy: actorUserAccountId,
+        }),
+      );
       await this.touchCart(manager, cart.id, actorUserAccountId);
       return true;
     });
   }
 
-  async updateQuantity(customerProfileId: string, actorUserAccountId: string, cartItemId: string, quantity: number): Promise<boolean> {
+  async updateQuantity(
+    customerProfileId: string,
+    actorUserAccountId: string,
+    cartItemId: string,
+    quantity: number,
+  ): Promise<boolean> {
     return this.dataSource.transaction(async (manager) => {
       const item = await this.findOwnedItem(manager, customerProfileId, cartItemId, true);
       if (!item) return false;
@@ -80,7 +105,11 @@ export class TypeOrmCartRepository implements CartRepository {
     });
   }
 
-  async remove(customerProfileId: string, actorUserAccountId: string, cartItemId: string): Promise<boolean> {
+  async remove(
+    customerProfileId: string,
+    actorUserAccountId: string,
+    cartItemId: string,
+  ): Promise<boolean> {
     return this.dataSource.transaction(async (manager) => {
       const item = await this.findOwnedItem(manager, customerProfileId, cartItemId, true);
       if (!item) return false;
@@ -94,11 +123,18 @@ export class TypeOrmCartRepository implements CartRepository {
     });
   }
 
-  findOwnedActiveItem(customerProfileId: string, cartItemId: string): Promise<CartItemEntity | null> {
+  findOwnedActiveItem(
+    customerProfileId: string,
+    cartItemId: string,
+  ): Promise<CartItemEntity | null> {
     return this.findOwnedItem(this.dataSource.manager, customerProfileId, cartItemId, false);
   }
 
-  private async findOrCreateLocked(manager: EntityManager, customerProfileId: string, actorUserAccountId: string): Promise<CartEntity> {
+  private async findOrCreateLocked(
+    manager: EntityManager,
+    customerProfileId: string,
+    actorUserAccountId: string,
+  ): Promise<CartEntity> {
     await manager.getRepository(CustomerProfileEntity).findOneOrFail({
       where: { id: customerProfileId, tenantId: '1', customerStatus: 'active' },
       lock: { mode: 'pessimistic_write' },
@@ -109,16 +145,31 @@ export class TypeOrmCartRepository implements CartRepository {
       lock: { mode: 'pessimistic_write' },
     });
     if (existing) return existing;
-    return carts.save(carts.create({
-      tenantId: '1', customerProfileId, cartOwnerType: 'customer', guestSessionReference: null,
-      cartStatus: 'active', cartValidationStatus: 'not_validated', lastValidatedAt: null,
-      createdBy: actorUserAccountId, updatedBy: actorUserAccountId,
-    }));
+    return carts.save(
+      carts.create({
+        tenantId: '1',
+        customerProfileId,
+        cartOwnerType: 'customer',
+        guestSessionReference: null,
+        cartStatus: 'active',
+        cartValidationStatus: 'not_validated',
+        lastValidatedAt: null,
+        createdBy: actorUserAccountId,
+        updatedBy: actorUserAccountId,
+      }),
+    );
   }
 
-  private async findOwnedItem(manager: EntityManager, customerProfileId: string, cartItemId: string, lock: boolean): Promise<CartItemEntity | null> {
+  private async findOwnedItem(
+    manager: EntityManager,
+    customerProfileId: string,
+    cartItemId: string,
+    lock: boolean,
+  ): Promise<CartItemEntity | null> {
     const cart = await manager.getRepository(CartEntity).findOneBy({
-      tenantId: '1', customerProfileId, cartStatus: 'active',
+      tenantId: '1',
+      customerProfileId,
+      cartStatus: 'active',
     });
     if (!cart) return null;
     return manager.getRepository(CartItemEntity).findOne({
@@ -127,7 +178,11 @@ export class TypeOrmCartRepository implements CartRepository {
     });
   }
 
-  private async touchCart(manager: EntityManager, cartId: string, actorUserAccountId: string): Promise<void> {
+  private async touchCart(
+    manager: EntityManager,
+    cartId: string,
+    actorUserAccountId: string,
+  ): Promise<void> {
     const carts = manager.getRepository(CartEntity);
     const cart = await carts.findOneByOrFail({ id: cartId });
     cart.updatedBy = actorUserAccountId;

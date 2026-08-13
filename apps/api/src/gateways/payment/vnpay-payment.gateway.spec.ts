@@ -77,12 +77,16 @@ describe('VnpayPaymentGateway', () => {
   it('rejects invalid webhook signatures', async () => {
     const gateway = new VnpayPaymentGateway(env);
     await expect(
-      gateway.verifyWebhook(Buffer.alloc(0), {}, {
-        vnp_TxnRef: 'HHVNP-1-test',
-        vnp_Amount: '123450',
-        vnp_ResponseCode: '00',
-        vnp_SecureHash: 'deadbeef',
-      }),
+      gateway.verifyWebhook(
+        Buffer.alloc(0),
+        {},
+        {
+          vnp_TxnRef: 'HHVNP-1-test',
+          vnp_Amount: '123450',
+          vnp_ResponseCode: '00',
+          vnp_SecureHash: 'deadbeef',
+        },
+      ),
     ).rejects.toBeInstanceOf(VnpayPaymentSignatureError);
   });
 
@@ -90,22 +94,27 @@ describe('VnpayPaymentGateway', () => {
     ['51', '02', 'failed'],
     ['24', '02', 'cancelled'],
     ['00', '01', 'pending'],
-  ] as const)('maps response %s / transaction %s to %s', async (responseCode, transactionStatus, status) => {
-    const gateway = new VnpayPaymentGateway(env);
-    const query = buildQuery(
-      {
-        vnp_TmnCode: env.payment.vnpay.tmnCode,
-        vnp_TxnRef: `HHVNP-${responseCode}-${transactionStatus}`,
-        vnp_Amount: '123450',
-        vnp_ResponseCode: responseCode,
-        vnp_TransactionStatus: transactionStatus,
-        vnp_TransactionNo: '987654321',
-      },
-      env.payment.vnpay.hashSecret,
-    );
+  ] as const)(
+    'maps response %s / transaction %s to %s',
+    async (responseCode, transactionStatus, status) => {
+      const gateway = new VnpayPaymentGateway(env);
+      const query = buildQuery(
+        {
+          vnp_TmnCode: env.payment.vnpay.tmnCode,
+          vnp_TxnRef: `HHVNP-${responseCode}-${transactionStatus}`,
+          vnp_Amount: '123450',
+          vnp_ResponseCode: responseCode,
+          vnp_TransactionStatus: transactionStatus,
+          vnp_TransactionNo: '987654321',
+        },
+        env.payment.vnpay.hashSecret,
+      );
 
-    await expect(gateway.verifyWebhook(Buffer.alloc(0), {}, query)).resolves.toMatchObject({ status });
-  });
+      await expect(gateway.verifyWebhook(Buffer.alloc(0), {}, query)).resolves.toMatchObject({
+        status,
+      });
+    },
+  );
 
   it('rejects a signed callback for another terminal', async () => {
     const gateway = new VnpayPaymentGateway(env);
@@ -128,61 +137,8 @@ describe('VnpayPaymentGateway', () => {
 
   it('queries provider status through the official reconciliation endpoint', async () => {
     const gateway = new VnpayPaymentGateway(env);
-    const queryResponse = buildQueryDrResponse({
-      vnp_ResponseId: 'QDR-001',
-      vnp_Command: 'querydr',
-      vnp_ResponseCode: '00',
-      vnp_Message: 'Success',
-      vnp_TmnCode: env.payment.vnpay.tmnCode,
-      vnp_TxnRef: 'HHVNP-1-test',
-      vnp_Amount: '123450',
-      vnp_BankCode: 'NCB',
-      vnp_PayDate: '20260810093045',
-      vnp_TransactionNo: '987654321',
-      vnp_TransactionType: '01',
-      vnp_TransactionStatus: '00',
-      vnp_OrderInfo: 'HealthyHub order HHVNP-1-test',
-    }, env.payment.vnpay.hashSecret);
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      json: async () => queryResponse,
-    });
-    vi.stubGlobal('fetch', fetchMock);
-
-    const result = await gateway.queryPayment('HHVNP-1-test', new Date('2026-08-10T00:00:00+07:00'));
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      env.payment.vnpay.apiUrl,
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
-      }),
-    );
-    const requestBody = JSON.parse(fetchMock.mock.calls[0][1].body as string) as Record<string, string>;
-    expect(requestBody.vnp_Command).toBe('querydr');
-    expect(requestBody.vnp_SecureHash).toBe(signPipe([
-      requestBody.vnp_RequestId,
-      requestBody.vnp_Version,
-      requestBody.vnp_Command,
-      requestBody.vnp_TmnCode,
-      requestBody.vnp_TxnRef,
-      requestBody.vnp_TransactionDate,
-      requestBody.vnp_CreateDate,
-      requestBody.vnp_IpAddr,
-      requestBody.vnp_OrderInfo,
-    ], env.payment.vnpay.hashSecret));
-    expect(result.status).toBe('paid');
-    expect(result.amount).toBe('1234.50');
-    expect(result.providerTransactionNo).toBe('987654321');
-  });
-
-  it('rejects query responses with invalid provider checksum', async () => {
-    const gateway = new VnpayPaymentGateway(env);
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      json: async () => ({
+    const queryResponse = buildQueryDrResponse(
+      {
         vnp_ResponseId: 'QDR-001',
         vnp_Command: 'querydr',
         vnp_ResponseCode: '00',
@@ -196,12 +152,83 @@ describe('VnpayPaymentGateway', () => {
         vnp_TransactionType: '01',
         vnp_TransactionStatus: '00',
         vnp_OrderInfo: 'HealthyHub order HHVNP-1-test',
-        vnp_SecureHash: 'deadbeef',
-      }),
-    }));
+      },
+      env.payment.vnpay.hashSecret,
+    );
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => queryResponse,
+    });
+    vi.stubGlobal('fetch', fetchMock);
 
-    await expect(gateway.queryPayment('HHVNP-1-test', new Date('2026-08-10T00:00:00+07:00')))
-      .rejects.toBeInstanceOf(VnpayPaymentSignatureError);
+    const result = await gateway.queryPayment(
+      'HHVNP-1-test',
+      new Date('2026-08-10T00:00:00+07:00'),
+    );
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      env.payment.vnpay.apiUrl,
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
+      }),
+    );
+    const requestBody = JSON.parse(fetchMock.mock.calls[0][1].body as string) as Record<
+      string,
+      string
+    >;
+    expect(requestBody.vnp_Command).toBe('querydr');
+    expect(requestBody.vnp_SecureHash).toBe(
+      signPipe(
+        [
+          requestBody.vnp_RequestId,
+          requestBody.vnp_Version,
+          requestBody.vnp_Command,
+          requestBody.vnp_TmnCode,
+          requestBody.vnp_TxnRef,
+          requestBody.vnp_TransactionDate,
+          requestBody.vnp_CreateDate,
+          requestBody.vnp_IpAddr,
+          requestBody.vnp_OrderInfo,
+        ],
+        env.payment.vnpay.hashSecret,
+      ),
+    );
+    expect(result.status).toBe('paid');
+    expect(result.amount).toBe('1234.50');
+    expect(result.providerTransactionNo).toBe('987654321');
+  });
+
+  it('rejects query responses with invalid provider checksum', async () => {
+    const gateway = new VnpayPaymentGateway(env);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          vnp_ResponseId: 'QDR-001',
+          vnp_Command: 'querydr',
+          vnp_ResponseCode: '00',
+          vnp_Message: 'Success',
+          vnp_TmnCode: env.payment.vnpay.tmnCode,
+          vnp_TxnRef: 'HHVNP-1-test',
+          vnp_Amount: '123450',
+          vnp_BankCode: 'NCB',
+          vnp_PayDate: '20260810093045',
+          vnp_TransactionNo: '987654321',
+          vnp_TransactionType: '01',
+          vnp_TransactionStatus: '00',
+          vnp_OrderInfo: 'HealthyHub order HHVNP-1-test',
+          vnp_SecureHash: 'deadbeef',
+        }),
+      }),
+    );
+
+    await expect(
+      gateway.queryPayment('HHVNP-1-test', new Date('2026-08-10T00:00:00+07:00')),
+    ).rejects.toBeInstanceOf(VnpayPaymentSignatureError);
   });
 });
 
@@ -223,29 +250,37 @@ function signQuery(params: URLSearchParams, hashSecret: string): string {
   return createHmac('sha512', hashSecret).update(canonical).digest('hex');
 }
 
-function buildQueryDrResponse(values: Record<string, string>, hashSecret: string): Record<string, string> {
+function buildQueryDrResponse(
+  values: Record<string, string>,
+  hashSecret: string,
+): Record<string, string> {
   return {
     ...values,
-    vnp_SecureHash: signPipe([
-      values.vnp_ResponseId,
-      values.vnp_Command,
-      values.vnp_ResponseCode,
-      values.vnp_Message,
-      values.vnp_TmnCode,
-      values.vnp_TxnRef,
-      values.vnp_Amount,
-      values.vnp_BankCode,
-      values.vnp_PayDate,
-      values.vnp_TransactionNo,
-      values.vnp_TransactionType,
-      values.vnp_TransactionStatus,
-      values.vnp_OrderInfo,
-      values.vnp_PromotionCode,
-      values.vnp_PromotionAmount,
-    ], hashSecret),
+    vnp_SecureHash: signPipe(
+      [
+        values.vnp_ResponseId,
+        values.vnp_Command,
+        values.vnp_ResponseCode,
+        values.vnp_Message,
+        values.vnp_TmnCode,
+        values.vnp_TxnRef,
+        values.vnp_Amount,
+        values.vnp_BankCode,
+        values.vnp_PayDate,
+        values.vnp_TransactionNo,
+        values.vnp_TransactionType,
+        values.vnp_TransactionStatus,
+        values.vnp_OrderInfo,
+        values.vnp_PromotionCode,
+        values.vnp_PromotionAmount,
+      ],
+      hashSecret,
+    ),
   };
 }
 
 function signPipe(values: Array<string | undefined>, hashSecret: string): string {
-  return createHmac('sha512', hashSecret).update(values.map((value) => value ?? '').join('|')).digest('hex');
+  return createHmac('sha512', hashSecret)
+    .update(values.map((value) => value ?? '').join('|'))
+    .digest('hex');
 }

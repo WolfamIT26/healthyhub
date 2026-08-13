@@ -66,7 +66,10 @@ const COMMON_PASSWORDS = new Set([
   'healthyhub123',
 ]);
 
-export function getPasswordPolicyFailure(password: string, email?: string): PasswordPolicyFailure | undefined {
+export function getPasswordPolicyFailure(
+  password: string,
+  email?: string,
+): PasswordPolicyFailure | undefined {
   if (password.length < 12 || password.length > 128) return 'length';
 
   const normalizedPassword = password.normalize('NFKC').toLocaleLowerCase('en-US');

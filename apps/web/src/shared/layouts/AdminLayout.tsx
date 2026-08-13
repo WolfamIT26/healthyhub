@@ -17,7 +17,9 @@ export function AdminLayout() {
               Dashboard nền
             </NavLink>
           </nav>
-          <div className="mt-4 text-sm"><AuthNavigation /></div>
+          <div className="mt-4 text-sm">
+            <AuthNavigation />
+          </div>
         </aside>
         <Outlet />
       </div>

@@ -1,7 +1,11 @@
 import type { ApiSuccessEnvelope } from '@healthyhub/shared-types';
 
 import { httpClient } from '../../services/api/httpClient';
-import type { CreatePaymentIntentInput, PaymentMethodReadModel, PaymentSummary } from './payment.types';
+import type {
+  CreatePaymentIntentInput,
+  PaymentMethodReadModel,
+  PaymentSummary,
+} from './payment.types';
 
 export const paymentApi = {
   listMethods: () =>

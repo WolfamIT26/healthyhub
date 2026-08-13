@@ -36,23 +36,43 @@ const outOfStockIds = new Set([5, 14]);
 export async function seedCartCommerceDevelopment(manager: EntityManager): Promise<void> {
   const productRepository = manager.getRepository(ProductEntity);
   const inventoryRepository = manager.getRepository(InventoryItemEntity);
-  await productRepository.upsert(products.map(([productName, slug, price], index) => {
-    const id = index + 1;
-    const unavailable = outOfStockIds.has(id);
-    return {
-      id: String(id), tenantId: '1', brandId: null, productCode: `HH-${String(id).padStart(4, '0')}`,
-      productName, slug, basePrice: `${price}.00`, sellableStatus: unavailable ? 'out_of_stock' as const : 'sellable' as const,
-      productVisibility: 'public' as const, productStatus: 'active' as const,
-    };
-  }), ['id']);
-  await inventoryRepository.upsert(products.map((_product, index) => {
-    const productId = index + 1;
-    const outOfStock = outOfStockIds.has(productId);
-    const lowStock = lowStockIds.has(productId);
-    return {
-      tenantId: '1', productId: String(productId), availableQuantity: outOfStock ? 0 : lowStock ? 3 : 25,
-      reservedQuantity: 0, stockThreshold: 3,
-      stockStatus: outOfStock ? 'out_of_stock' as const : lowStock ? 'low_stock' as const : 'available' as const,
-    };
-  }), ['tenantId', 'productId']);
+  await productRepository.upsert(
+    products.map(([productName, slug, price], index) => {
+      const id = index + 1;
+      const unavailable = outOfStockIds.has(id);
+      return {
+        id: String(id),
+        tenantId: '1',
+        brandId: null,
+        productCode: `HH-${String(id).padStart(4, '0')}`,
+        productName,
+        slug,
+        basePrice: `${price}.00`,
+        sellableStatus: unavailable ? ('out_of_stock' as const) : ('sellable' as const),
+        productVisibility: 'public' as const,
+        productStatus: 'active' as const,
+      };
+    }),
+    ['id'],
+  );
+  await inventoryRepository.upsert(
+    products.map((_product, index) => {
+      const productId = index + 1;
+      const outOfStock = outOfStockIds.has(productId);
+      const lowStock = lowStockIds.has(productId);
+      return {
+        tenantId: '1',
+        productId: String(productId),
+        availableQuantity: outOfStock ? 0 : lowStock ? 3 : 25,
+        reservedQuantity: 0,
+        stockThreshold: 3,
+        stockStatus: outOfStock
+          ? ('out_of_stock' as const)
+          : lowStock
+            ? ('low_stock' as const)
+            : ('available' as const),
+      };
+    }),
+    ['tenantId', 'productId'],
+  );
 }

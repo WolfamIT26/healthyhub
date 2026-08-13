@@ -14,11 +14,18 @@ export class AuthenticationRateLimitService {
 
   constructor(private readonly crypto: AuthenticationCrypto) {}
 
-  enforce(scope: string, identifier: string, ip: string | undefined, limit: number, windowMs: number): void {
+  enforce(
+    scope: string,
+    identifier: string,
+    ip: string | undefined,
+    limit: number,
+    windowMs: number,
+  ): void {
     const key = this.crypto.identifierDigest(`${scope}:${identifier}:${ip ?? 'unknown'}`);
     const now = Date.now();
     const current = this.buckets.get(key);
-    const bucket = !current || current.resetAt <= now ? { count: 0, resetAt: now + windowMs } : current;
+    const bucket =
+      !current || current.resetAt <= now ? { count: 0, resetAt: now + windowMs } : current;
     bucket.count += 1;
     this.buckets.set(key, bucket);
     if (bucket.count > limit) {

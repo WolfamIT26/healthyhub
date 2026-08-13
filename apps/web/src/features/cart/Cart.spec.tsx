@@ -17,15 +17,56 @@ import { catalogProducts } from '../products/catalog.data';
 
 vi.mock('../auth/AuthContext', () => ({ useAuth: vi.fn() }));
 vi.mock('../auth/authApi', () => ({ authApi: { resendVerification: vi.fn() } }));
-vi.mock('./cartApi', () => ({ cartApi: { get: vi.fn(), add: vi.fn(), update: vi.fn(), remove: vi.fn() } }));
+vi.mock('./cartApi', () => ({
+  cartApi: { get: vi.fn(), add: vi.fn(), update: vi.fn(), remove: vi.fn() },
+}));
 
-const guestAuth = { status: 'guest' as const, actor: null, current: null, login: vi.fn(), logout: vi.fn(), hasRole: vi.fn(() => false), hasPermission: vi.fn() };
-const customerAuth = { ...guestAuth, status: 'authenticated' as const, actor: { id: 'customer-1', email: 'customer@example.com', fullName: 'Customer', roles: ['CUSTOMER'] as Array<'CUSTOMER'>, isEmailVerified: true }, hasRole: vi.fn((role) => role === 'CUSTOMER') };
-const unverifiedAuth = { ...customerAuth, actor: { ...customerAuth.actor, id: 'customer-2', email: 'pending@example.com', isEmailVerified: false } };
+const guestAuth = {
+  status: 'guest' as const,
+  actor: null,
+  current: null,
+  login: vi.fn(),
+  logout: vi.fn(),
+  hasRole: vi.fn(() => false),
+  hasPermission: vi.fn(),
+};
+const customerAuth = {
+  ...guestAuth,
+  status: 'authenticated' as const,
+  actor: {
+    id: 'customer-1',
+    email: 'customer@example.com',
+    fullName: 'Customer',
+    roles: ['CUSTOMER'] as Array<'CUSTOMER'>,
+    isEmailVerified: true,
+  },
+  hasRole: vi.fn((role) => role === 'CUSTOMER'),
+};
+const unverifiedAuth = {
+  ...customerAuth,
+  actor: {
+    ...customerAuth.actor,
+    id: 'customer-2',
+    email: 'pending@example.com',
+    isEmailVerified: false,
+  },
+};
 
 function CartTestControls() {
   const cart = useCart();
-  return <div className="sr-only"><Link to="/cart">Mở Cart test</Link><button type="button" onClick={() => { void cart.add('5', 1); }}>Seed out-of-stock</button></div>;
+  return (
+    <div className="sr-only">
+      <Link to="/cart">Mở Cart test</Link>
+      <button
+        type="button"
+        onClick={() => {
+          void cart.add('5', 1);
+        }}
+      >
+        Seed out-of-stock
+      </button>
+    </div>
+  );
 }
 
 function renderFlow(entry = '/products/oat-milk-original') {
@@ -33,7 +74,30 @@ function renderFlow(entry = '/products/oat-milk-original') {
 }
 
 function CartFlow({ entry }: { entry: string }) {
-  return <MemoryRouter initialEntries={[entry]}><WishlistProvider><CartProvider><CartTestControls /><Routes><Route path="/products" element={<ProductCatalogPage />} /><Route path="/products/:slug" element={<ProductDetailPage />} /><Route path="/cart" element={<RouteGuard area="customer"><CartPage /></RouteGuard>} /><Route path="/login" element={<p>Trang đăng nhập</p>} /><Route path="/checkout" element={<p>Checkout foundation</p>} /><Route path="/verify-email" element={<p>Trang xác minh</p>} /></Routes></CartProvider></WishlistProvider></MemoryRouter>;
+  return (
+    <MemoryRouter initialEntries={[entry]}>
+      <WishlistProvider>
+        <CartProvider>
+          <CartTestControls />
+          <Routes>
+            <Route path="/products" element={<ProductCatalogPage />} />
+            <Route path="/products/:slug" element={<ProductDetailPage />} />
+            <Route
+              path="/cart"
+              element={
+                <RouteGuard area="customer">
+                  <CartPage />
+                </RouteGuard>
+              }
+            />
+            <Route path="/login" element={<p>Trang đăng nhập</p>} />
+            <Route path="/checkout" element={<p>Checkout foundation</p>} />
+            <Route path="/verify-email" element={<p>Trang xác minh</p>} />
+          </Routes>
+        </CartProvider>
+      </WishlistProvider>
+    </MemoryRouter>
+  );
 }
 
 async function addOatMilkAndOpenCart(times = 1) {
@@ -57,7 +121,11 @@ describe('Shopping Cart V1 frontend foundation', () => {
       return serverCart(serverItems);
     });
     vi.mocked(cartApi.update).mockImplementation(async (cartItemId, quantity) => {
-      serverItems = serverItems.map((item) => item.id === cartItemId ? { ...item, quantity, lineTotal: String(Number(item.unitPrice) * quantity) } : item);
+      serverItems = serverItems.map((item) =>
+        item.id === cartItemId
+          ? { ...item, quantity, lineTotal: String(Number(item.unitPrice) * quantity) }
+          : item,
+      );
       return serverCart(serverItems);
     });
     vi.mocked(cartApi.remove).mockImplementation(async (cartItemId) => {
@@ -68,7 +136,9 @@ describe('Shopping Cart V1 frontend foundation', () => {
 
   it('does not fake-add for guests and offers Login with safe return routing', async () => {
     renderFlow();
-    await userEvent.click(screen.getByRole('button', { name: 'Thêm Sữa yến mạch nguyên bản vào giỏ hàng' }));
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Thêm Sữa yến mạch nguyên bản vào giỏ hàng' }),
+    );
     const dialog = screen.getByRole('dialog', { name: 'Đăng nhập để thêm sản phẩm vào giỏ hàng.' });
     expect(within(dialog).getByText(/không được lưu giả/)).toBeInTheDocument();
     await userEvent.click(within(dialog).getByRole('button', { name: 'Đăng nhập' }));
@@ -78,7 +148,11 @@ describe('Shopping Cart V1 frontend foundation', () => {
   it('fetches the Customer Cart on initial mount and renders loading state', async () => {
     vi.mocked(useAuth).mockReturnValue(customerAuth);
     let resolveCart!: (cart: ServerCart) => void;
-    vi.mocked(cartApi.get).mockReturnValue(new Promise((resolve) => { resolveCart = resolve; }));
+    vi.mocked(cartApi.get).mockReturnValue(
+      new Promise((resolve) => {
+        resolveCart = resolve;
+      }),
+    );
     renderFlow('/cart');
     expect(screen.getByLabelText('Đang tải giỏ hàng')).toBeInTheDocument();
     resolveCart(serverCart([]));
@@ -100,7 +174,9 @@ describe('Shopping Cart V1 frontend foundation', () => {
     await addOatMilkAndOpenCart(2);
     expect(screen.getByText('2 sản phẩm')).toBeInTheDocument();
     expect(screen.getAllByText('Sữa yến mạch nguyên bản')).toHaveLength(1);
-    expect(screen.getByRole('spinbutton', { name: 'Số lượng Sữa yến mạch nguyên bản' })).toHaveValue(2);
+    expect(
+      screen.getByRole('spinbutton', { name: 'Số lượng Sữa yến mạch nguyên bản' }),
+    ).toHaveValue(2);
     expect(cartApi.add).toHaveBeenCalledTimes(2);
   });
 
@@ -119,7 +195,9 @@ describe('Shopping Cart V1 frontend foundation', () => {
     vi.mocked(useAuth).mockReturnValue(customerAuth);
     vi.mocked(cartApi.add).mockRejectedValue(new Error('insufficient stock'));
     renderFlow();
-    await userEvent.click(screen.getByRole('button', { name: 'Thêm Sữa yến mạch nguyên bản vào giỏ hàng' }));
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Thêm Sữa yến mạch nguyên bản vào giỏ hàng' }),
+    );
     expect(await screen.findByText('Không thể thêm sản phẩm vào giỏ hàng.')).toBeInTheDocument();
   });
 
@@ -134,11 +212,21 @@ describe('Shopping Cart V1 frontend foundation', () => {
     vi.mocked(useAuth).mockReturnValue(customerAuth);
     renderFlow();
     await addOatMilkAndOpenCart();
-    await userEvent.click(screen.getByRole('button', { name: 'Tăng số lượng Sữa yến mạch nguyên bản' }));
-    expect(screen.getByRole('spinbutton', { name: 'Số lượng Sữa yến mạch nguyên bản' })).toHaveValue(2);
-    await userEvent.click(screen.getByRole('button', { name: 'Giảm số lượng Sữa yến mạch nguyên bản' }));
-    expect(screen.getByRole('spinbutton', { name: 'Số lượng Sữa yến mạch nguyên bản' })).toHaveValue(1);
-    fireEvent.change(screen.getByRole('spinbutton', { name: 'Số lượng Sữa yến mạch nguyên bản' }), { target: { value: '1.5' } });
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Tăng số lượng Sữa yến mạch nguyên bản' }),
+    );
+    expect(
+      screen.getByRole('spinbutton', { name: 'Số lượng Sữa yến mạch nguyên bản' }),
+    ).toHaveValue(2);
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Giảm số lượng Sữa yến mạch nguyên bản' }),
+    );
+    expect(
+      screen.getByRole('spinbutton', { name: 'Số lượng Sữa yến mạch nguyên bản' }),
+    ).toHaveValue(1);
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Số lượng Sữa yến mạch nguyên bản' }), {
+      target: { value: '1.5' },
+    });
     expect(screen.getByRole('alert')).toHaveTextContent('số nguyên từ 1 đến 9999');
   });
 
@@ -146,7 +234,9 @@ describe('Shopping Cart V1 frontend foundation', () => {
     vi.mocked(useAuth).mockReturnValue(customerAuth);
     renderFlow();
     await addOatMilkAndOpenCart();
-    await userEvent.click(screen.getByRole('button', { name: 'Xóa Sữa yến mạch nguyên bản khỏi giỏ hàng' }));
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Xóa Sữa yến mạch nguyên bản khỏi giỏ hàng' }),
+    );
     expect(screen.getByText('Giỏ hàng của bạn đang trống.')).toBeInTheDocument();
   });
 
@@ -154,7 +244,10 @@ describe('Shopping Cart V1 frontend foundation', () => {
     vi.mocked(useAuth).mockReturnValue(customerAuth);
     renderFlow('/cart');
     expect(screen.getByRole('heading', { level: 1, name: 'Giỏ hàng của bạn' })).toBeInTheDocument();
-    expect(await screen.findByRole('link', { name: 'Khám phá sản phẩm' })).toHaveAttribute('href', '/products');
+    expect(await screen.findByRole('link', { name: 'Khám phá sản phẩm' })).toHaveAttribute(
+      'href',
+      '/products',
+    );
   });
 
   it('keeps an out-of-stock item visible and blocks Checkout', async () => {
@@ -190,8 +283,13 @@ describe('Shopping Cart V1 frontend foundation', () => {
     renderFlow();
     await addOatMilkAndOpenCart();
     await userEvent.click(screen.getByRole('button', { name: 'Tiến hành Checkout' }));
-    const dialog = screen.getByRole('dialog', { name: 'Bạn cần xác minh email trước khi thanh toán.' });
-    expect(within(dialog).getByRole('link', { name: 'Xác minh ngay' })).toHaveAttribute('href', '/verify-email');
+    const dialog = screen.getByRole('dialog', {
+      name: 'Bạn cần xác minh email trước khi thanh toán.',
+    });
+    expect(within(dialog).getByRole('link', { name: 'Xác minh ngay' })).toHaveAttribute(
+      'href',
+      '/verify-email',
+    );
     await userEvent.click(within(dialog).getByRole('button', { name: 'Gửi lại email' }));
     expect(authApi.resendVerification).toHaveBeenCalledWith({ email: 'pending@example.com' });
     expect(await within(dialog).findByText('Email xác minh đã được gửi lại.')).toBeInTheDocument();
@@ -213,19 +311,36 @@ function serverItem(productId: string, quantity: number): ServerCartItem {
   const product = catalogProducts.find((candidate) => candidate.id === productId)!;
   const available = product.stockStatus !== 'out_of_stock';
   return {
-    id: `item-${productId}`, productId, slug: product.slug, name: product.name, thumbnail: null, quantity,
-    unitPrice: `${product.price}.00`, lineTotal: `${product.price * quantity}.00`, currency: 'VND',
-    availability: available ? product.stockStatus === 'low_stock' ? 'LOW_STOCK' : 'AVAILABLE' : 'OUT_OF_STOCK',
+    id: `item-${productId}`,
+    productId,
+    slug: product.slug,
+    name: product.name,
+    thumbnail: null,
+    quantity,
+    unitPrice: `${product.price}.00`,
+    lineTotal: `${product.price * quantity}.00`,
+    currency: 'VND',
+    availability: available
+      ? product.stockStatus === 'low_stock'
+        ? 'LOW_STOCK'
+        : 'AVAILABLE'
+      : 'OUT_OF_STOCK',
     availableQuantity: available ? 10 : 0,
   };
 }
 
 function serverCart(items: ServerCartItem[]): ServerCart {
   return {
-    id: 'cart-1', status: 'active', validationStatus: 'not_validated', items: items.map((item) => ({ ...item })),
+    id: 'cart-1',
+    status: 'active',
+    validationStatus: 'not_validated',
+    items: items.map((item) => ({ ...item })),
     itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
-    subtotal: `${items.reduce((sum, item) => sum + Number(item.unitPrice) * item.quantity, 0)}.00`, currency: 'VND',
-    isValid: items.every((item) => item.availability === 'AVAILABLE' || item.availability === 'LOW_STOCK'),
+    subtotal: `${items.reduce((sum, item) => sum + Number(item.unitPrice) * item.quantity, 0)}.00`,
+    currency: 'VND',
+    isValid: items.every(
+      (item) => item.availability === 'AVAILABLE' || item.availability === 'LOW_STOCK',
+    ),
     updatedAt: new Date().toISOString(),
   };
 }

@@ -15,9 +15,13 @@ import { httpClient } from '../../services/api/httpClient';
 
 export const authApi = {
   register: (payload: AuthRegisterRequest) =>
-    httpClient.post<RegisterResponse>('/auth/register', payload).then((response) => response.data.data),
+    httpClient
+      .post<RegisterResponse>('/auth/register', payload)
+      .then((response) => response.data.data),
   login: (payload: AuthLoginRequest) =>
-    httpClient.post<AuthenticationResponse>('/auth/login', payload).then((response) => response.data.data),
+    httpClient
+      .post<AuthenticationResponse>('/auth/login', payload)
+      .then((response) => response.data.data),
   session: () =>
     httpClient.get<CurrentSessionResponse>('/auth/session').then((response) => response.data.data),
   logout: () =>

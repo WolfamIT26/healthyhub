@@ -5,8 +5,12 @@ export class EnableVnpaySandbox1760000006000 implements MigrationInterface {
   async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('ALTER TABLE `payments` DROP CHECK `chk_payments_method`');
     await queryRunner.query('ALTER TABLE `payments` DROP CHECK `chk_payments_status`');
-    await queryRunner.query("ALTER TABLE `payments` ADD CONSTRAINT `chk_payments_method_v2` CHECK (`payment_method` IN ('cod','vnpay'))");
-    await queryRunner.query("ALTER TABLE `payments` ADD CONSTRAINT `chk_payments_status_v2` CHECK (`payment_status` IN ('unpaid','pending','paid','failed','cancelled'))");
+    await queryRunner.query(
+      "ALTER TABLE `payments` ADD CONSTRAINT `chk_payments_method_v2` CHECK (`payment_method` IN ('cod','vnpay'))",
+    );
+    await queryRunner.query(
+      "ALTER TABLE `payments` ADD CONSTRAINT `chk_payments_status_v2` CHECK (`payment_status` IN ('unpaid','pending','paid','failed','cancelled'))",
+    );
     await queryRunner.query(`CREATE TABLE \`payment_attempts\` (
       \`id\` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, \`tenant_id\` BIGINT UNSIGNED NOT NULL DEFAULT 1,
       \`payment_id\` BIGINT UNSIGNED NOT NULL, \`provider\` VARCHAR(32) NOT NULL, \`provider_reference\` VARCHAR(100) NOT NULL,
@@ -29,7 +33,11 @@ export class EnableVnpaySandbox1760000006000 implements MigrationInterface {
     await queryRunner.query('DROP TABLE IF EXISTS `payment_attempts`');
     await queryRunner.query('ALTER TABLE `payments` DROP CHECK `chk_payments_method_v2`');
     await queryRunner.query('ALTER TABLE `payments` DROP CHECK `chk_payments_status_v2`');
-    await queryRunner.query("ALTER TABLE `payments` ADD CONSTRAINT `chk_payments_method` CHECK (`payment_method` IN ('cod'))");
-    await queryRunner.query("ALTER TABLE `payments` ADD CONSTRAINT `chk_payments_status` CHECK (`payment_status` IN ('pending'))");
+    await queryRunner.query(
+      "ALTER TABLE `payments` ADD CONSTRAINT `chk_payments_method` CHECK (`payment_method` IN ('cod'))",
+    );
+    await queryRunner.query(
+      "ALTER TABLE `payments` ADD CONSTRAINT `chk_payments_status` CHECK (`payment_status` IN ('pending'))",
+    );
   }
 }

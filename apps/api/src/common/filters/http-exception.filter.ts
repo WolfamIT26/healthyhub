@@ -41,8 +41,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         message,
         validationErrors: this.getValidationErrors(exceptionResponse),
         retryable:
-          typed?.retryable ??
-          (statusCode >= 500 || statusCode === HttpStatus.TOO_MANY_REQUESTS),
+          typed?.retryable ?? (statusCode >= 500 || statusCode === HttpStatus.TOO_MANY_REQUESTS),
         details: this.env.app.env === 'production' ? undefined : this.getSafeDetails(exception),
       },
       metadata: {
@@ -74,9 +73,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
     response.status(statusCode).json(envelope);
   }
 
-  private getTypedError(exceptionResponse: unknown):
-    | { code: string; category: ErrorCategory; retryable?: boolean }
-    | undefined {
+  private getTypedError(
+    exceptionResponse: unknown,
+  ): { code: string; category: ErrorCategory; retryable?: boolean } | undefined {
     if (!exceptionResponse || typeof exceptionResponse !== 'object') return undefined;
     const value = exceptionResponse as Record<string, unknown>;
     if (typeof value.code !== 'string' || typeof value.category !== 'string') return undefined;

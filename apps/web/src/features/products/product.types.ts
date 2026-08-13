@@ -1,5 +1,13 @@
 export type ProductStockStatus = 'in_stock' | 'low_stock' | 'out_of_stock';
-export type DietaryTag = 'low-sugar' | 'sugar-free' | 'high-protein' | 'vegan' | 'vegetarian' | 'lactose-free' | 'gluten-free' | 'organic';
+export type DietaryTag =
+  | 'low-sugar'
+  | 'sugar-free'
+  | 'high-protein'
+  | 'vegan'
+  | 'vegetarian'
+  | 'lactose-free'
+  | 'gluten-free'
+  | 'organic';
 
 export interface ProductMediaPresentation {
   id: string;
@@ -67,7 +75,8 @@ export interface CatalogQuery {
   limit: number;
 }
 
-export type CatalogSort = 'featured' | 'newest' | 'price-asc' | 'price-desc' | 'best-selling' | 'rating';
+export type CatalogSort =
+  'featured' | 'newest' | 'price-asc' | 'price-desc' | 'best-selling' | 'rating';
 
 export const dietaryTagLabels: Record<DietaryTag, string> = {
   'low-sugar': 'Ít đường',

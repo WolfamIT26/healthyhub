@@ -1,4 +1,10 @@
-export type CartAvailability = 'AVAILABLE' | 'LOW_STOCK' | 'INSUFFICIENT_STOCK' | 'OUT_OF_STOCK' | 'UNAVAILABLE' | 'INVALID_QUANTITY';
+export type CartAvailability =
+  | 'AVAILABLE'
+  | 'LOW_STOCK'
+  | 'INSUFFICIENT_STOCK'
+  | 'OUT_OF_STOCK'
+  | 'UNAVAILABLE'
+  | 'INVALID_QUANTITY';
 
 export interface ServerCartItem {
   id: string;

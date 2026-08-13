@@ -58,7 +58,12 @@ export interface AuthenticationRepository {
   findAccountByNormalizedEmail(normalizedEmail: string): Promise<UserAccountEntity | null>;
   emailExists(normalizedEmail: string): Promise<boolean>;
   createAccount(input: CreateUserAccountInput): Promise<UserAccountEntity>;
-  createCustomerProfile(userAccountId: string, fullName: string, email: string, phone: string | null): Promise<void>;
+  createCustomerProfile(
+    userAccountId: string,
+    fullName: string,
+    email: string,
+    phone: string | null,
+  ): Promise<void>;
   assignRole(userAccountId: string, role: RoleName, assignedAt: Date): Promise<void>;
   updatePassword(userAccountId: string, passwordHash: string): Promise<void>;
   markEmailVerified(userAccountId: string, verifiedAt: Date): Promise<void>;

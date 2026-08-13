@@ -9,7 +9,14 @@ interface PasswordFieldProps {
   autoComplete?: string;
 }
 
-export function PasswordField({ id, label, value, onChange, error, autoComplete }: PasswordFieldProps) {
+export function PasswordField({
+  id,
+  label,
+  value,
+  onChange,
+  error,
+  autoComplete,
+}: PasswordFieldProps) {
   return (
     <FormField id={id} label={label} error={error}>
       <PasswordInput

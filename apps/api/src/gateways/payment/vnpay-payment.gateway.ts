@@ -18,12 +18,16 @@ const PROVIDER_TIMEOUT_MS = 10_000;
 
 export class VnpayPaymentSignatureError extends Error {
   readonly code = 'PAYMENT_SIGNATURE_INVALID';
-  constructor() { super('Chữ ký VNPAY không hợp lệ.'); }
+  constructor() {
+    super('Chữ ký VNPAY không hợp lệ.');
+  }
 }
 
 export class VnpayPaymentProviderError extends Error {
   readonly code = 'PAYMENT_PROVIDER_UNAVAILABLE';
-  constructor(message = 'VNPAY sandbox không phản hồi đúng contract.') { super(message); }
+  constructor(message = 'VNPAY sandbox không phản hồi đúng contract.') {
+    super(message);
+  }
 }
 
 export class VnpayPaymentGateway implements PaymentProviderGateway {
@@ -56,7 +60,10 @@ export class VnpayPaymentGateway implements PaymentProviderGateway {
     };
   }
 
-  async queryPayment(providerReference: string, transactionDate?: Date): Promise<ProviderPaymentQuery> {
+  async queryPayment(
+    providerReference: string,
+    transactionDate?: Date,
+  ): Promise<ProviderPaymentQuery> {
     const requestId = createRequestId();
     const requestCommand = 'querydr';
     const requestTransactionDate = formatDate(transactionDate ?? new Date());
@@ -100,15 +107,21 @@ export class VnpayPaymentGateway implements PaymentProviderGateway {
     this.verifyQueryResponse(raw);
     const responseReference = required(stringValue(raw.vnp_TxnRef) ?? undefined, 'vnp_TxnRef');
     const responseTmnCode = required(stringValue(raw.vnp_TmnCode) ?? undefined, 'vnp_TmnCode');
-    if (responseReference !== providerReference || responseTmnCode !== this.env.payment.vnpay.tmnCode) {
+    if (
+      responseReference !== providerReference ||
+      responseTmnCode !== this.env.payment.vnpay.tmnCode
+    ) {
       throw new VnpayPaymentProviderError('VNPAY trả về sai tham chiếu hoặc terminal.');
     }
-    const responseCode = stringValue(raw.vnp_ResponseCode ?? raw.RspCode ?? raw.responseCode) ?? '99';
+    const responseCode =
+      stringValue(raw.vnp_ResponseCode ?? raw.RspCode ?? raw.responseCode) ?? '99';
     const transactionStatus = stringValue(raw.vnp_TransactionStatus ?? raw.transactionStatus);
     return {
       provider: this.providerCode,
       providerReference,
-      amount: fromVnpayAmount(required(stringValue(raw.vnp_Amount ?? raw.amount) ?? undefined, 'vnp_Amount')),
+      amount: fromVnpayAmount(
+        required(stringValue(raw.vnp_Amount ?? raw.amount) ?? undefined, 'vnp_Amount'),
+      ),
       currency: 'VND',
       providerTransactionNo: stringValue(raw.vnp_TransactionNo ?? raw.transactionNo),
       responseCode,
@@ -134,12 +147,17 @@ export class VnpayPaymentGateway implements PaymentProviderGateway {
       throw new VnpayPaymentProviderError('VNPAY trả về sai terminal.');
     }
     const providerReference = required(params.vnp_TxnRef, 'vnp_TxnRef');
-    const responseCode = required(params.vnp_ResponseCode ?? params.vnp_RspCode, 'vnp_ResponseCode');
+    const responseCode = required(
+      params.vnp_ResponseCode ?? params.vnp_RspCode,
+      'vnp_ResponseCode',
+    );
     const transactionStatus = required(params.vnp_TransactionStatus, 'vnp_TransactionStatus');
     const providerTransactionNo = required(params.vnp_TransactionNo, 'vnp_TransactionNo');
     return {
       provider: this.providerCode,
-      eventId: [providerReference, providerTransactionNo, responseCode, transactionStatus].join(':'),
+      eventId: [providerReference, providerTransactionNo, responseCode, transactionStatus].join(
+        ':',
+      ),
       eventType: 'payment.notification',
       providerReference,
       providerTransactionNo,
@@ -155,7 +173,9 @@ export class VnpayPaymentGateway implements PaymentProviderGateway {
 
   private sign(params: Record<string, string>): Record<string, string> {
     const canonical = this.signatureBase(params);
-    const secureHash = createHmac('sha512', this.env.payment.vnpay.hashSecret).update(canonical).digest('hex');
+    const secureHash = createHmac('sha512', this.env.payment.vnpay.hashSecret)
+      .update(canonical)
+      .digest('hex');
     return { ...params, vnp_SecureHash: secureHash };
   }
 
@@ -228,16 +248,20 @@ function formatDate(date: Date): string {
     minute: '2-digit',
     second: '2-digit',
     hour12: false,
-  }).formatToParts(date).reduce<Record<string, string>>((accumulator, part) => {
-    if (part.type !== 'literal') accumulator[part.type] = part.value;
-    return accumulator;
-  }, {});
+  })
+    .formatToParts(date)
+    .reduce<Record<string, string>>((accumulator, part) => {
+      if (part.type !== 'literal') accumulator[part.type] = part.value;
+      return accumulator;
+    }, {});
   return `${parts.year}${parts.month}${parts.day}${parts.hour}${parts.minute}${parts.second}`;
 }
 
 function parseDate(value: string | null | undefined): Date | null {
   if (!value || value.length !== 14) return null;
-  const candidate = new Date(`${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}T${value.slice(8, 10)}:${value.slice(10, 12)}:${value.slice(12, 14)}+07:00`);
+  const candidate = new Date(
+    `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}T${value.slice(8, 10)}:${value.slice(10, 12)}:${value.slice(12, 14)}+07:00`,
+  );
   return Number.isNaN(candidate.getTime()) ? null : candidate;
 }
 
@@ -245,10 +269,15 @@ function createRequestId(): string {
   return `HHQ${Date.now().toString(36).toUpperCase()}${randomBytes(4).toString('hex').toUpperCase()}`;
 }
 
-function flatten(query?: Readonly<Record<string, string | string[] | undefined>>): Record<string, string> {
+function flatten(
+  query?: Readonly<Record<string, string | string[] | undefined>>,
+): Record<string, string> {
   if (!query) return {};
   return Object.fromEntries(
-    Object.entries(query).map(([key, value]) => [key, Array.isArray(value) ? value[0] ?? '' : value ?? '']),
+    Object.entries(query).map(([key, value]) => [
+      key,
+      Array.isArray(value) ? (value[0] ?? '') : (value ?? ''),
+    ]),
   );
 }
 

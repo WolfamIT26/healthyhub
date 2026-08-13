@@ -50,7 +50,11 @@ function setup() {
   };
   const audit = { emit: vi.fn() };
   const rateLimit = { enforce: vi.fn() };
-  const tokens = { issueAccessToken: vi.fn().mockResolvedValue({ accessToken: 'access-token', expiresAt: new Date(Date.now() + 60_000) }) };
+  const tokens = {
+    issueAccessToken: vi
+      .fn()
+      .mockResolvedValue({ accessToken: 'access-token', expiresAt: new Date(Date.now() + 60_000) }),
+  };
   const service = new AuthenticationService(
     repository as never,
     notifications,
@@ -68,7 +72,9 @@ describe('AuthenticationService security flows', () => {
   it('returns the same accepted result when forgot-password account does not exist', async () => {
     const { service, repository, notifications } = setup();
     repository.findAccountByNormalizedEmail.mockResolvedValue(null);
-    await expect(service.forgotPassword('unknown@example.com')).resolves.toEqual({ accepted: true });
+    await expect(service.forgotPassword('unknown@example.com')).resolves.toEqual({
+      accepted: true,
+    });
     expect(notifications.sendPasswordReset).not.toHaveBeenCalled();
   });
 
@@ -94,11 +100,15 @@ describe('AuthenticationService security flows', () => {
   it('blocks forgot-password for an unverified account', async () => {
     const { service, repository, notifications } = setup();
     repository.findAccountByNormalizedEmail.mockResolvedValue({
-      id: '10', email: 'customer@example.com', userStatus: 'pending', emailVerifiedAt: null,
+      id: '10',
+      email: 'customer@example.com',
+      userStatus: 'pending',
+      emailVerifiedAt: null,
     });
 
-    await expect(service.forgotPassword('customer@example.com'))
-      .rejects.toMatchObject({ response: expect.objectContaining({ code: 'AUTH.EMAIL_NOT_VERIFIED' }) });
+    await expect(service.forgotPassword('customer@example.com')).rejects.toMatchObject({
+      response: expect.objectContaining({ code: 'AUTH.EMAIL_NOT_VERIFIED' }),
+    });
     expect(repository.createPasswordReset).not.toHaveBeenCalled();
     expect(notifications.sendPasswordReset).not.toHaveBeenCalled();
   });
@@ -106,13 +116,22 @@ describe('AuthenticationService security flows', () => {
   it('resends verification for an unverified Customer', async () => {
     const { service, repository, notifications } = setup();
     repository.findAccountByNormalizedEmail.mockResolvedValue({
-      id: '10', email: 'customer@example.com', userStatus: 'pending', emailVerifiedAt: null,
+      id: '10',
+      email: 'customer@example.com',
+      userStatus: 'pending',
+      emailVerifiedAt: null,
     });
 
-    await expect(service.resendVerification('customer@example.com')).resolves.toEqual({ accepted: true });
-    expect(repository.createEmailVerification).toHaveBeenCalledWith(expect.objectContaining({ userAccountId: '10' }));
+    await expect(service.resendVerification('customer@example.com')).resolves.toEqual({
+      accepted: true,
+    });
+    expect(repository.createEmailVerification).toHaveBeenCalledWith(
+      expect.objectContaining({ userAccountId: '10' }),
+    );
     expect(notifications.sendEmailVerification).toHaveBeenCalledWith(
-      'customer@example.com', 'opaque-token', expect.any(Date),
+      'customer@example.com',
+      'opaque-token',
+      expect.any(Date),
     );
   });
 
@@ -123,7 +142,9 @@ describe('AuthenticationService security flows', () => {
       sessionPublicId: 'session',
       refreshTokenGeneration: 2,
     });
-    await expect(service.refresh('session.1.old-secret')).rejects.toBeInstanceOf(AuthenticationException);
+    await expect(service.refresh('session.1.old-secret')).rejects.toBeInstanceOf(
+      AuthenticationException,
+    );
     expect(repository.markRefreshReuse).toHaveBeenCalledWith('20', expect.any(Date));
     expect(audit.emit).toHaveBeenCalledWith('refresh_reuse_detected', { sessionId: 'session' });
   });
@@ -171,41 +192,69 @@ describe('AuthenticationService security flows', () => {
     const { service, crypto, repository } = setup();
     crypto.assertPasswordAllowed.mockReturnValue(false);
 
-    await expect(service.register({
-      email: 'PhamViet@gmail.com',
-      password: 'Secure-phamviet-2026',
-      fullName: 'Pham Viet',
-    })).rejects.toBeInstanceOf(AuthenticationException);
+    await expect(
+      service.register({
+        email: 'PhamViet@gmail.com',
+        password: 'Secure-phamviet-2026',
+        fullName: 'Pham Viet',
+      }),
+    ).rejects.toBeInstanceOf(AuthenticationException);
 
-    expect(crypto.assertPasswordAllowed).toHaveBeenCalledWith('Secure-phamviet-2026', 'phamviet@gmail.com');
+    expect(crypto.assertPasswordAllowed).toHaveBeenCalledWith(
+      'Secure-phamviet-2026',
+      'phamviet@gmail.com',
+    );
     expect(repository.createAccount).not.toHaveBeenCalled();
   });
 
   it('creates the approved CustomerProfile mapping during Customer registration', async () => {
     const { service, repository, notifications } = setup();
     repository.emailExists.mockResolvedValue(false);
-    repository.createAccount.mockResolvedValue({ id: '42', email: 'customer@example.com', displayName: 'Customer', phone: null });
+    repository.createAccount.mockResolvedValue({
+      id: '42',
+      email: 'customer@example.com',
+      displayName: 'Customer',
+      phone: null,
+    });
     repository.createEmailVerification.mockResolvedValue({ id: 'verification-1' });
     notifications.sendEmailVerification.mockResolvedValue(undefined);
 
-    await service.register({ email: 'customer@example.com', password: 'Strong-Password-2026!', fullName: 'Customer' });
+    await service.register({
+      email: 'customer@example.com',
+      password: 'Strong-Password-2026!',
+      fullName: 'Customer',
+    });
 
     expect(repository.assignRole).toHaveBeenCalledWith('42', 'CUSTOMER', expect.any(Date));
-    expect(repository.createCustomerProfile).toHaveBeenCalledWith('42', 'Customer', 'customer@example.com', null);
+    expect(repository.createCustomerProfile).toHaveBeenCalledWith(
+      '42',
+      'Customer',
+      'customer@example.com',
+      null,
+    );
   });
 
   it('enforces the account email policy before consuming a reset token', async () => {
     const { service, crypto, repository } = setup();
     repository.findPasswordReset.mockResolvedValue({ userAccountId: '10' });
-    repository.findAccountById.mockResolvedValue({ id: '10', normalizedEmail: 'person@yahoo.com', emailVerifiedAt: new Date() });
+    repository.findAccountById.mockResolvedValue({
+      id: '10',
+      normalizedEmail: 'person@yahoo.com',
+      emailVerifiedAt: new Date(),
+    });
     crypto.assertPasswordAllowed.mockReturnValueOnce(true).mockReturnValueOnce(false);
 
-    await expect(service.resetPassword({
-      token: 'reset-token',
-      newPassword: 'Secure-yahoo-2026',
-    })).rejects.toBeInstanceOf(AuthenticationException);
+    await expect(
+      service.resetPassword({
+        token: 'reset-token',
+        newPassword: 'Secure-yahoo-2026',
+      }),
+    ).rejects.toBeInstanceOf(AuthenticationException);
 
-    expect(crypto.assertPasswordAllowed).toHaveBeenLastCalledWith('Secure-yahoo-2026', 'person@yahoo.com');
+    expect(crypto.assertPasswordAllowed).toHaveBeenLastCalledWith(
+      'Secure-yahoo-2026',
+      'person@yahoo.com',
+    );
     expect(repository.consumePasswordReset).not.toHaveBeenCalled();
   });
 
@@ -213,17 +262,26 @@ describe('AuthenticationService security flows', () => {
     const { service, repository } = setup();
     repository.findPasswordReset.mockResolvedValue({ userAccountId: '10' });
     repository.findAccountById.mockResolvedValue({
-      id: '10', normalizedEmail: 'customer@example.com', emailVerifiedAt: null,
+      id: '10',
+      normalizedEmail: 'customer@example.com',
+      emailVerifiedAt: null,
     });
 
-    await expect(service.resetPassword({ token: 'reset-token', newPassword: 'River@Stone-2026' }))
-      .rejects.toMatchObject({ response: expect.objectContaining({ code: 'AUTH.EMAIL_NOT_VERIFIED' }) });
+    await expect(
+      service.resetPassword({ token: 'reset-token', newPassword: 'River@Stone-2026' }),
+    ).rejects.toMatchObject({
+      response: expect.objectContaining({ code: 'AUTH.EMAIL_NOT_VERIFIED' }),
+    });
     expect(repository.consumePasswordReset).not.toHaveBeenCalled();
   });
 
   it('enforces the account email policy when changing a password', async () => {
     const { service, crypto, repository } = setup();
-    repository.findAccountById.mockResolvedValue({ id: '10', normalizedEmail: 'person@icloud.com', emailVerifiedAt: new Date() });
+    repository.findAccountById.mockResolvedValue({
+      id: '10',
+      normalizedEmail: 'person@icloud.com',
+      emailVerifiedAt: new Date(),
+    });
     repository.findAccountByNormalizedEmail.mockResolvedValue({
       id: '10',
       normalizedEmail: 'person@icloud.com',
@@ -232,33 +290,56 @@ describe('AuthenticationService security flows', () => {
     });
     crypto.assertPasswordAllowed.mockReturnValueOnce(true).mockReturnValueOnce(false);
 
-    await expect(service.changePassword({
-      userAccountId: '10',
-      sessionId: '20',
-      sessionPublicId: 'session',
-      roles: ['CUSTOMER'],
-      permissionsVersion: 1,
-    }, {
-      currentPassword: 'current-password',
-      newPassword: 'Secure-icloud-2026',
-    })).rejects.toBeInstanceOf(AuthenticationException);
+    await expect(
+      service.changePassword(
+        {
+          userAccountId: '10',
+          sessionId: '20',
+          sessionPublicId: 'session',
+          roles: ['CUSTOMER'],
+          permissionsVersion: 1,
+        },
+        {
+          currentPassword: 'current-password',
+          newPassword: 'Secure-icloud-2026',
+        },
+      ),
+    ).rejects.toBeInstanceOf(AuthenticationException);
 
-    expect(crypto.assertPasswordAllowed).toHaveBeenLastCalledWith('Secure-icloud-2026', 'person@icloud.com');
+    expect(crypto.assertPasswordAllowed).toHaveBeenLastCalledWith(
+      'Secure-icloud-2026',
+      'person@icloud.com',
+    );
     expect(repository.updatePassword).not.toHaveBeenCalled();
   });
 
   it('blocks change-password for an unverified Customer', async () => {
     const { service, repository } = setup();
-    repository.findAccountById.mockResolvedValue({ id: '10', normalizedEmail: 'customer@example.com' });
+    repository.findAccountById.mockResolvedValue({
+      id: '10',
+      normalizedEmail: 'customer@example.com',
+    });
     repository.findAccountByNormalizedEmail.mockResolvedValue({
-      id: '10', normalizedEmail: 'customer@example.com', passwordHash: 'current-hash', emailVerifiedAt: null,
+      id: '10',
+      normalizedEmail: 'customer@example.com',
+      passwordHash: 'current-hash',
+      emailVerifiedAt: null,
     });
 
-    await expect(service.changePassword({
-      userAccountId: '10', sessionId: '20', sessionPublicId: 'session',
-      roles: ['CUSTOMER'], permissionsVersion: 1,
-    }, { currentPassword: 'current-password', newPassword: 'River@Stone-2026' }))
-      .rejects.toMatchObject({ response: expect.objectContaining({ code: 'AUTH.EMAIL_NOT_VERIFIED' }) });
+    await expect(
+      service.changePassword(
+        {
+          userAccountId: '10',
+          sessionId: '20',
+          sessionPublicId: 'session',
+          roles: ['CUSTOMER'],
+          permissionsVersion: 1,
+        },
+        { currentPassword: 'current-password', newPassword: 'River@Stone-2026' },
+      ),
+    ).rejects.toMatchObject({
+      response: expect.objectContaining({ code: 'AUTH.EMAIL_NOT_VERIFIED' }),
+    });
     expect(repository.updatePassword).not.toHaveBeenCalled();
   });
 
@@ -266,36 +347,59 @@ describe('AuthenticationService security flows', () => {
     const { service, repository } = setup();
     const now = new Date();
     repository.findAccountByNormalizedEmail.mockResolvedValue({
-      id: '10', email: 'customer@example.com', normalizedEmail: 'customer@example.com',
-      displayName: 'Customer', passwordHash: 'hash', userStatus: 'pending', emailVerifiedAt: null,
-      lockedUntil: null, permissionsVersion: 1,
+      id: '10',
+      email: 'customer@example.com',
+      normalizedEmail: 'customer@example.com',
+      displayName: 'Customer',
+      passwordHash: 'hash',
+      userStatus: 'pending',
+      emailVerifiedAt: null,
+      lockedUntil: null,
+      permissionsVersion: 1,
     });
     repository.countFailedLoginAttempts.mockResolvedValue(0);
     repository.getRoleNames.mockResolvedValue(['CUSTOMER']);
     repository.createSession.mockResolvedValue({
-      id: '20', sessionPublicId: 'session', sessionStatus: 'active', issuedAt: now,
+      id: '20',
+      sessionPublicId: 'session',
+      sessionStatus: 'active',
+      issuedAt: now,
       expiresAt: new Date(now.getTime() + 60_000),
     });
 
-    const result = await service.login({ email: 'customer@example.com', password: 'correct-password' }, {});
+    const result = await service.login(
+      { email: 'customer@example.com', password: 'correct-password' },
+      {},
+    );
 
     expect(result.accessToken).toBe('access-token');
-    expect(result.actor).toEqual(expect.objectContaining({ isEmailVerified: false, roles: ['CUSTOMER'] }));
+    expect(result.actor).toEqual(
+      expect.objectContaining({ isEmailVerified: false, roles: ['CUSTOMER'] }),
+    );
     expect(repository.createSession).toHaveBeenCalledOnce();
   });
 
   it('rejects an unverified Internal account without creating a session', async () => {
     const { service, repository } = setup();
     repository.findAccountByNormalizedEmail.mockResolvedValue({
-      id: '10', email: 'staff@example.com', normalizedEmail: 'staff@example.com',
-      displayName: 'Staff', passwordHash: 'hash', userStatus: 'pending', emailVerifiedAt: null,
-      lockedUntil: null, permissionsVersion: 1,
+      id: '10',
+      email: 'staff@example.com',
+      normalizedEmail: 'staff@example.com',
+      displayName: 'Staff',
+      passwordHash: 'hash',
+      userStatus: 'pending',
+      emailVerifiedAt: null,
+      lockedUntil: null,
+      permissionsVersion: 1,
     });
     repository.countFailedLoginAttempts.mockResolvedValue(0);
     repository.getRoleNames.mockResolvedValue(['STAFF']);
 
-    await expect(service.login({ email: 'staff@example.com', password: 'correct-password' }, {}))
-      .rejects.toMatchObject({ response: expect.objectContaining({ code: 'AUTH.EMAIL_NOT_VERIFIED' }) });
+    await expect(
+      service.login({ email: 'staff@example.com', password: 'correct-password' }, {}),
+    ).rejects.toMatchObject({
+      response: expect.objectContaining({ code: 'AUTH.EMAIL_NOT_VERIFIED' }),
+    });
     expect(repository.createSession).not.toHaveBeenCalled();
   });
 
@@ -303,18 +407,30 @@ describe('AuthenticationService security flows', () => {
     const { service, repository } = setup();
     const now = new Date();
     repository.findAccountByNormalizedEmail.mockResolvedValue({
-      id: '10', email: 'admin@example.com', normalizedEmail: 'admin@example.com',
-      displayName: 'Admin', passwordHash: 'hash', userStatus: 'active', emailVerifiedAt: now,
-      lockedUntil: null, permissionsVersion: 1,
+      id: '10',
+      email: 'admin@example.com',
+      normalizedEmail: 'admin@example.com',
+      displayName: 'Admin',
+      passwordHash: 'hash',
+      userStatus: 'active',
+      emailVerifiedAt: now,
+      lockedUntil: null,
+      permissionsVersion: 1,
     });
     repository.countFailedLoginAttempts.mockResolvedValue(0);
     repository.getRoleNames.mockResolvedValue(['ADMINISTRATOR']);
     repository.createSession.mockResolvedValue({
-      id: '20', sessionPublicId: 'session', sessionStatus: 'active', issuedAt: now,
+      id: '20',
+      sessionPublicId: 'session',
+      sessionStatus: 'active',
+      issuedAt: now,
       expiresAt: new Date(now.getTime() + 60_000),
     });
 
-    await expect(service.login({ email: 'admin@example.com', password: 'correct-password' }, {}))
-      .resolves.toEqual(expect.objectContaining({ actor: expect.objectContaining({ isEmailVerified: true }) }));
+    await expect(
+      service.login({ email: 'admin@example.com', password: 'correct-password' }, {}),
+    ).resolves.toEqual(
+      expect.objectContaining({ actor: expect.objectContaining({ isEmailVerified: true }) }),
+    );
   });
 });

@@ -122,10 +122,13 @@ function createFixture(options: { verifiedAmount?: string } = {}) {
   const repositories = new Map<unknown, unknown>([
     [OrderEntity, { findOneBy: vi.fn().mockResolvedValue(order) }],
     [PaymentEntity, { findOneBy: vi.fn().mockResolvedValue(payment) }],
-    [PaymentAttemptEntity, {
-      findOneBy: vi.fn().mockResolvedValue(attempt),
-      findOne: vi.fn().mockResolvedValue(attempt),
-    }],
+    [
+      PaymentAttemptEntity,
+      {
+        findOneBy: vi.fn().mockResolvedValue(attempt),
+        findOne: vi.fn().mockResolvedValue(attempt),
+      },
+    ],
   ]);
   const dataSource = {
     getRepository: vi.fn((entity) => repositories.get(entity)),

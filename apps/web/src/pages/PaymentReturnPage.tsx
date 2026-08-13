@@ -74,8 +74,12 @@ function PaymentShell({ children }: { children: React.ReactNode }) {
           ]}
         />
         <div className="mb-8 mt-5">
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary-700">Thanh toán</p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Xác minh thanh toán</h1>
+          <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary-700">
+            Thanh toán
+          </p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+            Xác minh thanh toán
+          </h1>
         </div>
         {children}
       </div>

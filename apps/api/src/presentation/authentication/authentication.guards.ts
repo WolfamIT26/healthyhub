@@ -1,10 +1,4 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  HttpStatus,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { RoleName } from '@healthyhub/shared-types';
 
@@ -34,7 +28,8 @@ export class AccessTokenGuard implements CanActivate {
       const claims = await this.tokens.verifyAccessToken(authorization.slice(7));
       const session = await this.repository.findSessionByPublicId(claims.sid);
       const now = new Date();
-      if (!session || session.sessionStatus !== 'active' || session.expiresAt <= now) this.unauthorized();
+      if (!session || session.sessionStatus !== 'active' || session.expiresAt <= now)
+        this.unauthorized();
       request.auth = {
         userAccountId: claims.sub,
         sessionId: session.id,
@@ -121,7 +116,9 @@ export class RefreshCsrfGuard implements CanActivate {
     const origin = request.headers.origin ?? request.headers.referer;
     const originAllowed =
       typeof origin === 'string' &&
-      this.env.authentication.allowedOrigins.some((allowed) => origin === allowed || origin.startsWith(`${allowed}/`));
+      this.env.authentication.allowedOrigins.some(
+        (allowed) => origin === allowed || origin.startsWith(`${allowed}/`),
+      );
     if (
       !csrf ||
       !cookies.hh_csrf ||

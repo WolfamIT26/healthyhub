@@ -13,19 +13,27 @@ const WishlistContext = createContext<WishlistContextValue | null>(null);
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const auth = useAuth();
-  const actorId = auth.status === 'authenticated' ? auth.actor?.id ?? null : null;
+  const actorId = auth.status === 'authenticated' ? (auth.actor?.id ?? null) : null;
   return <WishlistStateProvider key={actorId ?? 'guest'}>{children}</WishlistStateProvider>;
 }
 
 function WishlistStateProvider({ children }: { children: ReactNode }) {
   const [productIds, setProductIds] = useState<string[]>([]);
 
-  const value = useMemo<WishlistContextValue>(() => ({
-    productIds,
-    has: (productId) => productIds.includes(productId),
-    toggle: (productId) => setProductIds((current) => current.includes(productId) ? current.filter((id) => id !== productId) : [...current, productId]),
-    remove: (productId) => setProductIds((current) => current.filter((id) => id !== productId)),
-  }), [productIds]);
+  const value = useMemo<WishlistContextValue>(
+    () => ({
+      productIds,
+      has: (productId) => productIds.includes(productId),
+      toggle: (productId) =>
+        setProductIds((current) =>
+          current.includes(productId)
+            ? current.filter((id) => id !== productId)
+            : [...current, productId],
+        ),
+      remove: (productId) => setProductIds((current) => current.filter((id) => id !== productId)),
+    }),
+    [productIds],
+  );
 
   return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;
 }

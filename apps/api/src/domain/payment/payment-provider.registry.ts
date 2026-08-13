@@ -35,9 +35,13 @@ export class PaymentProviderRegistry {
 
   getDecision(providerCode: string): PaymentProviderDecision {
     const normalized = providerCode.trim().toLowerCase();
-    if (normalized !== 'vnpay') throw new PaymentProviderNotConfiguredError(normalized || 'unknown');
+    if (normalized !== 'vnpay')
+      throw new PaymentProviderNotConfiguredError(normalized || 'unknown');
     return {
-      code: 'vnpay', name: 'VNPAY', status: 'approved', implementationPhase: 'foundation',
+      code: 'vnpay',
+      name: 'VNPAY',
+      status: 'approved',
+      implementationPhase: 'foundation',
       gatewayConfigured: this.gateways.has('vnpay'),
     };
   }

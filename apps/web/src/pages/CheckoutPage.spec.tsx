@@ -16,7 +16,12 @@ vi.mock('../features/checkout/checkoutApi', () => ({
   checkoutApi: { quoteShipping: vi.fn(), createOrder: vi.fn() },
 }));
 vi.mock('../features/payment/paymentApi', () => ({
-  paymentApi: { listMethods: vi.fn(), createIntent: vi.fn(), getStatus: vi.fn(), processVnpayReturn: vi.fn() },
+  paymentApi: {
+    listMethods: vi.fn(),
+    createIntent: vi.fn(),
+    getStatus: vi.fn(),
+    processVnpayReturn: vi.fn(),
+  },
 }));
 vi.mock('../features/payment/paymentNavigation', () => ({
   navigateToExternalUrl: vi.fn(),
@@ -78,8 +83,20 @@ describe('CheckoutPage', () => {
       estimatedDelivery: null,
     });
     vi.mocked(paymentApi.listMethods).mockResolvedValue([
-      { code: 'cod', name: 'Thanh toán khi nhận hàng', enabled: true, captureRequired: false, initialPaymentStatus: 'pending' },
-      { code: 'vnpay', name: 'Thanh toán VNPAY', enabled: true, captureRequired: true, initialPaymentStatus: 'pending' },
+      {
+        code: 'cod',
+        name: 'Thanh toán khi nhận hàng',
+        enabled: true,
+        captureRequired: false,
+        initialPaymentStatus: 'pending',
+      },
+      {
+        code: 'vnpay',
+        name: 'Thanh toán VNPAY',
+        enabled: true,
+        captureRequired: true,
+        initialPaymentStatus: 'pending',
+      },
     ]);
     vi.mocked(checkoutApi.createOrder).mockResolvedValue({
       orderId: '91',
@@ -118,7 +135,9 @@ describe('CheckoutPage', () => {
 
   it('loads authoritative Cart and COD method and renders an empty Cart state', async () => {
     renderPage();
-    expect(await screen.findByRole('radio', { name: /Thanh toán khi nhận hàng/ })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('radio', { name: /Thanh toán khi nhận hàng/ }),
+    ).toBeInTheDocument();
     expect(screen.getAllByText(/250\.000/).length).toBeGreaterThan(0);
     expect(reload).toHaveBeenCalled();
 

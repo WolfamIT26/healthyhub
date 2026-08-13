@@ -36,13 +36,24 @@ describe.skipIf(!enabled)('Cart server persistence MySQL integration', () => {
   beforeAll(async () => {
     dataSource = new DataSource({
       ...createTypeOrmOptions(getValidatedEnvironment(process.env)),
-      migrations: [CreateUserIdentityFoundation1760000000000, CreateAuthenticationData1760000001000,
-        CreateCartDependencyFoundation1760000002000, CreateCartPersistence1760000003000,
-        CreateOrderCreationFoundation1760000004000],
-      entities: [...Object.values(authenticationEntities), ...Object.values(cartEntities),
-        ...Object.values(customerEntities), ...Object.values(inventoryEntities), ...Object.values(orderEntities),
-        ...Object.values(paymentEntities), ...Object.values(productEntities), ...Object.values(shippingEntities),
-        ...Object.values(userEntities)],
+      migrations: [
+        CreateUserIdentityFoundation1760000000000,
+        CreateAuthenticationData1760000001000,
+        CreateCartDependencyFoundation1760000002000,
+        CreateCartPersistence1760000003000,
+        CreateOrderCreationFoundation1760000004000,
+      ],
+      entities: [
+        ...Object.values(authenticationEntities),
+        ...Object.values(cartEntities),
+        ...Object.values(customerEntities),
+        ...Object.values(inventoryEntities),
+        ...Object.values(orderEntities),
+        ...Object.values(paymentEntities),
+        ...Object.values(productEntities),
+        ...Object.values(shippingEntities),
+        ...Object.values(userEntities),
+      ],
     });
     await dataSource.initialize();
   });
@@ -62,35 +73,70 @@ describe.skipIf(!enabled)('Cart server persistence MySQL integration', () => {
     const createdUsers: UserAccountEntity[] = [];
 
     for (const label of ['a', 'b']) {
-      createdUsers.push(await users.save(users.create({
-        email: `cart-${label}-${suffix}@example.test`, normalizedEmail: `cart-${label}-${suffix}@example.test`,
-        phone: null, displayName: `Cart Customer ${label.toUpperCase()}`,
-        passwordHash: 'integration-fixture-not-a-login-secret', userStatus: 'active',
-        emailVerifiedAt: null, lockedUntil: null, lastLoginAt: null,
-      })));
+      createdUsers.push(
+        await users.save(
+          users.create({
+            email: `cart-${label}-${suffix}@example.test`,
+            normalizedEmail: `cart-${label}-${suffix}@example.test`,
+            phone: null,
+            displayName: `Cart Customer ${label.toUpperCase()}`,
+            passwordHash: 'integration-fixture-not-a-login-secret',
+            userStatus: 'active',
+            emailVerifiedAt: null,
+            lockedUntil: null,
+            lastLoginAt: null,
+          }),
+        ),
+      );
     }
-    const createdCustomers = await customers.save(createdUsers.map((user, index) => customers.create({
-      tenantId: '1', userAccountId: user.id, customerCode: `CUS-CART-${index}-${suffix}`,
-      fullName: user.displayName, contactInfo: { email: user.email }, customerStatus: 'active',
-      consentState: 'unknown', marketingOptInStatus: 'not_opted_in',
-    })));
-    const product = await products.save(products.create({
-      tenantId: '1', brandId: null, productCode: `CART-PERSIST-${suffix}`,
-      productName: 'Persistent Cart Product', slug: `persistent-cart-product-${suffix}`,
-      basePrice: '125000.00', sellableStatus: 'sellable', productVisibility: 'public', productStatus: 'active',
-    }));
-    const stock = await inventory.save(inventory.create({
-      tenantId: '1', productId: product.id, availableQuantity: 5, reservedQuantity: 0,
-      stockThreshold: 1, stockStatus: 'available',
-    }));
+    const createdCustomers = await customers.save(
+      createdUsers.map((user, index) =>
+        customers.create({
+          tenantId: '1',
+          userAccountId: user.id,
+          customerCode: `CUS-CART-${index}-${suffix}`,
+          fullName: user.displayName,
+          contactInfo: { email: user.email },
+          customerStatus: 'active',
+          consentState: 'unknown',
+          marketingOptInStatus: 'not_opted_in',
+        }),
+      ),
+    );
+    const product = await products.save(
+      products.create({
+        tenantId: '1',
+        brandId: null,
+        productCode: `CART-PERSIST-${suffix}`,
+        productName: 'Persistent Cart Product',
+        slug: `persistent-cart-product-${suffix}`,
+        basePrice: '125000.00',
+        sellableStatus: 'sellable',
+        productVisibility: 'public',
+        productStatus: 'active',
+      }),
+    );
+    const stock = await inventory.save(
+      inventory.create({
+        tenantId: '1',
+        productId: product.id,
+        availableQuantity: 5,
+        reservedQuantity: 0,
+        stockThreshold: 1,
+        stockStatus: 'available',
+      }),
+    );
 
     const repository = new TypeOrmCartRepository(dataSource);
     const service = new CartService(
       repository,
       new ProductCommerceReader({ findById: (id) => products.findOneBy({ id }) }),
-      new InventoryAvailabilityReader({ findByProductId: (productId) => inventory.findOneBy({ productId }) }),
+      new InventoryAvailabilityReader({
+        findByProductId: (productId) => inventory.findOneBy({ productId }),
+      }),
       new CustomerOwnerResolver({
-        findActiveByUserAccountId: (userAccountId) => customers.findOneBy({ userAccountId, customerStatus: 'active' }),
+        findActiveByUserAccountId: (userAccountId) =>
+          customers.findOneBy({ userAccountId, customerStatus: 'active' }),
       }),
     );
     const authA = actor(createdUsers[0].id);
@@ -103,19 +149,36 @@ describe.skipIf(!enabled)('Cart server persistence MySQL integration', () => {
       const reloaded = await service.get(authA);
       expect(reloaded).toMatchObject({ itemCount: 3, subtotal: '375000.00' });
       expect(reloaded.items).toHaveLength(1);
-      expect(await carts.countBy({ customerProfileId: createdCustomers[0].id, cartStatus: 'active' })).toBe(1);
-      expect(await cartItems.countBy({ cartId: reloaded.id, productId: product.id, itemStatus: 'active' })).toBe(1);
+      expect(
+        await carts.countBy({ customerProfileId: createdCustomers[0].id, cartStatus: 'active' }),
+      ).toBe(1);
+      expect(
+        await cartItems.countBy({
+          cartId: reloaded.id,
+          productId: product.id,
+          itemStatus: 'active',
+        }),
+      ).toBe(1);
 
       const otherCustomer = await service.get(authB);
       expect(otherCustomer.items).toEqual([]);
       expect(otherCustomer.id).not.toBe(reloaded.id);
 
       await service.update(authA, reloaded.items[0].id, 4);
-      await expect(service.get(authA)).resolves.toMatchObject({ itemCount: 4, subtotal: '500000.00' });
+      await expect(service.get(authA)).resolves.toMatchObject({
+        itemCount: 4,
+        subtotal: '500000.00',
+      });
       await service.remove(authA, reloaded.items[0].id);
       await expect(service.get(authA)).resolves.toMatchObject({ itemCount: 0, items: [] });
     } finally {
-      await cartItems.createQueryBuilder().delete().where('cart_id IN (SELECT id FROM carts WHERE customer_profile_id IN (:...ids))', { ids: createdCustomers.map((item) => item.id) }).execute();
+      await cartItems
+        .createQueryBuilder()
+        .delete()
+        .where('cart_id IN (SELECT id FROM carts WHERE customer_profile_id IN (:...ids))', {
+          ids: createdCustomers.map((item) => item.id),
+        })
+        .execute();
       await carts.delete({ customerProfileId: createdCustomers[0].id });
       await carts.delete({ customerProfileId: createdCustomers[1].id });
       await inventory.delete(stock.id);
@@ -127,5 +190,11 @@ describe.skipIf(!enabled)('Cart server persistence MySQL integration', () => {
 });
 
 function actor(userAccountId: string) {
-  return { userAccountId, sessionId: '1', sessionPublicId: `session-${userAccountId}`, roles: ['CUSTOMER'] as const, permissionsVersion: 1 };
+  return {
+    userAccountId,
+    sessionId: '1',
+    sessionPublicId: `session-${userAccountId}`,
+    roles: ['CUSTOMER'] as const,
+    permissionsVersion: 1,
+  };
 }
