@@ -3,11 +3,16 @@ import type { PaymentStatus } from './payment-lifecycle.policy';
 export interface ProviderPaymentRequest {
   paymentId: string;
   orderId: string;
+  providerReference: string;
   amount: string;
   currency: 'VND';
   idempotencyKey: string;
   returnUrl: string;
   cancelUrl: string;
+  createdAt: Date;
+  expiresAt: Date;
+  orderInfo: string;
+  ipAddress?: string;
 }
 
 export interface ProviderPaymentResult {
@@ -15,12 +20,19 @@ export interface ProviderPaymentResult {
   providerReference: string;
   status: PaymentStatus;
   redirectUrl: string | null;
+  providerTransactionNo?: string | null;
 }
 
 export interface ProviderPaymentQuery {
   provider: string;
   providerReference: string;
   status: PaymentStatus;
+  amount: string;
+  currency: 'VND';
+  providerTransactionNo?: string | null;
+  responseCode?: string;
+  transactionStatus?: string | null;
+  occurredAt?: Date;
 }
 
 export interface VerifiedPaymentWebhook {
@@ -28,6 +40,9 @@ export interface VerifiedPaymentWebhook {
   eventId: string;
   eventType: string;
   providerReference: string;
+  providerTransactionNo?: string | null;
+  responseCode?: string;
+  transactionStatus?: string | null;
   status: PaymentStatus;
   amount: string;
   currency: 'VND';
@@ -39,10 +54,11 @@ export interface VerifiedPaymentWebhook {
 export interface PaymentProviderGateway {
   readonly providerCode: string;
   createPayment(request: ProviderPaymentRequest): Promise<ProviderPaymentResult>;
-  queryPayment(providerReference: string): Promise<ProviderPaymentQuery>;
+  queryPayment(providerReference: string, transactionDate?: Date): Promise<ProviderPaymentQuery>;
   verifyWebhook(
     rawBody: Buffer,
     headers: Readonly<Record<string, string | string[] | undefined>>,
+    query?: Readonly<Record<string, string | string[] | undefined>>,
   ): Promise<VerifiedPaymentWebhook>;
 }
 

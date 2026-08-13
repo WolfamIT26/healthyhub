@@ -16,5 +16,5 @@ export class CreateOrderDto {
   @ValidateNested() @Type(() => OrderShippingAddressDto) shippingAddress!: OrderShippingAddressDto;
   @IsIn(['manual']) shippingMethod!: 'manual';
   @IsString() @MaxLength(64) shippingQuoteReference!: string;
-  @IsIn(['cod']) paymentMethod!: 'cod';
+  @IsIn(['cod', 'vnpay']) paymentMethod!: 'cod' | 'vnpay';
 }

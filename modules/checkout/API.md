@@ -1,5 +1,5 @@
 # Checkout API Status
 
-**Not implemented.**
+**Implemented as part of Checkout orchestration; no extra checkout-specific payment endpoint invented.**
 
-OpenAPI hiện có Cart validate, Shipping quote và Order create outlines nhưng vẫn generic ở các dependency quyết định. Payment COD list là internal capability vì contract không có GET payment methods. Không thêm endpoint tùy ý.
+Checkout vẫn dùng `POST /shipping/quotes` và `POST /orders`. Payment method list được lấy từ backend payment capability, hiện gồm `cod` và `vnpay` thông qua `GET /payments/methods`. Khi chọn VNPAY, frontend gọi payment intent sau khi Order đã persist.

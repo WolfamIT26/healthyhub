@@ -4407,7 +4407,7 @@ paths:
         Tạo payment intent cho order
 
         Ghi chú quyền: Order payer.
-        Xác thực: Customer JWT hoặc guest checkout token.
+        Xác thực: Customer JWT.
         Rate limit: Áp dụng rate limit chặt cho gateway/provider integration.
         Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
       tags:
@@ -4415,7 +4415,7 @@ paths:
       security:
         - BearerAuth: []
       x-permission: "Order payer"
-      x-auth-level: "Customer JWT hoặc guest checkout token"
+      x-auth-level: "Customer JWT"
       x-rate-limit-note: "Áp dụng rate limit chặt cho gateway/provider integration."
       x-idempotency-required: true
       x-source: ".spec/api/domains/payment.md"
@@ -4454,6 +4454,88 @@ paths:
           $ref: "#/components/responses/BadGateway"
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
+  /api/v1/payments/methods:
+    get:
+      operationId: "getPaymentsMethods"
+      summary: "Lấy danh sách phương thức thanh toán khả dụng"
+      description: |
+        Lấy danh sách phương thức thanh toán khả dụng
+
+        Ghi chú quyền: Public.
+        Xác thực: Public.
+        Rate limit: Áp dụng rate limit chặt cho gateway/provider integration.
+        Idempotency: không bắt buộc cho thao tác đọc.
+      tags:
+        - "Payment"
+      security: []
+      x-permission: "Public"
+      x-auth-level: "Public"
+      x-rate-limit-note: "Áp dụng rate limit chặt cho gateway/provider integration."
+      x-idempotency-required: false
+      x-source: ".spec/api/domains/payment.md"
+      parameters:
+        - $ref: "#/components/parameters/RequestIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      responses:
+        "200":
+          $ref: "#/components/responses/Ok"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/v1/payments/vnpay/return:
+    get:
+      operationId: "getPaymentsVnpayReturn"
+      summary: "Xác minh browser return từ VNPAY"
+      description: |
+        Xác minh checksum, terminal, reference và amount của browser return từ VNPAY,
+        sau đó trả Payment state đã persist. Endpoint này không cập nhật Payment/Order.
+
+        Ghi chú quyền: Order payer.
+        Xác thực: Customer JWT.
+        Rate limit: Áp dụng rate limit chặt cho gateway/provider integration.
+        Idempotency: không bắt buộc cho thao tác đọc.
+      tags:
+        - "Payment"
+      security:
+        - BearerAuth: []
+      x-permission: "Order payer"
+      x-auth-level: "Customer JWT"
+      x-rate-limit-note: "Áp dụng rate limit chặt cho gateway/provider integration."
+      x-idempotency-required: false
+      x-source: ".spec/api/domains/payment.md"
+      parameters:
+        - $ref: "#/components/parameters/RequestIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+        - $ref: "#/components/parameters/PaymentIdQuery"
+        - $ref: "#/components/parameters/VnpayTmnCodeQuery"
+        - $ref: "#/components/parameters/VnpayAmountQuery"
+        - $ref: "#/components/parameters/VnpayResponseCodeQuery"
+        - $ref: "#/components/parameters/VnpayTransactionStatusQuery"
+        - $ref: "#/components/parameters/VnpayTransactionNoQuery"
+        - $ref: "#/components/parameters/VnpayTxnRefQuery"
+        - $ref: "#/components/parameters/VnpaySecureHashQuery"
+      responses:
+        "200":
+          $ref: "#/components/responses/Ok"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /api/v1/payments/{paymentId}:
     get:
       operationId: "getPaymentsPaymentId"
@@ -4764,45 +4846,44 @@ paths:
           $ref: "#/components/responses/BadGateway"
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
-  /api/v1/webhooks/payment/{provider}:
-    post:
-      operationId: "postWebhooksPaymentProvider"
-      summary: "Nhận webhook payment provider"
+  /api/v1/webhooks/payment/vnpay:
+    get:
+      operationId: "getWebhooksPaymentVnpay"
+      summary: "Nhận IPN/callback từ VNPAY"
       description: |
-        Nhận webhook payment provider
+        Nhận IPN/callback authoritative từ VNPAY, verify checksum/terminal/reference/amount,
+        dedupe provider event và áp dụng Payment/Order effect trong transaction.
 
         Ghi chú quyền: Provider scope.
-        Xác thực: Provider auth.
+        Xác thực: Provider signature trong query string.
         Rate limit: Áp dụng rate limit chặt cho gateway/provider integration.
         Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
       tags:
         - "Payment"
-      security:
-        - WebhookSignatureAuth: []
-        - ApiKeyAuth: []
+      security: []
       x-permission: "Provider scope"
-      x-auth-level: "Provider auth"
+      x-auth-level: "Provider signature in query string"
       x-rate-limit-note: "Áp dụng rate limit chặt cho gateway/provider integration."
-      x-idempotency-required: true
+      x-idempotency-required: false
       x-source: ".spec/api/domains/payment.md"
       parameters:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/ProviderPath"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/WebhookEventRequest"
-            examples:
-              default:
-                $ref: "#/components/examples/WebhookEventRequest"
+        - $ref: "#/components/parameters/VnpayTmnCodeQuery"
+        - $ref: "#/components/parameters/VnpayAmountQuery"
+        - $ref: "#/components/parameters/VnpayResponseCodeQuery"
+        - $ref: "#/components/parameters/VnpayTransactionStatusQuery"
+        - $ref: "#/components/parameters/VnpayTransactionNoQuery"
+        - $ref: "#/components/parameters/VnpayTxnRefQuery"
+        - $ref: "#/components/parameters/VnpaySecureHashQuery"
       responses:
-        "202":
-          $ref: "#/components/responses/Accepted"
+        "200":
+          description: "VNPAY acknowledgment raw JSON"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VnpayIpnAcknowledgement"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -4815,14 +4896,6 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
-          $ref: "#/components/responses/Conflict"
-        "502":
-          $ref: "#/components/responses/BadGateway"
-        "503":
-          $ref: "#/components/responses/ServiceUnavailable"
   /api/v1/shipping/quotes:
     post:
       operationId: "postShippingQuotes"
@@ -9588,6 +9661,22 @@ components:
       $ref: "./parameters/common.yaml#/SortParam"
     FilterParam:
       $ref: "./parameters/common.yaml#/FilterParam"
+    PaymentIdQuery:
+      $ref: "./parameters/common.yaml#/PaymentIdQuery"
+    VnpayTmnCodeQuery:
+      $ref: "./parameters/common.yaml#/VnpayTmnCodeQuery"
+    VnpayAmountQuery:
+      $ref: "./parameters/common.yaml#/VnpayAmountQuery"
+    VnpayResponseCodeQuery:
+      $ref: "./parameters/common.yaml#/VnpayResponseCodeQuery"
+    VnpayTransactionStatusQuery:
+      $ref: "./parameters/common.yaml#/VnpayTransactionStatusQuery"
+    VnpayTransactionNoQuery:
+      $ref: "./parameters/common.yaml#/VnpayTransactionNoQuery"
+    VnpayTxnRefQuery:
+      $ref: "./parameters/common.yaml#/VnpayTxnRefQuery"
+    VnpaySecureHashQuery:
+      $ref: "./parameters/common.yaml#/VnpaySecureHashQuery"
     DateFromParam:
       $ref: "./parameters/common.yaml#/DateFromParam"
     DateToParam:
@@ -9758,6 +9847,12 @@ components:
       $ref: "./schemas/common.yaml#/AiFeedbackRequest"
     PaymentIntentRequest:
       $ref: "./schemas/common.yaml#/PaymentIntentRequest"
+    PaymentMethodReadModel:
+      $ref: "./schemas/common.yaml#/PaymentMethodReadModel"
+    PaymentSummary:
+      $ref: "./schemas/common.yaml#/PaymentSummary"
+    VnpayIpnAcknowledgement:
+      $ref: "./schemas/common.yaml#/VnpayIpnAcknowledgement"
     ShippingQuoteRequest:
       $ref: "./schemas/common.yaml#/ShippingQuoteRequest"
     AnalyticsEventRequest:

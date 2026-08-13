@@ -1,10 +1,18 @@
 export type PaymentStatus =
   'unpaid' | 'pending' | 'paid' | 'failed' | 'refunded' | 'partially_refunded' | 'cancelled';
 
+export interface PaymentMethodReadModel {
+  code: 'cod' | 'vnpay';
+  name: string;
+  enabled: boolean;
+  captureRequired: boolean;
+  initialPaymentStatus: 'pending';
+}
+
 export interface PaymentSummary {
   id: string;
   orderId: string;
-  method: 'cod' | 'bank_transfer' | 'online';
+  method: 'cod' | 'vnpay';
   status: PaymentStatus;
   amount: string;
   currency: 'VND';
@@ -15,7 +23,7 @@ export interface PaymentSummary {
 
 export interface CreatePaymentIntentInput {
   orderId: string;
-  paymentMethod: 'online';
+  paymentMethod: 'vnpay';
 }
 
 export type PaymentUiState =

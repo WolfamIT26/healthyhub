@@ -30,7 +30,7 @@ describe.skipIf(!enabled)('Payment provider event MySQL integration', () => {
   let dataSource: DataSource;
   beforeAll(async () => {
     dataSource = new DataSource({
-      ...createTypeOrmOptions(getValidatedEnvironment(process.env)),
+      ...createTypeOrmOptions(getValidatedEnvironment({ ...process.env, PAYMENT_PROVIDER: 'not_configured' })),
       migrations: [CreateUserIdentityFoundation1760000000000, CreateAuthenticationData1760000001000,
         CreateCartDependencyFoundation1760000002000, CreateCartPersistence1760000003000,
         CreateOrderCreationFoundation1760000004000, CreatePaymentProviderEvents1760000005000],

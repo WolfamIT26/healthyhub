@@ -49,6 +49,13 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-change_me_local_password}
       TYPEORM_SYNCHRONIZE: 'false'
       TYPEORM_LOGGING: ${TYPEORM_LOGGING:-false}
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-not_configured}
+      VNPAY_TMN_CODE: ${VNPAY_TMN_CODE:-}
+      VNPAY_HASH_SECRET: ${VNPAY_HASH_SECRET:-}
+      VNPAY_PAYMENT_URL: ${VNPAY_PAYMENT_URL:-}
+      VNPAY_API_URL: ${VNPAY_API_URL:-}
+      VNPAY_RETURN_URL: ${VNPAY_RETURN_URL:-}
+      VNPAY_IPN_URL: ${VNPAY_IPN_URL:-}
     ports:
       - '${API_PORT:-3001}:3001'
     depends_on:

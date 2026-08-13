@@ -1,5 +1,38 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.13.9] - 2026-08-12
+
+### Fixed / Đã sửa
+
+- Sửa VNPAY checksum canonical URL encoding, terminal/reference/amount validation, status mapping và QueryDr timeout/response checks.
+- Giữ browser return read-only; chỉ verified IPN claim event và apply Payment/Order effect.
+- Resolve đúng payment attempt, reload/lock rows khi update và chỉ map Order `new → confirmed`.
+- Harden duplicate/concurrent provider events và forward VNPAY env vào Docker API mà không hard-code credential.
+
+### Verification / Kiểm tra
+
+- Automated unit/frontend/MySQL/OpenAPI/typecheck/lint verification PASS.
+- VNPAY Sandbox E2E/IPN thật BLOCKED do credentials và public HTTPS callback chưa cấu hình; không fake PASS.
+
+## [0.13.8] - 2026-08-10
+
+### Added / Đã thêm
+
+- Thêm VNPAY Sandbox adapter executable: create payment URL, HMAC SHA512 signing/verification, browser return, IPN/callback và query/reconciliation.
+- Thêm Payment API module/controller/service, raw VNPAY IPN acknowledgment, Order confirmation migration và VNPAY adapter/controller tests.
+- Thêm Checkout COD + VNPAY selection từ server, VNPAY redirect flow, payment return/result pages và frontend payment tests.
+
+### Changed / Đã cập nhật
+
+- OpenAPI PaymentIntentRequest không nhận amount/provider từ frontend; amount lấy từ persisted Order.
+- Payment method reader expose COD + VNPAY; VNPAY chỉ enabled khi gateway configured.
+- Đồng bộ docs/payment, docs/checkout, docs/order, modules/payment, modules/checkout, modules/orders và Payment OpenAPI/domain-map lên 196 operation.
+
+### Notes / Ghi chú
+
+- Không dùng production credential, không fake paid, không triển khai refund/settlement.
+- Sandbox E2E thật còn phụ thuộc credential VNPAY được cấu hình trong môi trường local.
+
 ## [0.13.7] - 2026-08-09
 
 ### Added / Đã thêm

@@ -6,12 +6,20 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAuth } from '../features/auth/AuthContext';
 import { useCart } from '../features/cart/CartContext';
 import { checkoutApi } from '../features/checkout/checkoutApi';
+import { paymentApi } from '../features/payment/paymentApi';
+import { navigateToExternalUrl } from '../features/payment/paymentNavigation';
 import { CheckoutPage } from './CheckoutPage';
 
 vi.mock('../features/auth/AuthContext', () => ({ useAuth: vi.fn() }));
 vi.mock('../features/cart/CartContext', () => ({ useCart: vi.fn() }));
 vi.mock('../features/checkout/checkoutApi', () => ({
   checkoutApi: { quoteShipping: vi.fn(), createOrder: vi.fn() },
+}));
+vi.mock('../features/payment/paymentApi', () => ({
+  paymentApi: { listMethods: vi.fn(), createIntent: vi.fn(), getStatus: vi.fn(), processVnpayReturn: vi.fn() },
+}));
+vi.mock('../features/payment/paymentNavigation', () => ({
+  navigateToExternalUrl: vi.fn(),
 }));
 
 const reload = vi.fn().mockResolvedValue(undefined);
@@ -69,6 +77,10 @@ describe('CheckoutPage', () => {
       available: true,
       estimatedDelivery: null,
     });
+    vi.mocked(paymentApi.listMethods).mockResolvedValue([
+      { code: 'cod', name: 'Thanh toán khi nhận hàng', enabled: true, captureRequired: false, initialPaymentStatus: 'pending' },
+      { code: 'vnpay', name: 'Thanh toán VNPAY', enabled: true, captureRequired: true, initialPaymentStatus: 'pending' },
+    ]);
     vi.mocked(checkoutApi.createOrder).mockResolvedValue({
       orderId: '91',
       orderNumber: 'HH-20260809-ABC',
@@ -106,9 +118,7 @@ describe('CheckoutPage', () => {
 
   it('loads authoritative Cart and COD method and renders an empty Cart state', async () => {
     renderPage();
-    expect(
-      await screen.findByText('Thanh toán khi nhận hàng — trạng thái ban đầu: Chờ thanh toán'),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole('radio', { name: /Thanh toán khi nhận hàng/ })).toBeInTheDocument();
     expect(screen.getAllByText(/250\.000/).length).toBeGreaterThan(0);
     expect(reload).toHaveBeenCalled();
 
@@ -136,7 +146,7 @@ describe('CheckoutPage', () => {
 
   it('validates recipient fields before requesting a Shipping quote', async () => {
     renderPage();
-    await screen.findByText('Thanh toán khi nhận hàng — trạng thái ban đầu: Chờ thanh toán');
+    await screen.findByRole('radio', { name: /Thanh toán khi nhận hàng/ });
     await userEvent.click(screen.getByRole('button', { name: 'Kiểm tra giao hàng' }));
     expect(await screen.findAllByText('Trường này là bắt buộc.')).toHaveLength(4);
     expect(checkoutApi.quoteShipping).not.toHaveBeenCalled();
@@ -210,6 +220,48 @@ describe('CheckoutPage', () => {
       vi.mocked(checkoutApi.createOrder).mock.calls[1][2],
     );
   });
+
+  it('creates a VNPAY payment intent and redirects after Order creation', async () => {
+    vi.mocked(checkoutApi.createOrder).mockResolvedValueOnce({
+      orderId: '91',
+      orderNumber: 'HH-VNPAY',
+      status: 'new',
+      paymentStatus: 'pending',
+      paymentMethod: 'vnpay',
+      shippingStatus: 'pending',
+      shippingMethod: 'manual',
+      items: [],
+      subtotal: '250000.00',
+      shippingFee: '0.00',
+      total: '250000.00',
+      currency: 'VND',
+      shippingAddress: {},
+      createdAt: new Date().toISOString(),
+    });
+    vi.mocked(paymentApi.createIntent).mockResolvedValueOnce({
+      id: 'pay_1',
+      orderId: '91',
+      method: 'vnpay',
+      status: 'pending',
+      amount: '250000.00',
+      currency: 'VND',
+      providerReference: 'HHVNP-pay_1-test',
+      redirectUrl: 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?foo=bar',
+      updatedAt: new Date().toISOString(),
+    });
+    renderPage();
+    await fillAddress();
+    await userEvent.click(screen.getByRole('radio', { name: /Thanh toán VNPAY/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Kiểm tra giao hàng' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Xác nhận đặt hàng' }));
+    expect(vi.mocked(paymentApi.createIntent)).toHaveBeenCalledWith(
+      { orderId: '91', paymentMethod: 'vnpay' },
+      expect.stringMatching(/^checkout-/),
+    );
+    expect(vi.mocked(navigateToExternalUrl)).toHaveBeenCalledWith(
+      'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?foo=bar',
+    );
+  });
 });
 
 function renderPage() {
@@ -220,7 +272,7 @@ function renderPage() {
   );
 }
 async function fillAddress() {
-  await screen.findByText('Thanh toán khi nhận hàng — trạng thái ban đầu: Chờ thanh toán');
+  await screen.findByRole('radio', { name: /Thanh toán khi nhận hàng/ });
   await userEvent.type(screen.getByLabelText(/Số điện thoại/), '0901234567');
   await userEvent.type(screen.getByLabelText(/Tỉnh \/ Thành phố/), 'Hồ Chí Minh');
   await userEvent.type(screen.getByLabelText(/Quận \/ Huyện/), 'Quận 1');

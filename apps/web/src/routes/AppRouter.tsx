@@ -21,6 +21,8 @@ import { ProductDetailPage } from '../pages/ProductDetailPage';
 import { WishlistPage } from '../pages/WishlistPage';
 import { CartPage } from '../pages/CartPage';
 import { CheckoutPage } from '../pages/CheckoutPage';
+import { PaymentReturnPage } from '../pages/PaymentReturnPage';
+import { PaymentResultPage } from '../pages/PaymentResultPage';
 
 export function AppRouter() {
   return (
@@ -90,6 +92,22 @@ export function AppRouter() {
           element={
             <RouteGuard area="customer">
               <CheckoutPage />
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/payment/vnpay/return"
+          element={
+            <RouteGuard area="customer">
+              <PaymentReturnPage />
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/payment/vnpay/result"
+          element={
+            <RouteGuard area="customer">
+              <PaymentResultPage />
             </RouteGuard>
           }
         />

@@ -41,3 +41,10 @@ Ngày audit: 2026-08-09.
 1. Triển khai Prompt 26.2 verified-Customer Checkout UI với one-time VN address, `manual` Shipping và COD.
 2. Dùng `POST /orders` cùng required idempotency key; không gửi totals/owner/status.
 3. Chốt Cart transition theo authoritative rule trước khi mutate Cart.
+
+## Prompt 27.2 resolution
+
+- Checkout payment method selection now consumes backend capability and supports `cod` + `vnpay`.
+- VNPAY redirect happens only after Order persistence and payment intent creation.
+- Browser return/result remains non-authoritative and queries backend state.
+- COD regression remains intact; no provider call is made for COD.

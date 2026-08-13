@@ -32,6 +32,8 @@ Mỗi file tổng hợp nên có:
 
 ## Summary Index / Danh sách file tổng hợp
 
+- [Prompt 27.3 - VNPAY Sandbox E2E Verification](2026-08-12-01-prompt-27-3-vnpay-sandbox-e2e-verification.md).
+- [Prompt 27.2 - VNPAY Sandbox Integration](2026-08-10-01-prompt-27-2-vnpay-sandbox-integration.md).
 - [Prompt 03 - Foundation Documentation](2026-08-05-01-prompt-03-foundation-documentation.md).
 - [Work Summary System](2026-08-05-02-work-summary-system.md).
 - [Prompt 04 - AI Development Core](2026-08-05-03-prompt-04-ai-development-core.md).

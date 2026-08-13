@@ -172,8 +172,14 @@ function validatePaymentConfiguration(env: HealthyHubEnvironment): void {
   const required = Object.entries(env.payment.vnpay);
   const missing = required.filter(([, value]) => !value).map(([name]) => name);
   if (missing.length > 0) throw new Error(`Thiếu cấu hình VNPAY: ${missing.join(', ')}.`);
+  if (!/^[A-Za-z0-9]{8}$/.test(env.payment.vnpay.tmnCode)) {
+    throw new Error('VNPAY_TMN_CODE phải gồm đúng 8 ký tự chữ hoặc số.');
+  }
   for (const [name, value] of required.filter(([name]) => name.endsWith('Url'))) {
     try { new URL(value); } catch { throw new Error(`Cấu hình VNPAY ${name} phải là URL hợp lệ.`); }
+  }
+  if (new URL(env.payment.vnpay.ipnUrl).protocol !== 'https:') {
+    throw new Error('VNPAY_IPN_URL phải là HTTPS public callback để VNPAY gọi server-to-server.');
   }
 }
 

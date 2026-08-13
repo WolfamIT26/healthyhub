@@ -22,7 +22,10 @@ function setup() {
   const owners = { resolve: vi.fn().mockResolvedValue({ customerProfileId: '7', userAccountId: '42' }) };
   const products = { findSellableProduct: vi.fn().mockResolvedValue(product) };
   const inventory = { checkAvailability: vi.fn().mockResolvedValue({ status: 'AVAILABLE', availableQuantity: 5 }) };
-  repository.createSnapshot.mockImplementation(async (input) => aggregate({ requestHash: input.requestHash }));
+  repository.createSnapshot.mockImplementation(async (input) => aggregate({
+    requestHash: input.requestHash,
+    paymentMethod: input.payment.method,
+  }));
   const service = new OrderCreationService(repository as never, carts as never, authentication as never,
     owners as never, products as never, inventory as never, shipping, new PaymentMethodReader(),
     new EmailVerificationPolicyService());
@@ -44,6 +47,20 @@ describe('OrderCreationService', () => {
       customerProfileId: '7', cartId: '10', orderTotal: '138000.00',
       payment: { method: 'cod', amount: '138000.00', status: 'pending' },
       shipping: expect.objectContaining({ method: 'manual', fee: '0.00' }),
+    }));
+  });
+
+  it('accepts VNPAY as a supported payment method for persisted Order snapshots', async () => {
+    const { service, repository, input } = setup();
+    await expect(
+      service.createOrderFromCheckout(auth, 'checkout-attempt-vnpay', { ...input, paymentMethod: 'vnpay' as const }),
+    ).resolves.toMatchObject({
+      status: 'new',
+      paymentStatus: 'pending',
+      paymentMethod: 'vnpay',
+    });
+    expect(repository.createSnapshot).toHaveBeenCalledWith(expect.objectContaining({
+      payment: { method: 'vnpay', amount: '138000.00', status: 'pending' },
     }));
   });
 
@@ -116,13 +133,13 @@ describe('OrderCreationService', () => {
   });
 });
 
-function aggregate({ requestHash }: { requestHash: string }) {
+function aggregate({ requestHash, paymentMethod = 'cod' }: { requestHash: string; paymentMethod?: 'cod' | 'vnpay' }) {
   return {
     order: { id: '100', orderCode: 'HH-20260809-ABCDEF123456', orderStatus: 'new', orderTotal: '138000.00',
       requestHash, placedAt: new Date('2026-08-09T00:00:00Z') },
     items: [{ productId: '1', productNameSnapshot: 'Sữa yến mạch', skuSnapshot: 'HH-0001',
       unitPriceSnapshot: '69000.00', quantity: 2, lineTotal: '138000.00' }],
-    payment: { paymentStatus: 'pending', paymentMethod: 'cod' },
+    payment: { paymentStatus: 'pending', paymentMethod },
     shipment: { shippingStatus: 'pending', shippingMethod: 'manual', shippingFee: '0.00' },
     shippingAddress: { addressText: JSON.stringify({ countryCode: 'VN', provinceCity: 'Hồ Chí Minh',
       district: 'Quận 1', ward: 'Bến Nghé', addressLine: '12 Nguyễn Huệ' }) },

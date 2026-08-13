@@ -11,7 +11,12 @@ export const checkoutApi = {
         shippingMethod: 'manual',
       })
       .then((response) => response.data.data),
-  createOrder: (address: CheckoutAddress, quoteReference: string, idempotencyKey: string) =>
+  createOrder: (
+    address: CheckoutAddress,
+    quoteReference: string,
+    idempotencyKey: string,
+    paymentMethod: 'cod' | 'vnpay',
+  ) =>
     httpClient
       .post<ApiSuccessEnvelope<CreatedOrder>>(
         '/orders',
@@ -19,7 +24,7 @@ export const checkoutApi = {
           shippingAddress: address,
           shippingMethod: 'manual',
           shippingQuoteReference: quoteReference,
-          paymentMethod: 'cod',
+          paymentMethod,
         },
         { headers: { 'X-Idempotency-Key': idempotencyKey } },
       )

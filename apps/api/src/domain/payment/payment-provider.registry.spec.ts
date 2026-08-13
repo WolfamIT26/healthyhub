@@ -26,11 +26,15 @@ describe('PaymentProviderRegistry', () => {
       gateway.createPayment({
         paymentId: '1',
         orderId: '2',
+        providerReference: 'ref-1',
         amount: '100000.00',
         currency: 'VND',
         idempotencyKey: 'attempt-001',
         returnUrl: 'https://example.test/return',
         cancelUrl: 'https://example.test/cancel',
+        createdAt: new Date('2026-08-10T00:00:00Z'),
+        expiresAt: new Date('2026-08-10T00:15:00Z'),
+        orderInfo: 'Test order',
       }),
     ).rejects.toThrow('provider unavailable');
     await expect(gateway.verifyWebhook(Buffer.from('{}'), {})).rejects.toThrow('invalid signature');

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-export type ExecutablePaymentMethodCode = 'cod';
+export type ExecutablePaymentMethodCode = 'cod' | 'vnpay';
 
 export interface ExecutablePaymentMethod {
   code: ExecutablePaymentMethodCode;
   name: string;
-  enabled: true;
-  captureRequired: false;
+  enabled: boolean;
+  captureRequired: boolean;
   initialPaymentStatus: 'pending';
 }
 
@@ -25,14 +25,24 @@ const COD_METHOD: ExecutablePaymentMethod = Object.freeze({
   initialPaymentStatus: 'pending',
 });
 
+const VNPAY_METHOD: ExecutablePaymentMethod = Object.freeze({
+  code: 'vnpay',
+  name: 'Thanh toán VNPAY',
+  enabled: true,
+  captureRequired: true,
+  initialPaymentStatus: 'pending',
+});
+
 @Injectable()
 export class PaymentMethodReader {
   listExecutableMethods(): readonly ExecutablePaymentMethod[] {
-    return [COD_METHOD];
+    return [COD_METHOD, VNPAY_METHOD];
   }
 
   requireExecutableMethod(code: string): ExecutablePaymentMethod {
-    if (code.toLowerCase() !== 'cod') throw new UnsupportedPaymentMethodError(code);
-    return COD_METHOD;
+    const normalized = code.toLowerCase();
+    if (normalized === 'cod') return COD_METHOD;
+    if (normalized === 'vnpay') return VNPAY_METHOD;
+    throw new UnsupportedPaymentMethodError(code);
   }
 }

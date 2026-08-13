@@ -67,6 +67,69 @@ FilterParam:
   description: "Filter dạng chuỗi quy ước theo Data Contract."
   schema:
     type: string
+PaymentIdQuery:
+  name: paymentId
+  in: query
+  required: false
+  description: "Payment nội bộ dùng cho điều hướng Return; backend vẫn resolve bằng vnp_TxnRef đã ký."
+  schema:
+    type: string
+VnpayTmnCodeQuery:
+  name: vnp_TmnCode
+  in: query
+  required: true
+  description: "Mã terminal VNPAY; phải khớp terminal backend đã cấu hình."
+  schema:
+    type: string
+    pattern: "^[A-Za-z0-9]{8}$"
+VnpayAmountQuery:
+  name: vnp_Amount
+  in: query
+  required: true
+  description: "Số tiền VND do VNPAY trả về ở đơn vị nhân 100; backend đối chiếu Order đã persist."
+  schema:
+    type: string
+    pattern: "^\\d{1,12}$"
+VnpayResponseCodeQuery:
+  name: vnp_ResponseCode
+  in: query
+  required: true
+  description: "Mã kết quả giao dịch VNPAY."
+  schema:
+    type: string
+    pattern: "^\\d{2}$"
+VnpayTransactionStatusQuery:
+  name: vnp_TransactionStatus
+  in: query
+  required: true
+  description: "Trạng thái giao dịch VNPAY."
+  schema:
+    type: string
+    pattern: "^\\d{2}$"
+VnpayTransactionNoQuery:
+  name: vnp_TransactionNo
+  in: query
+  required: true
+  description: "Mã giao dịch do VNPAY ghi nhận."
+  schema:
+    type: string
+    pattern: "^\\d{1,15}$"
+VnpayTxnRefQuery:
+  name: vnp_TxnRef
+  in: query
+  required: true
+  description: "Tham chiếu payment attempt đã gửi sang VNPAY."
+  schema:
+    type: string
+    pattern: "^[A-Za-z0-9]{1,100}$"
+VnpaySecureHashQuery:
+  name: vnp_SecureHash
+  in: query
+  required: true
+  description: "Checksum HMAC do VNPAY gửi; chỉ backend xác minh và không persist giá trị raw."
+  schema:
+    type: string
+    pattern: "^[A-Fa-f0-9]{32,256}$"
 DateFromParam:
   name: dateFrom
   in: query

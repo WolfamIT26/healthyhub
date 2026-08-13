@@ -6,6 +6,6 @@ Trước implementation cần có:
 - Cart server revalidation ngay khi preview và confirm.
 - Typed one-time address contract hoặc executable saved-address ownership.
 - Authoritative Shipping method/fee/availability.
-- Approved Payment method list không chứa gateway success giả.
+- Approved Payment method list do backend công bố, hiện gồm COD + VNPAY.
 - Transactional Order creation với idempotency và snapshot totals/address/items.
 - Price/stock/shipping conflict response để frontend yêu cầu xác nhận lại.

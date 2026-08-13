@@ -1,5 +1,5 @@
 # Checkout Status
 
-**COMPLETE — Functional and persistence verification passed; browser visual verification BLOCKED.**
+**Prompt 27.3 Automated Verification PASS — Sandbox E2E BLOCKED.**
 
-`/checkout` now uses server Cart, authoritative Shipping quote and the real idempotent Order boundary. COD remains pending and success is rendered only from a persisted Order response.
+`/checkout` dùng server Cart, authoritative Shipping quote và Order boundary thật. Backend payment methods hiện xuất `cod` và `vnpay`; VNPAY redirect đi qua payment intent server-side, browser return không mutate, Result reload persisted backend state. Sandbox thật bị chặn bởi credentials/HTTPS IPN callback chưa cấu hình.

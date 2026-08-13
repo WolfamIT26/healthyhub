@@ -4,6 +4,10 @@
 
 **APPROVED: VNPAY cho HealthyHub V1.** Quyết định này mở khóa foundation cấu hình, registry và dedupe persistence. Adapter/kết nối thật, ký request, xác minh IPN và tạo payment URL thuộc Prompt 27.2; chưa được triển khai tại đây.
 
+## Prompt 27.2 Resolution
+
+VNPAY Sandbox adapter hiện đã executable phía sau provider-neutral gateway. Backend tạo payment URL, ký request, verify return/IPN, query provider khi cần reconciliation và chỉ apply Order effect sau khi Payment success được xác minh. Browser return vẫn là UX-only, không phải nguồn đánh dấu `paid`.
+
 ## Provider decision matrix
 
 Không ghi fee vì repository không có authoritative commercial agreement.

@@ -31,13 +31,19 @@
 ## Validation / Kiểm tra
 
 - YAML syntax parse cho toàn bộ `openapi/**/*.yaml`: Passed.
-- Đếm operation trong `openapi/openapi.yaml`: 194.
-- Đếm endpoint từ `.spec/api/domains`: 194.
-- Kiểm tra `operationId` không trùng: Passed, 194 unique operationId.
+- Đếm operation trong `openapi/openapi.yaml`: 196.
+- Đếm endpoint từ `.spec/api/domains`: 196.
+- Kiểm tra `operationId` không trùng: Passed, 196 unique operationId.
 - Kiểm tra `$ref` local/external quan trọng: Passed.
 - Đếm schema dùng chung: 55.
 - Quét pattern secret hoặc dấu hiệu chưa hoàn thiện rõ ràng trong `openapi`: Passed.
 - `git diff --check`: Passed.
+
+## Prompt 27.3 / Prompt 27.3
+
+- Bổ sung reusable query parameters cho `paymentId` và signed VNPAY Return/IPN fields.
+- Ghi rõ browser return read-only và IPN authoritative trong operation description.
+- Không thêm operation, credential, secret example hoặc provider mới.
 
 ## Limits / Giới hạn
 

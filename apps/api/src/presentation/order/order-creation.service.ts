@@ -36,9 +36,9 @@ import { OrderException } from './order.exception';
 export interface OrderReadModel {
   orderId: string;
   orderNumber: string;
-  status: 'new';
-  paymentStatus: 'pending';
-  paymentMethod: 'cod';
+  status: 'new' | 'confirmed';
+  paymentStatus: 'unpaid' | 'pending' | 'paid' | 'failed' | 'cancelled';
+  paymentMethod: 'cod' | 'vnpay';
   shippingStatus: 'pending';
   shippingMethod: 'manual';
   items: Array<{
@@ -261,7 +261,7 @@ export class OrderCreationService {
       orderId: aggregate.order.id,
       orderNumber: aggregate.order.orderCode,
       status: aggregate.order.orderStatus,
-      paymentStatus: aggregate.payment.paymentStatus,
+      paymentStatus: aggregate.payment.paymentStatus === 'unpaid' ? 'pending' : aggregate.payment.paymentStatus,
       paymentMethod: aggregate.payment.paymentMethod,
       shippingStatus: aggregate.shipment.shippingStatus,
       shippingMethod: aggregate.shipment.shippingMethod,

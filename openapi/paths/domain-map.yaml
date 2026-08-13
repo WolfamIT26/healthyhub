@@ -2,8 +2,8 @@ generatedAt: "2026-08-06"
 source: ".spec/api/domains"
 apiPrefix: "/api/v1"
 domainCount: 23
-endpointCount: 194
-pathCount: 167
+endpointCount: 196
+pathCount: 169
 domains:
   - name: Authentication
     endpointCount: 10
@@ -499,12 +499,22 @@ domains:
         auth: "Staff JWT"
         permission: "orders:read"
   - name: Payment
-    endpointCount: 8
+    endpointCount: 10
     paths:
+      - method: GET
+        uri: /api/v1/payments/methods
+        operationId: getPaymentsMethods
+        auth: "Public"
+        permission: "Public"
       - method: POST
         uri: /api/v1/payments/intents
         operationId: postPaymentsIntents
         auth: "Customer JWT hoặc guest checkout token"
+        permission: "Order payer"
+      - method: GET
+        uri: /api/v1/payments/vnpay/return
+        operationId: getPaymentsVnpayReturn
+        auth: "Customer JWT"
         permission: "Order payer"
       - method: GET
         uri: /api/v1/payments/{paymentId}
@@ -536,10 +546,10 @@ domains:
         operationId: getAdminPaymentsPaymentIdTransactions
         auth: "Staff JWT"
         permission: "payments:read"
-      - method: POST
-        uri: /api/v1/webhooks/payment/{provider}
-        operationId: postWebhooksPaymentProvider
-        auth: "Provider auth"
+      - method: GET
+        uri: /api/v1/webhooks/payment/vnpay
+        operationId: getWebhooksPaymentVnpay
+        auth: "Provider signature trong query string"
         permission: "Provider scope"
   - name: Shipping
     endpointCount: 7

@@ -1,11 +1,16 @@
-# HealthyHub Checkout V1
+# HealthyHub Checkout / Thanh toán tại checkout
 
 ## Status
 
-**COMPLETE — Visual Browser Verification Blocked.**
+**Prompt 27.3 Automated Verification PASS — VNPAY Sandbox E2E BLOCKED.**
 
-`/checkout` is a real single-page Customer flow. It reloads the server Cart, gates unverified accounts, validates recipient input, requests an authoritative manual Shipping quote, presents COD, and confirms through `POST /orders` with a stable idempotency key.
+`/checkout` là flow Customer thật. Nó reload Cart server, gate account chưa verified, validate thông tin nhận hàng, lấy Shipping quote authoritative, đọc danh sách payment method từ backend và cho phép chọn:
 
-The success state is based only on the persisted Order response. Cart remains active after success because no authoritative lifecycle transition has been approved. No online payment, capture, fulfillment or inventory mutation is implemented.
+- `cod`
+- `vnpay`
 
-Automated and MySQL persistence verification passed. Browser visual verification is separately blocked by the unavailable in-app browser execution connection.
+Khi chọn VNPAY, backend tạo Order trước rồi trả redirect URL sandbox; frontend chỉ điều hướng. Return screen chuyển sang Result, còn Result luôn reload `GET /payments/{paymentId}`. Browser return dù mang mã thành công cũng không tự đánh dấu `paid`; UI chỉ hiển thị state authoritative đã persist sau IPN.
+
+COD vẫn giữ nguyên luồng cũ và không gọi provider.
+
+Automated frontend regression và MySQL flow đã pass. Sandbox checkout thật chưa thể redirect/nhận IPN vì runtime chưa có terminal/hash secret và HTTPS public IPN callback, nên trạng thái thật là `BLOCKED — SANDBOX CREDENTIALS REQUIRED`.

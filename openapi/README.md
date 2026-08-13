@@ -4,7 +4,7 @@ Tài liệu này là nguồn OpenAPI 3.1 chính thức cho HealthyHub ở giai �
 
 ## Main Files / File chính
 
-- `openapi.yaml`: đặc tả OpenAPI 3.1 tổng hợp, gồm 194 operation thuộc 23 domain.
+- `openapi.yaml`: đặc tả OpenAPI 3.1 tổng hợp, gồm 196 operation thuộc 23 domain.
 - `schemas/common.yaml`: schema dùng chung cho envelope, error, pagination, upload, AI, money, address và audit metadata.
 - `parameters/common.yaml`: header, query parameter và path parameter dùng lại.
 - `responses/common.yaml`: response chuẩn 200, 201, 202, 204, 400, 401, 403, 404, 409, 422, 429, 500, 502, 503.

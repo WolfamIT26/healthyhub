@@ -20,19 +20,19 @@ export interface ShippingQuote {
 }
 
 export interface PaymentMethod {
-  code: 'cod';
+  code: 'cod' | 'vnpay';
   name: string;
-  enabled: true;
-  captureRequired: false;
+  enabled: boolean;
+  captureRequired: boolean;
   initialPaymentStatus: 'pending';
 }
 
 export interface CreatedOrder {
   orderId: string;
   orderNumber: string;
-  status: 'new';
-  paymentStatus: 'pending';
-  paymentMethod: 'cod';
+  status: 'new' | 'confirmed';
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'cancelled';
+  paymentMethod: 'cod' | 'vnpay';
   shippingStatus: 'pending';
   shippingMethod: 'manual';
   items: Array<{

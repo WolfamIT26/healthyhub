@@ -1,5 +1,17 @@
 # OpenAPI ChangeLog / Lịch sử thay đổi OpenAPI
 
+## 2026-08-12 - VNPAY Sandbox Verification Contract
+
+- Documented required signed Return/IPN query parameters.
+- Clarified browser return is read-only and IPN is authoritative.
+- Kept the operation inventory at 196 across 23 domains.
+
+## 2026-08-10 - VNPAY Sandbox Payment Contract
+
+- Added Payment methods, VNPAY browser return and VNPAY IPN/callback operations.
+- Updated Payment domain map from generic provider webhook to executable VNPAY sandbox callback.
+- Operation count is now 196 across 23 domains.
+
 ## 2026-08-06 - Authentication V1.1
 
 - Added dedicated register/login/refresh/session/action schemas, responses and safe examples.

@@ -6,7 +6,7 @@ export interface OrderSnapshotInput {
   customerProfileId: string; cartId: string; orderCode: string; orderTotal: string;
   idempotencyKeyHash: string; requestHash: string; actorUserAccountId: string;
   items: Array<{ productId: string; productName: string; sku: string; unitPrice: string; quantity: number; lineTotal: string }>;
-  payment: { method: 'cod'; amount: string; status: 'pending' };
+  payment: { method: 'cod' | 'vnpay'; amount: string; status: 'pending' };
   shipping: { method: 'manual'; fee: '0.00'; address: { recipientName: string; phone: string; addressText: string; note: string | null } };
 }
 

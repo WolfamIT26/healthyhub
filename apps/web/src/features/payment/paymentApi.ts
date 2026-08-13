@@ -1,10 +1,13 @@
 import type { ApiSuccessEnvelope } from '@healthyhub/shared-types';
 
 import { httpClient } from '../../services/api/httpClient';
-import type { CreatePaymentIntentInput, PaymentSummary } from './payment.types';
+import type { CreatePaymentIntentInput, PaymentMethodReadModel, PaymentSummary } from './payment.types';
 
-/** Typed future boundary only. No caller enables online payment until a provider is approved. */
 export const paymentApi = {
+  listMethods: () =>
+    httpClient
+      .get<ApiSuccessEnvelope<readonly PaymentMethodReadModel[]>>('/payments/methods')
+      .then((response) => response.data.data),
   createIntent: (input: CreatePaymentIntentInput, idempotencyKey: string) =>
     httpClient
       .post<ApiSuccessEnvelope<PaymentSummary>>('/payments/intents', input, {
@@ -14,5 +17,11 @@ export const paymentApi = {
   getStatus: (paymentId: string) =>
     httpClient
       .get<ApiSuccessEnvelope<PaymentSummary>>(`/payments/${paymentId}`)
+      .then((response) => response.data.data),
+  processVnpayReturn: (search: string) =>
+    httpClient
+      .get<ApiSuccessEnvelope<PaymentSummary>>(
+        `/payments/vnpay/return${search.startsWith('?') ? search : search ? `?${search}` : ''}`,
+      )
       .then((response) => response.data.data),
 };

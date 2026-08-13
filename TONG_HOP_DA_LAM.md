@@ -1,5 +1,33 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## VNPAY Sandbox E2E Verification — Prompt 27.3
+
+Đã audit official VNPAY contract và sửa các lỗi trực tiếp: checksum URL encoding, read-only Return, authoritative IPN, terminal/reference/Order-Payment-attempt amount validation, status mapping, attempt resolution, locked transaction, provider-event concurrency/dedupe, QueryDr timeout và Docker/OpenAPI config. Automated unit/frontend/MySQL verification PASS; database đã kiểm tra Order/OrderItem/Payment/PaymentAttempt/Shipment/address/provider-event và COD regression. Sandbox E2E/IPN thật vẫn **BLOCKED — SANDBOX CREDENTIALS REQUIRED** vì local runtime chưa có terminal/hash secret/endpoints và public HTTPS IPN callback. Không thêm credential, không fake success và không bắt đầu Prompt 28.
+
+File tổng hợp riêng: `docs/work-summaries/2026-08-12-01-prompt-27-3-vnpay-sandbox-e2e-verification.md`.
+
+## VNPAY Sandbox Integration — Prompt 27.2
+
+Đã tích hợp VNPAY Sandbox phía sau payment gateway neutral: backend tạo payment URL thật, ký/verify HMAC SHA512 theo official contract, xử lý browser return, IPN/callback authoritative, query/reconciliation và provider event dedupe. Checkout web đọc payment methods từ server, hỗ trợ COD + VNPAY, tạo Order trước rồi mới tạo payment intent và redirect sang VNPAY. Thêm trang `/payment/vnpay/return` và `/payment/vnpay/result` để reload/direct access query lại backend state. COD giữ nguyên pending; không dùng production credential, không fake paid, không làm refund/settlement.
+
+Đồng bộ thêm tài liệu:
+- `docs/payment.md`, `docs/checkout.md`, `docs/order.md`
+- `modules/payment/*`, `modules/checkout/*`, `modules/orders/*`
+- `.spec/api/domains/payment.md`
+- `openapi/openapi.yaml`, `openapi/paths/domain-map.yaml` và các file inventory/report/checklist liên quan
+
+Kiểm tra cuối cùng:
+- `npm run test`
+- `npm run typecheck`
+- `npm run build`
+- `npm run lint`
+- `npm run openapi:validate`
+- `npm run secrets:check`
+- `npm run docs:check`
+- `git diff --check`
+
+File tổng hợp riêng: `docs/work-summaries/2026-08-10-01-prompt-27-2-vnpay-sandbox-integration.md`.
+
 ## Payment Contract Resolution — Prompt 27.1
 
 Đã thống nhất lifecycle Payment theo shared contract, event ordering/idempotency, Order effect mapping, browser-return rule và webhook validation/dedupe contract. Có decision matrix VNPAY/MoMo/ZaloPay/Stripe từ tài liệu chính thức nhưng chưa tự chọn provider. Online Payment vẫn BLOCKED chờ user approve provider và dedupe persistence executable; COD giữ nguyên pending.

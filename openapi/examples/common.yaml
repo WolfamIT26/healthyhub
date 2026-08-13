@@ -161,12 +161,8 @@ AiFeedbackRequest:
 PaymentIntentRequest:
   summary: "Tạo payment intent"
   value:
-    orderId: "ord_1001"
-    amount:
-      amount: "250000.00"
-      currency: "VND"
-    provider: "configured-payment-provider"
-    returnUrl: "/checkout/payment-return"
+    orderId: "91"
+    paymentMethod: "vnpay"
 ShippingQuoteRequest:
   summary: "Tính phí vận chuyển"
   value:

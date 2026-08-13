@@ -13,8 +13,8 @@ export class OrderEntity extends BaseAuditEntity {
   @Column({ name: 'cart_id', type: 'bigint', unsigned: true, nullable: true }) cartId!: string | null;
   @Column({ name: 'order_code', type: 'varchar', length: 64 }) orderCode!: string;
   @Column({ name: 'order_source', type: 'varchar', length: 32, default: 'web' }) orderSource!: 'web';
-  @Column({ name: 'order_status', type: 'varchar', length: 32, default: 'new' }) orderStatus!: 'new';
-  @Column({ name: 'payment_status_snapshot', type: 'varchar', length: 32, default: 'pending' }) paymentStatusSnapshot!: 'pending';
+  @Column({ name: 'order_status', type: 'varchar', length: 32, default: 'new' }) orderStatus!: 'new' | 'confirmed';
+  @Column({ name: 'payment_status_snapshot', type: 'varchar', length: 32, default: 'pending' }) paymentStatusSnapshot!: 'pending' | 'paid' | 'failed' | 'cancelled';
   @Column({ name: 'shipping_status_snapshot', type: 'varchar', length: 32, default: 'pending' }) shippingStatusSnapshot!: 'pending';
   @Column({ name: 'order_total', type: 'decimal', precision: 12, scale: 2 }) orderTotal!: string;
   @Column({ name: 'idempotency_key_hash', type: 'char', length: 64 }) idempotencyKeyHash!: string;

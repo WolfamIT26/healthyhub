@@ -809,17 +809,59 @@ AiResult:
 PaymentIntentRequest:
   type: object
   additionalProperties: false
-  required: [orderId, amount, provider]
+  required: [orderId, paymentMethod]
   properties:
     orderId:
       type: string
+    paymentMethod:
+      type: string
+      enum: [vnpay]
+PaymentMethodReadModel:
+  type: object
+  additionalProperties: false
+  required: [code, name, enabled, captureRequired, initialPaymentStatus]
+  properties:
+    code:
+      type: string
+      enum: [cod, vnpay]
+    name:
+      type: string
+    enabled:
+      type: boolean
+    captureRequired:
+      type: boolean
+    initialPaymentStatus:
+      type: string
+      enum: [pending]
+PaymentSummary:
+  type: object
+  additionalProperties: false
+  required: [id, orderId, method, status, amount, currency, providerReference, updatedAt]
+  properties:
+    id:
+      type: string
+    orderId:
+      type: string
+    method:
+      type: string
+      enum: [cod, vnpay]
+    status:
+      type: string
+      enum: [unpaid, pending, paid, failed, refunded, partially_refunded, cancelled]
     amount:
-      $ref: "#/Money"
-    provider:
       type: string
-    returnUrl:
+      pattern: "^\\d+\\.\\d{2}$"
+    currency:
       type: string
+      enum: [VND]
+    providerReference:
+      type: [string, "null"]
+    redirectUrl:
+      type: [string, "null"]
       format: uri-reference
+    updatedAt:
+      type: string
+      format: date-time
 ShippingQuoteRequest:
   type: object
   additionalProperties: false
@@ -883,6 +925,19 @@ WebhookAcknowledgement:
       type: string
     duplicate:
       type: boolean
+VnpayIpnAcknowledgement:
+  type: object
+  additionalProperties: false
+  required: [RspCode, Message]
+  properties:
+    RspCode:
+      type: string
+      description: "Mã acknowledgment trả cho VNPAY IPN."
+      examples: ["00"]
+    Message:
+      type: string
+      description: "Thông điệp acknowledgment trả cho VNPAY IPN."
+      examples: ["Confirm Success"]
 AcceptedData:
   type: object
   additionalProperties: true

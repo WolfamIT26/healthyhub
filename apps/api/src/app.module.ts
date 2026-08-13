@@ -16,6 +16,7 @@ import { PaymentFoundationModule } from './domain/payment/payment-foundation.mod
 import { ShippingFoundationModule } from './domain/shipping/shipping-foundation.module';
 import { OrderModule } from './presentation/order/order.module';
 import { CheckoutModule } from './presentation/checkout/checkout.module';
+import { PaymentModule } from './presentation/payment/payment.module';
 
 const runtimeEnvironment = process.env.APP_ENV ?? process.env.NODE_ENV ?? 'development';
 
@@ -39,6 +40,7 @@ const runtimeEnvironment = process.env.APP_ENV ?? process.env.NODE_ENV ?? 'devel
     ShippingFoundationModule,
     OrderModule,
     CheckoutModule,
+    PaymentModule,
   ],
   providers: [AppLoggerService],
 })

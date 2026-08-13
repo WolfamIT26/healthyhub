@@ -24,4 +24,17 @@ describe('payment environment', () => {
     });
     expect(env.payment.provider).toBe('vnpay');
   });
+
+  it('rejects a non-HTTPS VNPAY IPN callback', () => {
+    expect(() => getValidatedEnvironment({
+      ...base,
+      PAYMENT_PROVIDER: 'vnpay',
+      VNPAY_TMN_CODE: 'TESTTMN1',
+      VNPAY_HASH_SECRET: 'test-only-key',
+      VNPAY_PAYMENT_URL: 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html',
+      VNPAY_API_URL: 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction',
+      VNPAY_RETURN_URL: 'http://localhost:3000/payment/vnpay/return',
+      VNPAY_IPN_URL: 'http://localhost:3001/api/v1/webhooks/payment/vnpay',
+    })).toThrow('VNPAY_IPN_URL phải là HTTPS public callback');
+  });
 });
