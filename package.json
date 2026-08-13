@@ -20,6 +20,7 @@
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "pretypecheck": "npm run build:packages",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "pretest": "npm run build:packages",
     "test": "npm run test --workspaces --if-present",
