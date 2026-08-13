@@ -10,12 +10,23 @@ export function CustomerLayout() {
           <NavLink to="/" className="text-lg font-bold text-leaf-700">
             HealthyHub
           </NavLink>
-          <nav className="flex items-center gap-2 text-sm font-medium text-slate-700">
+          <nav
+            aria-label="Điều hướng khách hàng"
+            className="flex flex-wrap items-center gap-2 text-sm font-medium text-slate-700"
+          >
             <NavLink className="rounded-md px-3 py-2 hover:bg-leaf-50" to="/">
               Trang chính
             </NavLink>
             <NavLink className="rounded-md bg-leaf-100 px-3 py-2 text-leaf-700" to="/customer">
               Khu khách hàng
+            </NavLink>
+            <NavLink
+              className={({ isActive }) =>
+                `rounded-md px-3 py-2 ${isActive ? 'bg-leaf-100 text-leaf-700' : 'hover:bg-leaf-50'}`
+              }
+              to="/orders"
+            >
+              Đơn hàng của tôi
             </NavLink>
           </nav>
           <AuthNavigation />

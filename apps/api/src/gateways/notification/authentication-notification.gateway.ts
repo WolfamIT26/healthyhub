@@ -6,7 +6,11 @@ export interface AuthenticationNotificationGateway {
 }
 
 export class LocalAuthenticationNotificationGateway implements AuthenticationNotificationGateway {
-  async sendEmailVerification(_recipient: string, _rawToken: string, _expiresAt: Date): Promise<void> {
+  async sendEmailVerification(
+    _recipient: string,
+    _rawToken: string,
+    _expiresAt: Date,
+  ): Promise<void> {
     return Promise.resolve();
   }
 

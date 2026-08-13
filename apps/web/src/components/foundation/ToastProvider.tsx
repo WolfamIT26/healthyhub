@@ -58,7 +58,8 @@ export function useToast() {
 }
 
 function getToastClassName(tone: ToastTone): string {
-  const base = 'rounded-card px-4 py-3 text-sm font-medium shadow-medium motion-safe:animate-overlay-in';
+  const base =
+    'rounded-card px-4 py-3 text-sm font-medium shadow-medium motion-safe:animate-overlay-in';
   if (tone === 'success') return `${base} bg-success text-white`;
   if (tone === 'error') return `${base} bg-error text-white`;
   return `${base} bg-info-dark text-white`;

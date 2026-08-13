@@ -14,23 +14,47 @@ import { ResetPasswordPage } from './ResetPasswordPage';
 vi.mock('../../features/auth/AuthContext', () => ({ useAuth: vi.fn() }));
 vi.mock('../../features/auth/authApi', () => ({
   authApi: {
-    register: vi.fn(), forgotPassword: vi.fn(), resetPassword: vi.fn(),
+    register: vi.fn(),
+    forgotPassword: vi.fn(),
+    resetPassword: vi.fn(),
   },
 }));
 
 function renderPage(node: React.ReactNode, entry = '/') {
-  return render(<ToastProvider><MemoryRouter initialEntries={[entry]}><Routes><Route path="*" element={node} /><Route path="/customer" element={<p>Customer dashboard</p>} /></Routes></MemoryRouter></ToastProvider>);
+  return render(
+    <ToastProvider>
+      <MemoryRouter initialEntries={[entry]}>
+        <Routes>
+          <Route path="*" element={node} />
+          <Route path="/customer" element={<p>Customer dashboard</p>} />
+        </Routes>
+      </MemoryRouter>
+    </ToastProvider>,
+  );
 }
 
 describe('Authentication pages', () => {
   const login = vi.fn();
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useAuth).mockReturnValue({ status: 'guest', actor: null, current: null, login, logout: vi.fn(), hasRole: vi.fn(), hasPermission: vi.fn() });
+    vi.mocked(useAuth).mockReturnValue({
+      status: 'guest',
+      actor: null,
+      current: null,
+      login,
+      logout: vi.fn(),
+      hasRole: vi.fn(),
+      hasPermission: vi.fn(),
+    });
   });
 
   it('logs in successfully and redirects by role', async () => {
-    login.mockResolvedValue({ id: '1', email: 'user@example.com', fullName: 'User', roles: ['CUSTOMER'] });
+    login.mockResolvedValue({
+      id: '1',
+      email: 'user@example.com',
+      fullName: 'User',
+      roles: ['CUSTOMER'],
+    });
     renderPage(<LoginPage />, '/login');
     await userEvent.type(screen.getByLabelText('Email'), 'USER@example.com');
     await userEvent.type(screen.getByLabelText('Mật khẩu'), 'valid-password');
@@ -45,7 +69,9 @@ describe('Authentication pages', () => {
     await userEvent.type(screen.getByLabelText('Email'), 'user@example.com');
     await userEvent.type(screen.getByLabelText('Mật khẩu'), 'wrong');
     await userEvent.click(screen.getByRole('button', { name: 'Đăng nhập' }));
-    expect(await screen.findByRole('alert')).toHaveTextContent('Email hoặc mật khẩu không chính xác.');
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Email hoặc mật khẩu không chính xác.',
+    );
   });
 
   it('blocks invalid registration before calling the API', async () => {
@@ -56,14 +82,25 @@ describe('Authentication pages', () => {
   });
 
   it('registers with fullName and shows pending verification success', async () => {
-    vi.mocked(authApi.register).mockResolvedValue({ user: { id: '1', email: 'new@example.com', fullName: 'New User', roles: ['CUSTOMER'], isEmailVerified: false }, verification: { status: 'pending', expiresAt: new Date().toISOString() } });
+    vi.mocked(authApi.register).mockResolvedValue({
+      user: {
+        id: '1',
+        email: 'new@example.com',
+        fullName: 'New User',
+        roles: ['CUSTOMER'],
+        isEmailVerified: false,
+      },
+      verification: { status: 'pending', expiresAt: new Date().toISOString() },
+    });
     renderPage(<RegisterPage />, '/register');
     await userEvent.type(screen.getByLabelText('Họ và tên'), 'New User');
     await userEvent.type(screen.getByLabelText('Email'), 'new@example.com');
     await userEvent.type(screen.getByLabelText('Mật khẩu'), 'valid-password-123');
     await userEvent.type(screen.getByLabelText('Xác nhận mật khẩu'), 'valid-password-123');
     await userEvent.click(screen.getByRole('button', { name: 'Đăng ký' }));
-    expect(authApi.register).toHaveBeenCalledWith(expect.objectContaining({ fullName: 'New User' }));
+    expect(authApi.register).toHaveBeenCalledWith(
+      expect.objectContaining({ fullName: 'New User' }),
+    );
     expect(await screen.findByText(/Vui lòng kiểm tra email/)).toBeInTheDocument();
   });
 
@@ -74,7 +111,9 @@ describe('Authentication pages', () => {
     await userEvent.type(screen.getByLabelText('Mật khẩu'), 'Secure-NEW-2026');
     await userEvent.type(screen.getByLabelText('Xác nhận mật khẩu'), 'Secure-NEW-2026');
     await userEvent.click(screen.getByRole('button', { name: 'Đăng ký' }));
-    expect(screen.getByText('Mật khẩu không được chứa email hoặc phần dễ đoán từ email.')).toBeInTheDocument();
+    expect(
+      screen.getByText('Mật khẩu không được chứa email hoặc phần dễ đoán từ email.'),
+    ).toBeInTheDocument();
     expect(authApi.register).not.toHaveBeenCalled();
   });
 
@@ -95,7 +134,10 @@ describe('Authentication pages', () => {
     await userEvent.type(screen.getByLabelText('Email'), 'pending@example.com');
     await userEvent.click(screen.getByRole('button', { name: 'Gửi hướng dẫn' }));
     expect(await screen.findByText(/Tài khoản của bạn chưa được xác minh/)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Gửi lại Email xác minh' })).toHaveAttribute('href', '/verify-email');
+    expect(screen.getByRole('link', { name: 'Gửi lại Email xác minh' })).toHaveAttribute(
+      'href',
+      '/verify-email',
+    );
   });
 
   it('shows invalid reset-token state when URL has no token', () => {

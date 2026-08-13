@@ -27,8 +27,14 @@ describe('normalizeApiError', () => {
           message: 'raw',
           data: null,
           error: { code, category: 'AUTH', message: 'raw', retryable: false },
-          metadata: { timestamp: new Date().toISOString(), timezone: 'Asia/Ho_Chi_Minh', locale: 'vi-VN' },
-          requestId: 'req_1', traceId: 'trace_1', contractVersion: 'v1',
+          metadata: {
+            timestamp: new Date().toISOString(),
+            timezone: 'Asia/Ho_Chi_Minh',
+            locale: 'vi-VN',
+          },
+          requestId: 'req_1',
+          traceId: 'trace_1',
+          contractVersion: 'v1',
         },
       },
     };

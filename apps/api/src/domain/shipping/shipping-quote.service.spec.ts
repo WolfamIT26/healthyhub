@@ -9,9 +9,14 @@ import {
 } from './shipping-quote.service';
 
 const address = {
-  recipientName: ' Nguyễn Văn A ', phone: '0901234567', countryCode: 'vn',
-  provinceCity: 'Hồ Chí Minh', district: 'Quận 1', ward: 'Bến Nghé',
-  addressLine: ' 12 Nguyễn Huệ ', note: ' Gọi trước khi giao ',
+  recipientName: ' Nguyễn Văn A ',
+  phone: '0901234567',
+  countryCode: 'vn',
+  provinceCity: 'Hồ Chí Minh',
+  district: 'Quận 1',
+  ward: 'Bến Nghé',
+  addressLine: ' 12 Nguyễn Huệ ',
+  note: ' Gọi trước khi giao ',
 };
 const cart = { cartId: '10', subtotal: '125000.00', itemCount: 2, isValid: true };
 
@@ -26,15 +31,22 @@ describe('ShippingQuoteService', () => {
 
   it('creates an immutable normalized address snapshot for future Order/Shipment use', () => {
     expect(service.createAddressSnapshot(address)).toEqual({
-      recipientName: 'Nguyễn Văn A', phone: '0901234567', countryCode: 'VN',
-      provinceCity: 'Hồ Chí Minh', district: 'Quận 1', ward: 'Bến Nghé',
-      addressLine: '12 Nguyễn Huệ', note: 'Gọi trước khi giao',
+      recipientName: 'Nguyễn Văn A',
+      phone: '0901234567',
+      countryCode: 'VN',
+      provinceCity: 'Hồ Chí Minh',
+      district: 'Quận 1',
+      ward: 'Bến Nghé',
+      addressLine: '12 Nguyễn Huệ',
+      note: 'Gọi trước khi giao',
     });
   });
 
   it.each([
-    [{ ...address, recipientName: '' }], [{ ...address, phone: '123' }],
-    [{ ...address, district: '' }], [{ ...address, addressLine: '' }],
+    [{ ...address, recipientName: '' }],
+    [{ ...address, phone: '123' }],
+    [{ ...address, district: '' }],
+    [{ ...address, addressLine: '' }],
   ])('rejects invalid address data', (invalidAddress) => {
     expect(() => service.quote(invalidAddress, 'manual', cart)).toThrow(ShippingValidationError);
   });
@@ -61,12 +73,19 @@ describe('ShippingQuoteService', () => {
     const second = service.quote(address, 'manual', cart);
     expect(first.quoteReference).toBe(second.quoteReference);
     expect(service.validateQuote(first.quoteReference, address, 'manual', cart)).toBe(true);
-    expect(service.validateQuote(first.quoteReference, address, 'manual', { ...cart, subtotal: '126000.00' })).toBe(false);
+    expect(
+      service.validateQuote(first.quoteReference, address, 'manual', {
+        ...cart,
+        subtotal: '126000.00',
+      }),
+    ).toBe(false);
   });
 
   it.each([
-    [{ ...cart, isValid: false }], [{ ...cart, itemCount: 0 }],
-    [{ ...cart, subtotal: '-1.00' }], [{ ...cart, subtotal: 'invalid' }],
+    [{ ...cart, isValid: false }],
+    [{ ...cart, itemCount: 0 }],
+    [{ ...cart, subtotal: '-1.00' }],
+    [{ ...cart, subtotal: 'invalid' }],
   ])('rejects an invalid authoritative Cart context', (invalidCart) => {
     expect(() => service.quote(address, 'manual', invalidCart)).toThrow(InvalidShippingCartError);
   });

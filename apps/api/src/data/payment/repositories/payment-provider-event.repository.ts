@@ -20,8 +20,15 @@ export interface PaymentProviderEventClaim {
 
 export interface PaymentProviderEventRepository {
   claim(input: ClaimPaymentProviderEventInput): Promise<PaymentProviderEventClaim>;
-  completeWithBusinessEffect(eventId: string, paymentId: string, effect: (manager: EntityManager) => Promise<void>): Promise<void>;
+  completeWithBusinessEffect(
+    eventId: string,
+    paymentId: string,
+    effect: (manager: EntityManager) => Promise<void>,
+  ): Promise<void>;
   markFailed(eventId: string, failureCode: string): Promise<void>;
   markRejected(eventId: string, failureCode: string): Promise<void>;
-  findByProviderEvent(provider: string, providerEventId: string): Promise<PaymentProviderEventEntity | null>;
+  findByProviderEvent(
+    provider: string,
+    providerEventId: string,
+  ): Promise<PaymentProviderEventEntity | null>;
 }

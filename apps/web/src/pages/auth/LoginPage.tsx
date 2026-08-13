@@ -2,7 +2,13 @@ import { useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { useToast } from '../../components/foundation/ToastProvider';
-import { AuthCard, AuthField, AuthForm, FormAlert, SubmitButton } from '../../features/auth/AuthCard';
+import {
+  AuthCard,
+  AuthField,
+  AuthForm,
+  FormAlert,
+  SubmitButton,
+} from '../../features/auth/AuthCard';
 import { PasswordField } from '../../features/auth/PasswordField';
 import { useAuth } from '../../features/auth/AuthContext';
 import { validateEmail } from '../../features/auth/authValidation';
@@ -43,11 +49,37 @@ export function LoginPage() {
   }
 
   return (
-    <AuthCard title="Đăng nhập" description="Chào mừng bạn quay lại HealthyHub." footer={<><Link to="/forgot-password">Quên mật khẩu?</Link><span>Chưa có tài khoản? <Link to="/register">Đăng ký</Link></span></>}>
+    <AuthCard
+      title="Đăng nhập"
+      description="Chào mừng bạn quay lại HealthyHub."
+      footer={
+        <>
+          <Link to="/forgot-password">Quên mật khẩu?</Link>
+          <span>
+            Chưa có tài khoản? <Link to="/register">Đăng ký</Link>
+          </span>
+        </>
+      }
+    >
       <AuthForm onSubmit={submit}>
         {error ? <FormAlert>{error}</FormAlert> : null}
-        <AuthField id="email" label="Email" type="email" value={email} onChange={setEmail} error={errors.email} autoComplete="email" />
-        <PasswordField id="password" label="Mật khẩu" value={password} onChange={setPassword} error={errors.password} autoComplete="current-password" />
+        <AuthField
+          id="email"
+          label="Email"
+          type="email"
+          value={email}
+          onChange={setEmail}
+          error={errors.email}
+          autoComplete="email"
+        />
+        <PasswordField
+          id="password"
+          label="Mật khẩu"
+          value={password}
+          onChange={setPassword}
+          error={errors.password}
+          autoComplete="current-password"
+        />
         <SubmitButton pending={pending}>Đăng nhập</SubmitButton>
       </AuthForm>
     </AuthCard>

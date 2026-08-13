@@ -9,8 +9,8 @@ Docker Guide mô tả cách chạy foundation bằng Docker Compose. Compose hi�
 | Service | Container | Port mặc định | Mục tiêu |
 | --- | --- | --- | --- |
 | `mysql` | `healthyhub-mysql` | `3306` | MySQL 8.0 local |
-| `api` | `healthyhub-api` | `3001` | NestJS API foundation |
-| `web` | `healthyhub-web` | `3000` | React/Vite web shell |
+| `api` | `healthyhub-api` | `${API_PORT}` (`3001` ở development) | NestJS API foundation |
+| `web` | `healthyhub-web` | `${WEB_PORT}` (`3100` ở development) | React/Vite web shell |
 | `phpmyadmin` | `healthyhub-phpmyadmin` | `8080` | Quản trị MySQL bằng UI |
 
 ## Commands / Lệnh
@@ -33,11 +33,14 @@ Dừng stack:
 npm run docker:down
 ```
 
+Ba script trên đọc `.env.development` tại workspace root. Compose không giữ một port
+Web/API riêng: listener, port mapping và healthcheck đều dùng `WEB_PORT`/`API_PORT`.
+
 ## Health Checks / Kiểm tra sức khỏe
 
 - MySQL dùng `mysqladmin ping`.
-- API dùng `GET /api/v1/health/live`.
-- Web dùng request tới `http://127.0.0.1:3000`.
+- API dùng `GET /api/v1/health/live` trên `API_PORT`.
+- Web dùng request tới `http://127.0.0.1:${WEB_PORT}`.
 - phpMyAdmin dùng request nội bộ tới trang chủ container.
 
 ## Volume and Network / Volume và network

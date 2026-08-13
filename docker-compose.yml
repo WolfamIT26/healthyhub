@@ -31,12 +31,13 @@ services:
       APP_NAME: ${APP_NAME:-HealthyHub}
       APP_ENV: ${APP_ENV:-development}
       NODE_ENV: ${NODE_ENV:-development}
-      APP_URL: ${APP_URL:-http://localhost:3000}
-      API_PORT: 3001
+      APP_URL: ${APP_URL:?APP_URL is required}
+      API_PORT: ${API_PORT:?API_PORT is required}
       API_PREFIX: ${API_PREFIX:-/api/v1}
       API_DOCS_PATH: ${API_DOCS_PATH:-/api/docs}
       CONTRACT_VERSION: ${CONTRACT_VERSION:-v1}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      CORS_ORIGINS: ${CORS_ORIGINS:?CORS_ORIGINS is required}
+      AUTH_ALLOWED_ORIGINS: ${AUTH_ALLOWED_ORIGINS:?AUTH_ALLOWED_ORIGINS is required}
       REQUEST_BODY_LIMIT: ${REQUEST_BODY_LIMIT:-1mb}
       RATE_LIMIT_TTL_MS: ${RATE_LIMIT_TTL_MS:-60000}
       RATE_LIMIT_LIMIT: ${RATE_LIMIT_LIMIT:-100}
@@ -57,16 +58,15 @@ services:
       VNPAY_RETURN_URL: ${VNPAY_RETURN_URL:-}
       VNPAY_IPN_URL: ${VNPAY_IPN_URL:-}
     ports:
-      - '${API_PORT:-3001}:3001'
+      - '${API_PORT:?API_PORT is required}:${API_PORT:?API_PORT is required}'
     depends_on:
       mysql:
         condition: service_healthy
     healthcheck:
       test:
-        [
-          'CMD-SHELL',
-          'node -e "fetch(''http://127.0.0.1:3001/api/v1/health/live'').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"',
-        ]
+        - CMD-SHELL
+        - >-
+          node -e "fetch('http://127.0.0.1:' + process.env.API_PORT + '/api/v1/health/live').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
       interval: 10s
       timeout: 5s
       retries: 10
@@ -81,22 +81,21 @@ services:
       dockerfile: apps/web/Dockerfile
       args:
         VITE_APP_NAME: ${VITE_APP_NAME:-HealthyHub}
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:3001/api/v1}
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:?VITE_API_BASE_URL is required}
     environment:
-      WEB_PORT: 3000
+      WEB_PORT: ${WEB_PORT:?WEB_PORT is required}
       VITE_APP_NAME: ${VITE_APP_NAME:-HealthyHub}
-      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:3001/api/v1}
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:?VITE_API_BASE_URL is required}
     ports:
-      - '${WEB_PORT:-3000}:3000'
+      - '${WEB_PORT:?WEB_PORT is required}:${WEB_PORT:?WEB_PORT is required}'
     depends_on:
       api:
         condition: service_healthy
     healthcheck:
       test:
-        [
-          'CMD-SHELL',
-          'node -e "fetch(''http://127.0.0.1:3000'').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"',
-        ]
+        - CMD-SHELL
+        - >-
+          node -e "fetch('http://127.0.0.1:' + process.env.WEB_PORT).then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
       interval: 10s
       timeout: 5s
       retries: 10

@@ -1,6 +1,15 @@
-const webPort = process.env.WEB_PORT ?? '3000';
-const apiPort = process.env.API_PORT ?? '3001';
+const webPort = requiredPort('WEB_PORT');
+const apiPort = requiredPort('API_PORT');
 const phpMyAdminPort = process.env.PHPMYADMIN_PORT ?? '8080';
+
+function requiredPort(name) {
+  const value = process.env[name];
+  const parsed = Number(value);
+  if (!value || !Number.isInteger(parsed) || parsed <= 0 || parsed > 65535) {
+    throw new Error(`${name} phải được cấu hình bằng port hợp lệ.`);
+  }
+  return value;
+}
 
 const checks = [
   ['web', `http://127.0.0.1:${webPort}`],

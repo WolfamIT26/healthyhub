@@ -18,8 +18,8 @@ CreateOrderRequest:
   properties:
     shippingAddress: { $ref: "#/OrderShippingAddressRequest" }
     shippingMethod: { type: string, const: manual }
-    shippingQuoteReference: { type: string, minLength: 1, maxLength: 255 }
-    paymentMethod: { type: string, const: cod }
+    shippingQuoteReference: { type: string, minLength: 1, maxLength: 64 }
+    paymentMethod: { type: string, enum: [cod, vnpay] }
 OrderItem:
   type: object
   additionalProperties: false
@@ -38,9 +38,9 @@ Order:
   properties:
     orderId: { type: string }
     orderNumber: { type: string }
-    status: { type: string, const: new }
-    paymentStatus: { type: string, const: pending }
-    paymentMethod: { type: string, const: cod }
+    status: { type: string, enum: [new, confirmed] }
+    paymentStatus: { type: string, enum: [unpaid, pending, paid, failed, cancelled] }
+    paymentMethod: { type: string, enum: [cod, vnpay] }
     shippingStatus: { type: string, const: pending }
     shippingMethod: { type: string, const: manual }
     items: { type: array, minItems: 1, items: { $ref: "#/OrderItem" } }
@@ -50,6 +50,124 @@ Order:
     currency: { type: string, const: VND }
     shippingAddress: { type: object, additionalProperties: { type: [string, "null"] } }
     createdAt: { type: string, format: date-time }
+CustomerOrderListItem:
+  type: object
+  additionalProperties: false
+  required: [orderId, orderNumber, orderStatus, paymentStatus, paymentMethod, shippingStatus, itemCount, total, currency, createdAt]
+  properties:
+    orderId: { type: string, pattern: "^[1-9][0-9]*$" }
+    orderNumber: { type: string, maxLength: 64 }
+    orderStatus: { type: string, enum: [new, confirmed] }
+    paymentStatus: { type: string, enum: [unpaid, pending, paid, failed, cancelled] }
+    paymentMethod: { type: string, enum: [cod, vnpay] }
+    shippingStatus: { type: string, enum: [pending] }
+    itemCount: { type: integer, minimum: 0 }
+    total: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+    currency: { type: string, const: VND }
+    createdAt: { type: string, format: date-time }
+CustomerOrderListData:
+  type: object
+  additionalProperties: false
+  required: [items]
+  properties:
+    items:
+      type: array
+      items: { $ref: "#/CustomerOrderListItem" }
+CustomerOrderListResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data: { $ref: "#/CustomerOrderListData" }
+    metadata:
+      allOf:
+        - $ref: "./common.yaml#/ResponseMetadata"
+        - type: object
+          required: [pagination]
+          properties:
+            pagination: { $ref: "./common.yaml#/PaginationMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }
+CustomerOrderShippingAddress:
+  type: object
+  additionalProperties: false
+  required: [recipientName, phone, countryCode, provinceCity, district, ward, addressLine, note]
+  properties:
+    recipientName: { type: string }
+    phone: { type: string }
+    countryCode: { type: [string, "null"] }
+    provinceCity: { type: [string, "null"] }
+    district: { type: [string, "null"] }
+    ward: { type: [string, "null"] }
+    addressLine: { type: [string, "null"] }
+    note: { type: [string, "null"] }
+CustomerOrderPayment:
+  type: object
+  additionalProperties: false
+  required: [paymentId, method, status, amount, currency, providerReference, paidAt, updatedAt]
+  properties:
+    paymentId: { type: string, pattern: "^[1-9][0-9]*$" }
+    method: { type: string, enum: [cod, vnpay] }
+    status: { type: string, enum: [unpaid, pending, paid, failed, cancelled] }
+    amount: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+    currency: { type: string, const: VND }
+    providerReference:
+      type: [string, "null"]
+      description: "Provider reference an toàn; không chứa checksum, signature hoặc credential."
+    paidAt: { type: [string, "null"], format: date-time }
+    updatedAt: { type: string, format: date-time }
+CustomerOrderShipping:
+  type: object
+  additionalProperties: false
+  required: [method, status, fee, trackingReference, shippedAt, deliveredAt]
+  properties:
+    method: { type: string, enum: [manual] }
+    status: { type: string, enum: [pending] }
+    fee: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+    trackingReference: { type: [string, "null"] }
+    shippedAt: { type: [string, "null"], format: date-time }
+    deliveredAt: { type: [string, "null"], format: date-time }
+CustomerOrderDetail:
+  type: object
+  additionalProperties: false
+  required: [orderId, orderNumber, orderStatus, paymentStatus, paymentMethod, shippingStatus, shippingMethod, items, subtotal, shippingFee, total, currency, shippingAddress, payment, shipping, createdAt, placedAt, updatedAt, completedAt]
+  properties:
+    orderId: { type: string, pattern: "^[1-9][0-9]*$" }
+    orderNumber: { type: string, maxLength: 64 }
+    orderStatus: { type: string, enum: [new, confirmed] }
+    paymentStatus: { type: string, enum: [unpaid, pending, paid, failed, cancelled] }
+    paymentMethod: { type: string, enum: [cod, vnpay] }
+    shippingStatus: { type: string, enum: [pending] }
+    shippingMethod: { type: string, enum: [manual] }
+    items: { type: array, minItems: 1, items: { $ref: "#/OrderItem" } }
+    subtotal: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+    shippingFee: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+    total: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
+    currency: { type: string, const: VND }
+    shippingAddress: { $ref: "#/CustomerOrderShippingAddress" }
+    payment: { $ref: "#/CustomerOrderPayment" }
+    shipping: { $ref: "#/CustomerOrderShipping" }
+    createdAt: { type: string, format: date-time }
+    placedAt: { type: string, format: date-time }
+    updatedAt: { type: string, format: date-time }
+    completedAt: { type: [string, "null"], format: date-time }
+CustomerOrderDetailResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data: { $ref: "#/CustomerOrderDetail" }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }
 OrderResponseEnvelope:
   type: object
   additionalProperties: false

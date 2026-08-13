@@ -39,7 +39,9 @@ describe('PaymentReturnPage', () => {
 
   it('verifies browser return then routes to the result screen', async () => {
     render(
-      <MemoryRouter initialEntries={['/payment/vnpay/return?paymentId=pay_1&vnp_TxnRef=HHVNP-pay_1']}>
+      <MemoryRouter
+        initialEntries={['/payment/vnpay/return?paymentId=pay_1&vnp_TxnRef=HHVNP-pay_1']}
+      >
         <Routes>
           <Route path="/payment/vnpay/return" element={<PaymentReturnPage />} />
           <Route path="/payment/vnpay/result" element={<PaymentResultPage />} />

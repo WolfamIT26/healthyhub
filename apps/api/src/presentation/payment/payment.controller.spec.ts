@@ -28,9 +28,16 @@ describe('PaymentController', () => {
     ['PAYMENT_TRANSACTION_NOT_FOUND', '01'],
   ])('maps %s to VNPAY acknowledgment %s', async (errorCode, rspCode) => {
     const payments = {
-      processVnpayIpn: vi.fn().mockRejectedValue(
-        new PaymentException(HttpStatus.UNPROCESSABLE_ENTITY, errorCode, 'VALIDATION', 'Provider callback rejected.'),
-      ),
+      processVnpayIpn: vi
+        .fn()
+        .mockRejectedValue(
+          new PaymentException(
+            HttpStatus.UNPROCESSABLE_ENTITY,
+            errorCode,
+            'VALIDATION',
+            'Provider callback rejected.',
+          ),
+        ),
     } as never;
     const controller = new PaymentController(payments);
     const response = {
@@ -41,8 +48,6 @@ describe('PaymentController', () => {
     await controller.handleIpn({}, response);
 
     expect(response.status).toHaveBeenCalledWith(200);
-    expect(response.json).toHaveBeenCalledWith(
-      expect.objectContaining({ RspCode: rspCode }),
-    );
+    expect(response.json).toHaveBeenCalledWith(expect.objectContaining({ RspCode: rspCode }));
   });
 });

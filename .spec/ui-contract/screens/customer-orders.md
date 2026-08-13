@@ -12,7 +12,7 @@ Giúp khách theo dõi đơn, giảm hỏi support và tạo đường dẫn rev
 
 | Route / Route | Purpose / Mục tiêu |
 | --- | --- |
-| `/account/orders` | Danh sách đơn của tôi. |
+| `/orders` | Danh sách đơn của tôi. |
 
 ## Permission / Phân quyền
 
@@ -105,4 +105,3 @@ Status badge có text, link detail có mã đơn rõ.
 ## SEO Metadata / SEO metadata
 
 Noindex vì là dữ liệu cá nhân.
-

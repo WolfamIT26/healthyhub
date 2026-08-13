@@ -42,7 +42,9 @@ describe.skipIf(!enabled)('Order creation MySQL integration', () => {
 
   beforeAll(async () => {
     dataSource = new DataSource({
-      ...createTypeOrmOptions(getValidatedEnvironment({ ...process.env, PAYMENT_PROVIDER: 'not_configured' })),
+      ...createTypeOrmOptions(
+        getValidatedEnvironment({ ...process.env, PAYMENT_PROVIDER: 'not_configured' }),
+      ),
       migrations: [
         CreateUserIdentityFoundation1760000000000,
         CreateAuthenticationData1760000001000,

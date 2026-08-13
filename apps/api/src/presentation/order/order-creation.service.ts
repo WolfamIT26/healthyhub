@@ -261,7 +261,8 @@ export class OrderCreationService {
       orderId: aggregate.order.id,
       orderNumber: aggregate.order.orderCode,
       status: aggregate.order.orderStatus,
-      paymentStatus: aggregate.payment.paymentStatus === 'unpaid' ? 'pending' : aggregate.payment.paymentStatus,
+      paymentStatus:
+        aggregate.payment.paymentStatus === 'unpaid' ? 'pending' : aggregate.payment.paymentStatus,
       paymentMethod: aggregate.payment.paymentMethod,
       shippingStatus: aggregate.shipment.shippingStatus,
       shippingMethod: aggregate.shipment.shippingMethod,

@@ -4,17 +4,31 @@ import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 
 import type { AuthenticatedRequestContext } from '../../common/types/request-with-context';
-import { PAYMENT_PROVIDER_EVENT_REPOSITORY, type PaymentProviderEventClaim, type PaymentProviderEventRepository } from '../../data/payment/repositories';
+import {
+  PAYMENT_PROVIDER_EVENT_REPOSITORY,
+  type PaymentProviderEventClaim,
+  type PaymentProviderEventRepository,
+} from '../../data/payment/repositories';
 import { OrderEntity } from '../../data/order/entities';
 import { PaymentAttemptEntity, PaymentEntity } from '../../data/payment/entities';
 import type { HealthyHubEnvironment } from '../../config/environment';
 import { CustomerOwnerResolver } from '../../domain/commerce-dependencies/customer-owner.resolver';
 import { OrderPaymentMappingPolicy } from '../../domain/payment/order-payment-mapping.policy';
-import { PaymentLifecyclePolicy, type PaymentStatus } from '../../domain/payment/payment-lifecycle.policy';
-import { PaymentMethodReader, UnsupportedPaymentMethodError } from '../../domain/payment/payment-method.reader';
+import {
+  PaymentLifecyclePolicy,
+  type PaymentStatus,
+} from '../../domain/payment/payment-lifecycle.policy';
+import {
+  PaymentMethodReader,
+  UnsupportedPaymentMethodError,
+} from '../../domain/payment/payment-method.reader';
 import { PaymentProviderRegistry } from '../../domain/payment/payment-provider.registry';
 import { PaymentProviderNotConfiguredError } from '../../domain/payment/payment-provider.gateway';
-import { VnpayPaymentGateway, VnpayPaymentProviderError, VnpayPaymentSignatureError } from '../../gateways/payment/vnpay-payment.gateway';
+import {
+  VnpayPaymentGateway,
+  VnpayPaymentProviderError,
+  VnpayPaymentSignatureError,
+} from '../../gateways/payment/vnpay-payment.gateway';
 import { PaymentException } from './payment.exception';
 import { CreatePaymentIntentDto } from './payment.dto';
 
@@ -60,9 +74,11 @@ export class PaymentService {
 
   listMethods(): readonly PaymentMethodReadModel[] {
     const decision = this.registry.getDecision('vnpay');
-    return this.methods.listExecutableMethods().map((method) =>
-      method.code === 'vnpay' ? { ...method, enabled: decision.gatewayConfigured } : method,
-    );
+    return this.methods
+      .listExecutableMethods()
+      .map((method) =>
+        method.code === 'vnpay' ? { ...method, enabled: decision.gatewayConfigured } : method,
+      );
   }
 
   async createIntent(
@@ -76,7 +92,12 @@ export class PaymentService {
     const order = await this.findOrderForOwner(input.orderId, owner.customerProfileId);
     const payment = await this.findPaymentByOrderId(order.id);
     if (!payment) {
-      throw new PaymentException(HttpStatus.NOT_FOUND, 'PAYMENT_TRANSACTION_NOT_FOUND', 'NOT_FOUND', 'Không tìm thấy payment.');
+      throw new PaymentException(
+        HttpStatus.NOT_FOUND,
+        'PAYMENT_TRANSACTION_NOT_FOUND',
+        'NOT_FOUND',
+        'Không tìm thấy payment.',
+      );
     }
     if (payment.paymentMethod !== 'vnpay') {
       throw new PaymentException(
@@ -195,7 +216,12 @@ export class PaymentService {
     const owner = await this.owners.resolve(auth);
     const aggregate = await this.findAggregate(paymentId);
     if (!aggregate || aggregate.order.customerProfileId !== owner.customerProfileId) {
-      throw new PaymentException(HttpStatus.NOT_FOUND, 'PAYMENT_TRANSACTION_NOT_FOUND', 'NOT_FOUND', 'Không tìm thấy payment.');
+      throw new PaymentException(
+        HttpStatus.NOT_FOUND,
+        'PAYMENT_TRANSACTION_NOT_FOUND',
+        'NOT_FOUND',
+        'Không tìm thấy payment.',
+      );
     }
     return this.toSummary(aggregate.payment);
   }
@@ -212,13 +238,28 @@ export class PaymentService {
       const verified = await gateway.verifyWebhook(Buffer.alloc(0), {}, providerParams);
       const aggregate = await this.findAggregateByProviderReference(verified.providerReference);
       if (!aggregate) {
-        throw new PaymentException(HttpStatus.NOT_FOUND, 'PAYMENT_TRANSACTION_NOT_FOUND', 'NOT_FOUND', 'Không tìm thấy payment.');
+        throw new PaymentException(
+          HttpStatus.NOT_FOUND,
+          'PAYMENT_TRANSACTION_NOT_FOUND',
+          'NOT_FOUND',
+          'Không tìm thấy payment.',
+        );
       }
       if (aggregate.order.customerProfileId !== owner.customerProfileId) {
-        throw new PaymentException(HttpStatus.FORBIDDEN, 'PAYMENT_ACCESS_DENIED', 'PERMISSION', 'Không có quyền truy cập payment này.');
+        throw new PaymentException(
+          HttpStatus.FORBIDDEN,
+          'PAYMENT_ACCESS_DENIED',
+          'PERMISSION',
+          'Không có quyền truy cập payment này.',
+        );
       }
       if (paymentId && paymentId !== aggregate.payment.id) {
-        throw new PaymentException(HttpStatus.UNPROCESSABLE_ENTITY, 'PAYMENT_REFERENCE_MISMATCH', 'VALIDATION', 'Tham chiếu payment không khớp.');
+        throw new PaymentException(
+          HttpStatus.UNPROCESSABLE_ENTITY,
+          'PAYMENT_REFERENCE_MISMATCH',
+          'VALIDATION',
+          'Tham chiếu payment không khớp.',
+        );
       }
       this.assertProviderOutcomeMatches(aggregate, verified);
       return this.toSummary(aggregate.payment);
@@ -227,7 +268,9 @@ export class PaymentService {
     }
   }
 
-  async processVnpayIpn(query: Readonly<Record<string, string | string[] | undefined>>): Promise<{ rspCode: string; message: string }> {
+  async processVnpayIpn(
+    query: Readonly<Record<string, string | string[] | undefined>>,
+  ): Promise<{ rspCode: string; message: string }> {
     await this.processVnpaySignal(query);
     return { rspCode: '00', message: 'Confirm Success' };
   }
@@ -242,7 +285,12 @@ export class PaymentService {
       const verified = await gateway.verifyWebhook(Buffer.alloc(0), {}, providerParams);
       const aggregate = await this.findAggregateByProviderReference(verified.providerReference);
       if (!aggregate) {
-        throw new PaymentException(HttpStatus.NOT_FOUND, 'PAYMENT_TRANSACTION_NOT_FOUND', 'NOT_FOUND', 'Không tìm thấy payment.');
+        throw new PaymentException(
+          HttpStatus.NOT_FOUND,
+          'PAYMENT_TRANSACTION_NOT_FOUND',
+          'NOT_FOUND',
+          'Không tìm thấy payment.',
+        );
       }
 
       const payloadHash = hash(canonicalProviderPayload(providerParams));
@@ -271,18 +319,27 @@ export class PaymentService {
         );
       }
 
-      await this.providerEvents.completeWithBusinessEffect(claim.event.id, aggregate.payment.id, async (manager) => {
-        await this.applyProviderOutcome(
-          manager,
-          aggregate.payment.id,
-          verified.providerReference,
-          verified,
-          undefined,
-        );
-      });
+      await this.providerEvents.completeWithBusinessEffect(
+        claim.event.id,
+        aggregate.payment.id,
+        async (manager) => {
+          await this.applyProviderOutcome(
+            manager,
+            aggregate.payment.id,
+            verified.providerReference,
+            verified,
+            undefined,
+          );
+        },
+      );
       const refreshed = await this.findAggregate(aggregate.payment.id);
       if (!refreshed) {
-        throw new PaymentException(HttpStatus.NOT_FOUND, 'PAYMENT_TRANSACTION_NOT_FOUND', 'NOT_FOUND', 'Không tìm thấy payment.');
+        throw new PaymentException(
+          HttpStatus.NOT_FOUND,
+          'PAYMENT_TRANSACTION_NOT_FOUND',
+          'NOT_FOUND',
+          'Không tìm thấy payment.',
+        );
       }
       return this.toSummary(refreshed.payment);
     } catch (error) {
@@ -301,7 +358,9 @@ export class PaymentService {
     manager: EntityManager,
     paymentId: string,
     providerReference: string,
-    outcome: Awaited<ReturnType<VnpayPaymentGateway['verifyWebhook']>> | Awaited<ReturnType<VnpayPaymentGateway['queryPayment']>>,
+    outcome:
+      | Awaited<ReturnType<VnpayPaymentGateway['verifyWebhook']>>
+      | Awaited<ReturnType<VnpayPaymentGateway['queryPayment']>>,
     actorUserAccountId: string | undefined,
   ): Promise<void> {
     const paymentRepository = manager.getRepository(PaymentEntity);
@@ -316,14 +375,24 @@ export class PaymentService {
       lock: { mode: 'pessimistic_write' },
     });
     if (!payment || !attempt) {
-      throw new PaymentException(HttpStatus.NOT_FOUND, 'PAYMENT_TRANSACTION_NOT_FOUND', 'NOT_FOUND', 'Không tìm thấy payment attempt.');
+      throw new PaymentException(
+        HttpStatus.NOT_FOUND,
+        'PAYMENT_TRANSACTION_NOT_FOUND',
+        'NOT_FOUND',
+        'Không tìm thấy payment attempt.',
+      );
     }
     const order = await orderRepository.findOne({
       where: { tenantId: '1', id: payment.orderId },
       lock: { mode: 'pessimistic_write' },
     });
     if (!order) {
-      throw new PaymentException(HttpStatus.NOT_FOUND, 'PAYMENT_TRANSACTION_NOT_FOUND', 'NOT_FOUND', 'Không tìm thấy Order.');
+      throw new PaymentException(
+        HttpStatus.NOT_FOUND,
+        'PAYMENT_TRANSACTION_NOT_FOUND',
+        'NOT_FOUND',
+        'Không tìm thấy Order.',
+      );
     }
     const aggregate = { order, payment, attempt };
     this.assertProviderOutcomeMatches(aggregate, outcome);
@@ -337,7 +406,8 @@ export class PaymentService {
     aggregate.payment.updatedBy = actorUserAccountId ?? aggregate.payment.updatedBy;
 
     if (nextStatus !== 'pending') {
-      aggregate.attempt.providerTransactionNo = outcome.providerTransactionNo ?? aggregate.attempt.providerTransactionNo;
+      aggregate.attempt.providerTransactionNo =
+        outcome.providerTransactionNo ?? aggregate.attempt.providerTransactionNo;
       aggregate.attempt.attemptStatus = nextStatus;
       aggregate.attempt.completedAt = new Date();
       aggregate.attempt.updatedBy = actorUserAccountId ?? aggregate.attempt.updatedBy;
@@ -368,9 +438,16 @@ export class PaymentService {
   }
 
   private async findOrderForOwner(orderId: string, customerProfileId: string) {
-    const order = await this.dataSource.getRepository(OrderEntity).findOneBy({ tenantId: '1', id: orderId, customerProfileId });
+    const order = await this.dataSource
+      .getRepository(OrderEntity)
+      .findOneBy({ tenantId: '1', id: orderId, customerProfileId });
     if (!order) {
-      throw new PaymentException(HttpStatus.NOT_FOUND, 'PAYMENT_TRANSACTION_NOT_FOUND', 'NOT_FOUND', 'Không tìm thấy Order.');
+      throw new PaymentException(
+        HttpStatus.NOT_FOUND,
+        'PAYMENT_TRANSACTION_NOT_FOUND',
+        'NOT_FOUND',
+        'Không tìm thấy Order.',
+      );
     }
     return order;
   }
@@ -380,13 +457,19 @@ export class PaymentService {
   }
 
   private async findAttemptByIdempotencyKey(paymentId: string, idempotencyKeyHash: string) {
-    return this.dataSource.getRepository(PaymentAttemptEntity).findOneBy({ tenantId: '1', paymentId, idempotencyKeyHash });
+    return this.dataSource
+      .getRepository(PaymentAttemptEntity)
+      .findOneBy({ tenantId: '1', paymentId, idempotencyKeyHash });
   }
 
   private async findAggregate(paymentId: string): Promise<PaymentAggregate | null> {
-    const payment = await this.dataSource.getRepository(PaymentEntity).findOneBy({ tenantId: '1', id: paymentId });
+    const payment = await this.dataSource
+      .getRepository(PaymentEntity)
+      .findOneBy({ tenantId: '1', id: paymentId });
     if (!payment) return null;
-    const order = await this.dataSource.getRepository(OrderEntity).findOneBy({ tenantId: '1', id: payment.orderId });
+    const order = await this.dataSource
+      .getRepository(OrderEntity)
+      .findOneBy({ tenantId: '1', id: payment.orderId });
     if (!order) return null;
     const attempt = await this.dataSource.getRepository(PaymentAttemptEntity).findOne({
       where: { tenantId: '1', paymentId: payment.id },
@@ -395,7 +478,9 @@ export class PaymentService {
     return { order, payment, attempt: attempt ?? null };
   }
 
-  private async findAggregateByProviderReference(providerReference: string): Promise<PaymentAggregate | null> {
+  private async findAggregateByProviderReference(
+    providerReference: string,
+  ): Promise<PaymentAggregate | null> {
     const attempt = await this.dataSource.getRepository(PaymentAttemptEntity).findOneBy({
       tenantId: '1',
       provider: 'vnpay',
@@ -427,7 +512,9 @@ export class PaymentService {
 
   private assertProviderOutcomeMatches(
     aggregate: PaymentAggregate,
-    outcome: Awaited<ReturnType<VnpayPaymentGateway['verifyWebhook']>> | Awaited<ReturnType<VnpayPaymentGateway['queryPayment']>>,
+    outcome:
+      | Awaited<ReturnType<VnpayPaymentGateway['verifyWebhook']>>
+      | Awaited<ReturnType<VnpayPaymentGateway['queryPayment']>>,
   ): void {
     if (!aggregate.attempt || aggregate.attempt.providerReference !== outcome.providerReference) {
       throw new PaymentException(
@@ -442,17 +529,24 @@ export class PaymentService {
       aggregate.payment.paymentAmount !== outcome.amount ||
       aggregate.attempt.amount !== outcome.amount
     ) {
-      throw new PaymentException(HttpStatus.UNPROCESSABLE_ENTITY, 'PAYMENT_AMOUNT_MISMATCH', 'VALIDATION', 'Số tiền thanh toán không khớp với Order đã lưu.');
+      throw new PaymentException(
+        HttpStatus.UNPROCESSABLE_ENTITY,
+        'PAYMENT_AMOUNT_MISMATCH',
+        'VALIDATION',
+        'Số tiền thanh toán không khớp với Order đã lưu.',
+      );
     }
     if (outcome.currency !== 'VND' || aggregate.attempt.currency !== 'VND') {
-      throw new PaymentException(HttpStatus.UNPROCESSABLE_ENTITY, 'PAYMENT_AMOUNT_MISMATCH', 'VALIDATION', 'Tiền tệ thanh toán không khớp.');
+      throw new PaymentException(
+        HttpStatus.UNPROCESSABLE_ENTITY,
+        'PAYMENT_AMOUNT_MISMATCH',
+        'VALIDATION',
+        'Tiền tệ thanh toán không khớp.',
+      );
     }
   }
 
-  private toSummary(
-    payment: PaymentEntity,
-    redirectUrl?: string | null,
-  ): PaymentSummary {
+  private toSummary(payment: PaymentEntity, redirectUrl?: string | null): PaymentSummary {
     return {
       id: payment.id,
       orderId: payment.orderId,
@@ -473,30 +567,71 @@ export class PaymentService {
     return url.toString();
   }
 
-  private assertIdempotencyKey(idempotencyKey: string | undefined): asserts idempotencyKey is string {
+  private assertIdempotencyKey(
+    idempotencyKey: string | undefined,
+  ): asserts idempotencyKey is string {
     if (!idempotencyKey?.trim()) {
-      throw new PaymentException(HttpStatus.BAD_REQUEST, 'PAYMENT_IDEMPOTENCY_KEY_REQUIRED', 'VALIDATION', 'X-Idempotency-Key là bắt buộc.');
+      throw new PaymentException(
+        HttpStatus.BAD_REQUEST,
+        'PAYMENT_IDEMPOTENCY_KEY_REQUIRED',
+        'VALIDATION',
+        'X-Idempotency-Key là bắt buộc.',
+      );
     }
   }
 
   private normalizeError(error: unknown): PaymentException {
     if (error instanceof PaymentException) return error;
     if (error instanceof PaymentProviderNotConfiguredError) {
-      return new PaymentException(HttpStatus.SERVICE_UNAVAILABLE, 'PAYMENT_PROVIDER_UNAVAILABLE', 'INTEGRATION', error.message, true);
+      return new PaymentException(
+        HttpStatus.SERVICE_UNAVAILABLE,
+        'PAYMENT_PROVIDER_UNAVAILABLE',
+        'INTEGRATION',
+        error.message,
+        true,
+      );
     }
     if (error instanceof VnpayPaymentProviderError) {
-      return new PaymentException(HttpStatus.SERVICE_UNAVAILABLE, 'PAYMENT_PROVIDER_UNAVAILABLE', 'INTEGRATION', error.message, true);
+      return new PaymentException(
+        HttpStatus.SERVICE_UNAVAILABLE,
+        'PAYMENT_PROVIDER_UNAVAILABLE',
+        'INTEGRATION',
+        error.message,
+        true,
+      );
     }
     if (error instanceof VnpayPaymentSignatureError) {
-      return new PaymentException(HttpStatus.UNPROCESSABLE_ENTITY, error.code, 'VALIDATION', error.message);
+      return new PaymentException(
+        HttpStatus.UNPROCESSABLE_ENTITY,
+        error.code,
+        'VALIDATION',
+        error.message,
+      );
     }
     if (error instanceof UnsupportedPaymentMethodError) {
-      return new PaymentException(HttpStatus.UNPROCESSABLE_ENTITY, 'PAYMENT_PROVIDER_REJECTED', 'VALIDATION', error.message);
+      return new PaymentException(
+        HttpStatus.UNPROCESSABLE_ENTITY,
+        'PAYMENT_PROVIDER_REJECTED',
+        'VALIDATION',
+        error.message,
+      );
     }
     if (error instanceof Error) {
-      return new PaymentException(HttpStatus.CONFLICT, 'PAYMENT_RECONCILIATION_REQUIRED', 'INTEGRATION', error.message, true);
+      return new PaymentException(
+        HttpStatus.CONFLICT,
+        'PAYMENT_RECONCILIATION_REQUIRED',
+        'INTEGRATION',
+        error.message,
+        true,
+      );
     }
-    return new PaymentException(HttpStatus.CONFLICT, 'PAYMENT_RECONCILIATION_REQUIRED', 'INTEGRATION', 'Thanh toán cần được đối soát lại.', true);
+    return new PaymentException(
+      HttpStatus.CONFLICT,
+      'PAYMENT_RECONCILIATION_REQUIRED',
+      'INTEGRATION',
+      'Thanh toán cần được đối soát lại.',
+      true,
+    );
   }
 }
 
@@ -508,11 +643,13 @@ function buildProviderReference(paymentId: string, idempotencyHash: string): str
   return `HHVNP${paymentId}${idempotencyHash.slice(0, 16)}`;
 }
 
-function extractProviderParams(query: Readonly<Record<string, string | string[] | undefined>>): Record<string, string> {
+function extractProviderParams(
+  query: Readonly<Record<string, string | string[] | undefined>>,
+): Record<string, string> {
   return Object.fromEntries(
     Object.entries(query)
       .filter(([key]) => key.startsWith('vnp_'))
-      .map(([key, value]) => [key, Array.isArray(value) ? value[0] ?? '' : value ?? '']),
+      .map(([key, value]) => [key, Array.isArray(value) ? (value[0] ?? '') : (value ?? '')]),
   );
 }
 

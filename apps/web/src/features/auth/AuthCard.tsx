@@ -38,24 +38,73 @@ export function AuthCard({ title, description, children, footer }: AuthCardProps
   );
 }
 
-export function AuthForm({ onSubmit, children }: { onSubmit(event: FormEvent<HTMLFormElement>): void; children: ReactNode }) {
-  return <form className="auth-form" onSubmit={onSubmit} noValidate>{children}</form>;
+export function AuthForm({
+  onSubmit,
+  children,
+}: {
+  onSubmit(event: FormEvent<HTMLFormElement>): void;
+  children: ReactNode;
+}) {
+  return (
+    <form className="auth-form" onSubmit={onSubmit} noValidate>
+      {children}
+    </form>
+  );
 }
 
-export function AuthField({ id, label, type = 'text', value, onChange, error, autoComplete }: { id: string; label: string; type?: string; value: string; onChange(value: string): void; error?: string; autoComplete?: string }) {
+export function AuthField({
+  id,
+  label,
+  type = 'text',
+  value,
+  onChange,
+  error,
+  autoComplete,
+}: {
+  id: string;
+  label: string;
+  type?: string;
+  value: string;
+  onChange(value: string): void;
+  error?: string;
+  autoComplete?: string;
+}) {
   return (
     <FormField id={id} label={label} error={error}>
-      <Input id={id} name={id} type={type} value={value} onChange={(event) => onChange(event.target.value)} autoComplete={autoComplete} error={Boolean(error)} aria-describedby={error ? `${id}-error` : undefined} />
+      <Input
+        id={id}
+        name={id}
+        type={type}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        autoComplete={autoComplete}
+        error={Boolean(error)}
+        aria-describedby={error ? `${id}-error` : undefined}
+      />
     </FormField>
   );
 }
 
 export function SubmitButton({ pending, children }: { pending: boolean; children: ReactNode }) {
-  return <Button className="mt-1 w-full" type="submit" loading={pending}>{children}</Button>;
+  return (
+    <Button className="mt-1 w-full" type="submit" loading={pending}>
+      {children}
+    </Button>
+  );
 }
 
-export function FormAlert({ children, tone = 'error' }: { children: ReactNode; tone?: 'error' | 'success' | 'info' }) {
-  return <Alert className="mb-4" tone={tone}>{children}</Alert>;
+export function FormAlert({
+  children,
+  tone = 'error',
+}: {
+  children: ReactNode;
+  tone?: 'error' | 'success' | 'info';
+}) {
+  return (
+    <Alert className="mb-4" tone={tone}>
+      {children}
+    </Alert>
+  );
 }
 
 export function StateIllustration({ src, alt }: { src: string; alt: string }) {

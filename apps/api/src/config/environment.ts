@@ -74,8 +74,8 @@ export function getValidatedEnvironment(source: NodeJS.ProcessEnv): HealthyHubEn
       name: source.APP_NAME ?? 'HealthyHub',
       env: appEnv,
       nodeEnv: source.NODE_ENV ?? appEnv,
-      url: source.APP_URL ?? 'http://localhost:3000',
-      port: parsePort(source.API_PORT, 3001, 'API_PORT'),
+      url: source.APP_URL ?? 'http://localhost:3100',
+      port: parseRequiredPort(source.API_PORT, 'API_PORT'),
       logLevel: source.LOG_LEVEL ?? (appEnv === 'development' ? 'debug' : 'info'),
     },
     api: {
@@ -84,7 +84,7 @@ export function getValidatedEnvironment(source: NodeJS.ProcessEnv): HealthyHubEn
       contractVersion: CONTRACT_VERSION,
     },
     security: {
-      corsOrigins: parseCsv(source.CORS_ORIGINS ?? 'http://localhost:3000'),
+      corsOrigins: parseCsv(source.CORS_ORIGINS ?? 'http://localhost:3100'),
       requestBodyLimit: source.REQUEST_BODY_LIMIT ?? '1mb',
       rateLimitTtlMs: parsePositiveNumber(source.RATE_LIMIT_TTL_MS, 60000, 'RATE_LIMIT_TTL_MS'),
       rateLimitLimit: parsePositiveNumber(source.RATE_LIMIT_LIMIT, 100, 'RATE_LIMIT_LIMIT'),
@@ -161,6 +161,11 @@ export function getValidatedEnvironment(source: NodeJS.ProcessEnv): HealthyHubEn
   return env;
 }
 
+export function validateEnvironmentSource(source: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  getValidatedEnvironment(source);
+  return source;
+}
+
 function parsePaymentProvider(value: string | undefined): 'not_configured' | 'vnpay' {
   const provider = (value ?? 'not_configured').trim().toLowerCase();
   if (provider === 'not_configured' || provider === 'vnpay') return provider;
@@ -176,7 +181,11 @@ function validatePaymentConfiguration(env: HealthyHubEnvironment): void {
     throw new Error('VNPAY_TMN_CODE phải gồm đúng 8 ký tự chữ hoặc số.');
   }
   for (const [name, value] of required.filter(([name]) => name.endsWith('Url'))) {
-    try { new URL(value); } catch { throw new Error(`Cấu hình VNPAY ${name} phải là URL hợp lệ.`); }
+    try {
+      new URL(value);
+    } catch {
+      throw new Error(`Cấu hình VNPAY ${name} phải là URL hợp lệ.`);
+    }
   }
   if (new URL(env.payment.vnpay.ipnUrl).protocol !== 'https:') {
     throw new Error('VNPAY_IPN_URL phải là HTTPS public callback để VNPAY gọi server-to-server.');
@@ -209,7 +218,18 @@ function parseCsv(value: string): string[] {
 }
 
 function parsePort(value: string | undefined, fallback: number, name: string): number {
-  const parsed = parsePositiveNumber(value, fallback, name);
+  return parsePortNumber(value ?? fallback, name);
+}
+
+function parseRequiredPort(value: string | undefined, name: string): number {
+  return parsePortNumber(requireValue(value, name), name);
+}
+
+function parsePortNumber(value: string | number, name: string): number {
+  const parsed = Number(value);
+  if (!Number.isInteger(parsed) || parsed <= 0) {
+    throw new Error(`${name} phải là số nguyên dương.`);
+  }
   if (parsed > 65535) {
     throw new Error(`${name} phải nhỏ hơn hoặc bằng 65535.`);
   }

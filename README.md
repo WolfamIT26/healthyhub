@@ -101,6 +101,6 @@ npm run dev
 
 Endpoint nền:
 
-- Web: `http://localhost:3000`.
+- Web: `http://localhost:3100`.
 - API health: `http://localhost:3001/api/v1/health/live`.
 - Swagger UI: `http://localhost:3001/api/docs`.

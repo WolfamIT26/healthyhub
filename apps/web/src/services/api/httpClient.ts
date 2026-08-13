@@ -50,14 +50,16 @@ interface RetriableRequestConfig extends InternalAxiosRequestConfig {
 }
 
 function createBrowserRequestId(): string {
-  const randomValue = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const randomValue =
+    globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   return `req_${randomValue}`;
 }
 
 function shouldRefresh(error: AxiosError): boolean {
   const config = error.config as RetriableRequestConfig | undefined;
   const url = config?.url ?? '';
-  const protectedRequest = !url.includes('/auth/') || url.includes('/auth/session') || url.includes('/auth/logout');
+  const protectedRequest =
+    !url.includes('/auth/') || url.includes('/auth/session') || url.includes('/auth/logout');
   return error.response?.status === 401 && !config?._authRetry && protectedRequest;
 }
 
@@ -65,19 +67,15 @@ export function refreshAccessToken(): Promise<string> {
   if (refreshPromise) return refreshPromise;
   const csrfToken = readCookie(CSRF_COOKIE);
   refreshPromise = axios
-    .post(
-      `${webEnv.apiBaseUrl}/auth/refresh`,
-      undefined,
-      {
-        withCredentials: true,
-        timeout: 15000,
-        headers: {
-          'Accept-Language': 'vi-VN',
-          'X-Client-Platform': 'web',
-          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
-        },
+    .post(`${webEnv.apiBaseUrl}/auth/refresh`, undefined, {
+      withCredentials: true,
+      timeout: 15000,
+      headers: {
+        'Accept-Language': 'vi-VN',
+        'X-Client-Platform': 'web',
+        ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
       },
-    )
+    })
     .then((response) => {
       const accessToken = response.data?.data?.accessToken;
       if (typeof accessToken !== 'string') throw new Error('Refresh response không hợp lệ.');

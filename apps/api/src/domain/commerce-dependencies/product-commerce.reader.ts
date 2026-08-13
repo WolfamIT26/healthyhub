@@ -12,12 +12,16 @@ export interface ProductCommerceSnapshot {
   sellable: boolean;
 }
 
-export interface ProductCommerceRepository { findById(productId: string): Promise<ProductEntity | null> }
+export interface ProductCommerceRepository {
+  findById(productId: string): Promise<ProductEntity | null>;
+}
 export const PRODUCT_COMMERCE_REPOSITORY = Symbol('PRODUCT_COMMERCE_REPOSITORY');
 
 @Injectable()
 export class ProductCommerceReader {
-  constructor(@Inject(PRODUCT_COMMERCE_REPOSITORY) private readonly repository: ProductCommerceRepository) {}
+  constructor(
+    @Inject(PRODUCT_COMMERCE_REPOSITORY) private readonly repository: ProductCommerceRepository,
+  ) {}
 
   async getProductCommerceSnapshot(productId: string): Promise<ProductCommerceSnapshot | null> {
     const product = await this.repository.findById(productId);
@@ -29,7 +33,10 @@ export class ProductCommerceReader {
       slug: product.slug,
       currentPrice: product.basePrice,
       currency: 'VND',
-      sellable: product.productStatus === 'active' && product.productVisibility === 'public' && product.sellableStatus === 'sellable',
+      sellable:
+        product.productStatus === 'active' &&
+        product.productVisibility === 'public' &&
+        product.sellableStatus === 'sellable',
     };
   }
 

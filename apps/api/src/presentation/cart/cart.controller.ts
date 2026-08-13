@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import type { AuthenticatedRequestContext } from '../../common/types/request-with-context';
@@ -40,7 +50,10 @@ export class CartController {
   @Delete('items/:cartItemId')
   @HttpCode(200)
   @ApiOperation({ operationId: 'deleteCartItemsCartItemId' })
-  remove(@CurrentAuthentication() auth: AuthenticatedRequestContext, @Param('cartItemId') cartItemId: string) {
+  remove(
+    @CurrentAuthentication() auth: AuthenticatedRequestContext,
+    @Param('cartItemId') cartItemId: string,
+  ) {
     return this.carts.remove(auth, cartItemId);
   }
 }

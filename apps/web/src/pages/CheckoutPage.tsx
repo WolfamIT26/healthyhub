@@ -55,8 +55,20 @@ export function CheckoutPage() {
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   const [quote, setQuote] = useState<ShippingQuote | null>(null);
   const [paymentMethods, setPaymentMethods] = useState<readonly PaymentMethodReadModel[]>([
-    { code: 'cod', name: 'Thanh toán khi nhận hàng', enabled: true, captureRequired: false, initialPaymentStatus: 'pending' },
-    { code: 'vnpay', name: 'Thanh toán VNPAY', enabled: false, captureRequired: true, initialPaymentStatus: 'pending' },
+    {
+      code: 'cod',
+      name: 'Thanh toán khi nhận hàng',
+      enabled: true,
+      captureRequired: false,
+      initialPaymentStatus: 'pending',
+    },
+    {
+      code: 'vnpay',
+      name: 'Thanh toán VNPAY',
+      enabled: false,
+      captureRequired: true,
+      initialPaymentStatus: 'pending',
+    },
   ]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod['code']>('cod');
   const [preparing, setPreparing] = useState(true);
@@ -92,8 +104,20 @@ export function CheckoutPage() {
         }
       } else {
         setPaymentMethods([
-          { code: 'cod', name: 'Thanh toán khi nhận hàng', enabled: true, captureRequired: false, initialPaymentStatus: 'pending' },
-          { code: 'vnpay', name: 'Thanh toán VNPAY', enabled: false, captureRequired: true, initialPaymentStatus: 'pending' },
+          {
+            code: 'cod',
+            name: 'Thanh toán khi nhận hàng',
+            enabled: true,
+            captureRequired: false,
+            initialPaymentStatus: 'pending',
+          },
+          {
+            code: 'vnpay',
+            name: 'Thanh toán VNPAY',
+            enabled: false,
+            captureRequired: true,
+            initialPaymentStatus: 'pending',
+          },
         ]);
         setSelectedPaymentMethod('cod');
       }
@@ -150,7 +174,10 @@ export function CheckoutPage() {
         paymentMethods.find((method) => method.code === selectedPaymentMethod) ??
         paymentMethods.find((method) => method.code === 'cod');
       if (!chosenMethod?.enabled) {
-        throw { message: 'Phương thức thanh toán này chưa khả dụng.', code: 'PAYMENT_PROVIDER_UNAVAILABLE' };
+        throw {
+          message: 'Phương thức thanh toán này chưa khả dụng.',
+          code: 'PAYMENT_PROVIDER_UNAVAILABLE',
+        };
       }
       const created = await checkoutApi.createOrder(
         normalized(address),
@@ -218,14 +245,17 @@ export function CheckoutPage() {
             <span>
               Mã đơn <strong>{order.orderNumber}</strong>. Tổng cộng{' '}
               {money.format(Number(order.total))}. Thanh toán{' '}
-              {paymentMethodLabel(order.paymentMethod)} — {paymentStatusLabel(order.paymentStatus)}. Giao hàng tiêu chuẩn —{' '}
-              {shippingLabel(order.shippingMethod)}.
+              {paymentMethodLabel(order.paymentMethod)} — {paymentStatusLabel(order.paymentStatus)}.
+              Giao hàng tiêu chuẩn — {shippingLabel(order.shippingMethod)}.
             </span>
           }
           action={
             <div className="flex flex-wrap gap-3">
-              <Link to="/customer" className={buttonClassName({ variant: 'secondary' })}>
-                Khu vực khách hàng
+              <Link
+                to={`/orders/${order.orderId}`}
+                className={buttonClassName({ variant: 'secondary' })}
+              >
+                Xem đơn hàng
               </Link>
               <Link to="/products" className={buttonClassName()}>
                 Tiếp tục mua sắm
@@ -372,7 +402,7 @@ export function CheckoutPage() {
                 label={
                   quote
                     ? `${quote.methodName} — ${money.format(Number(quote.shippingFee))}`
-                  : 'Giao hàng tiêu chuẩn HealthyHub — phí được máy chủ xác nhận sau khi kiểm tra địa chỉ'
+                    : 'Giao hàng tiêu chuẩn HealthyHub — phí được máy chủ xác nhận sau khi kiểm tra địa chỉ'
                 }
               />
               {paymentMethods.length ? (
@@ -593,12 +623,9 @@ function errorMessage(error: { message: string; code?: string }) {
     return 'Địa chỉ giao hàng không hợp lệ hoặc chưa được hỗ trợ.';
   if (error.code === 'ORDER.IDEMPOTENCY_CONFLICT')
     return 'Thông tin của lần đặt hàng đã thay đổi. Vui lòng kiểm tra lại.';
-  if (error.code === 'PAYMENT_PROVIDER_UNAVAILABLE')
-    return 'Cổng thanh toán hiện chưa sẵn sàng.';
-  if (error.code === 'PAYMENT_CREATION_FAILED')
-    return 'Không thể tạo yêu cầu thanh toán VNPAY.';
-  if (error.code === 'PAYMENT_SIGNATURE_INVALID')
-    return 'Chữ ký thanh toán không hợp lệ.';
+  if (error.code === 'PAYMENT_PROVIDER_UNAVAILABLE') return 'Cổng thanh toán hiện chưa sẵn sàng.';
+  if (error.code === 'PAYMENT_CREATION_FAILED') return 'Không thể tạo yêu cầu thanh toán VNPAY.';
+  if (error.code === 'PAYMENT_SIGNATURE_INVALID') return 'Chữ ký thanh toán không hợp lệ.';
   if (error.code === 'PAYMENT_AMOUNT_MISMATCH')
     return 'Số tiền thanh toán không khớp với đơn hàng.';
   return error.message;

@@ -17,10 +17,18 @@ describe('HealthyHub shared UI foundation', () => {
   });
 
   it('Input composes with FormField helper and error semantics', () => {
-    const { rerender } = render(<FormField id="email" label="Email" helperText="Dùng email đang hoạt động."><Input id="email" /></FormField>);
+    const { rerender } = render(
+      <FormField id="email" label="Email" helperText="Dùng email đang hoạt động.">
+        <Input id="email" />
+      </FormField>,
+    );
     expect(screen.getByLabelText('Email')).toHaveAttribute('aria-invalid', 'false');
     expect(screen.getByText('Dùng email đang hoạt động.')).toBeInTheDocument();
-    rerender(<FormField id="email" label="Email" error="Email không hợp lệ."><Input id="email" error aria-describedby="email-error" /></FormField>);
+    rerender(
+      <FormField id="email" label="Email" error="Email không hợp lệ.">
+        <Input id="email" error aria-describedby="email-error" />
+      </FormField>,
+    );
     expect(screen.getByLabelText('Email')).toHaveAttribute('aria-invalid', 'true');
     expect(screen.getByText('Email không hợp lệ.')).toHaveAttribute('id', 'email-error');
   });
@@ -41,7 +49,11 @@ describe('HealthyHub shared UI foundation', () => {
 
   it('Modal has dialog semantics, viewport bounds and Escape close', async () => {
     const onClose = vi.fn();
-    render(<Modal open onClose={onClose} title="Xác nhận"><p>Nội dung hộp thoại</p></Modal>);
+    render(
+      <Modal open onClose={onClose} title="Xác nhận">
+        <p>Nội dung hộp thoại</p>
+      </Modal>,
+    );
     const dialog = screen.getByRole('dialog', { name: 'Xác nhận' });
     expect(dialog).toHaveAttribute('aria-modal', 'true');
     expect(dialog.className).toContain('max-h-[calc(100dvh-2rem)]');

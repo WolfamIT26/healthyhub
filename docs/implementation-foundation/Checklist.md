@@ -59,6 +59,12 @@
 
 ## Verification / Kiểm tra chạy thật
 
+- [x] `.env.development` được resolve từ workspace root cho Web và API.
+- [x] `WEB_PORT` điều khiển Vite; `strictPort` fail rõ khi `3100` bị chiếm.
+- [x] `API_PORT` điều khiển NestJS listener qua `HealthyHubEnvironment`.
+- [x] Compose listener/mapping/healthcheck dùng `WEB_PORT` và `API_PORT`.
+- [x] APP URL, API base URL, CORS và Authentication origins đồng bộ `3100`/`3001`.
+
 - [x] Format check pass.
 - [x] Lint pass.
 - [x] Typecheck pass.
@@ -69,7 +75,7 @@
 - [x] Docs check pass.
 - [x] Secret check pass.
 - [x] `git diff --check` pass.
-- [x] Web start pass.
-- [ ] API start pass. Blocked: MySQL local từ chối user mẫu `healthyhub_user`.
+- [x] Web start pass tại `3100`.
+- [x] API start/live health pass tại `3001`.
 - [ ] MySQL/phpMyAdmin/Docker health pass. Blocked: Docker daemon chưa chạy.
 - [ ] Dependency audit sạch. Needs follow-up: đã giảm từ 9 xuống 4 high vulnerabilities, còn cần xử lý `@nestjs/swagger`/`js-yaml` và React Router advisory range.

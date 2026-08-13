@@ -8,6 +8,14 @@ Prompt 14 - Implementation Foundation & Workspace Setup.
 
 Đã chuyển HealthyHub từ framework tài liệu/specification sang workspace foundation có thể build. Phần đã tạo chỉ là nền tảng kỹ thuật, chưa triển khai nghiệp vụ.
 
+## Development Port Update / Cập nhật port development — 2026-08-13
+
+- `.env.development` tại workspace root là nguồn file chính cho Vite, NestJS và Docker scripts.
+- Vite bind `WEB_PORT=3100`, bật `strictPort` và không còn CLI/config hard-code `3000`.
+- NestJS bind `API_PORT=3001` sau khi `ConfigModule` nạp và validate raw env bằng `HealthyHubEnvironment`.
+- HTTP smoke pass cho Web `3100`, API live `3001` và credentialed CORS origin `http://localhost:3100`.
+- Không thay đổi business logic, API contract, Authentication, Payment, Checkout, VNPAY hoặc database.
+
 ## Added / Đã thêm
 
 - Root config: `.gitattributes`, `.dockerignore`, `.prettierrc.json`, `.prettierignore`, `eslint.config.mjs`, `tsconfig.base.json`, `package-lock.json`.
@@ -53,8 +61,9 @@ Prompt 14 - Implementation Foundation & Workspace Setup.
 | `npm run docs:check` | Pass | 8 tài liệu bắt buộc tồn tại |
 | `npm run secrets:check` | Pass | Không phát hiện dấu hiệu secret thật trong phạm vi quét |
 | `git diff --check` | Pass | Không có whitespace error |
-| `npm run dev:web` | Pass | Chạy ngoài sandbox, Vite trả HTTP 200 tại `127.0.0.1:3000` |
-| `npm run start:api` | Blocked | API build pass nhưng startup bị MySQL từ chối user mẫu `healthyhub_user` |
+| `npm run dev:web` | Pass | Vite trả HTTP 200 tại `127.0.0.1:3100`; strict-port collision fail rõ |
+| `npm run dev:api` | Pass | NestJS log `api_started` port `3001`; live health trả HTTP 200 |
+| `docker compose --env-file .env.development config --quiet` | Pass | Web `3100:3100`, API `3001:3001`, URL/origin đúng env |
 | `npm run docker:up` | Blocked | Docker daemon chưa chạy |
 | `npm run docker:check` | Blocked | Endpoint fail vì Docker Compose chưa khởi động |
 | `npm run audit:deps` | Needs follow-up | Audit chạy được bằng registry npm chính thức, còn 4 high vulnerabilities |

@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, type EntityManager } from 'typeorm';
 
 import { PaymentProviderEventEntity } from '../entities';
-import type { ClaimPaymentProviderEventInput, PaymentProviderEventClaim, PaymentProviderEventRepository } from './payment-provider-event.repository';
+import type {
+  ClaimPaymentProviderEventInput,
+  PaymentProviderEventClaim,
+  PaymentProviderEventRepository,
+} from './payment-provider-event.repository';
 
 @Injectable()
 export class TypeOrmPaymentProviderEventRepository implements PaymentProviderEventRepository {
@@ -13,20 +17,39 @@ export class TypeOrmPaymentProviderEventRepository implements PaymentProviderEve
       return await this.dataSource.transaction(async (manager) => {
         const repository = manager.getRepository(PaymentProviderEventEntity);
         let event = await repository.findOne({
-          where: { tenantId: '1', provider: input.provider, providerEventId: input.providerEventId },
+          where: {
+            tenantId: '1',
+            provider: input.provider,
+            providerEventId: input.providerEventId,
+          },
           lock: { mode: 'pessimistic_write' },
         });
         if (!event) {
-          event = await repository.save(repository.create({
-            tenantId: '1', provider: input.provider, providerEventId: input.providerEventId,
-            eventType: input.eventType, paymentId: null, providerReference: input.providerReference,
-            payloadHash: input.payloadHash, processingStatus: 'received', receivedAt: input.receivedAt,
-            processingStartedAt: null, processedAt: null, failureCode: null,
-          }));
-        } else if (event.payloadHash !== input.payloadHash || event.eventType !== input.eventType || event.providerReference !== input.providerReference) {
+          event = await repository.save(
+            repository.create({
+              tenantId: '1',
+              provider: input.provider,
+              providerEventId: input.providerEventId,
+              eventType: input.eventType,
+              paymentId: null,
+              providerReference: input.providerReference,
+              payloadHash: input.payloadHash,
+              processingStatus: 'received',
+              receivedAt: input.receivedAt,
+              processingStartedAt: null,
+              processedAt: null,
+              failureCode: null,
+            }),
+          );
+        } else if (
+          event.payloadHash !== input.payloadHash ||
+          event.eventType !== input.eventType ||
+          event.providerReference !== input.providerReference
+        ) {
           return { claimed: false, event };
         }
-        if (event.processingStatus !== 'received' && event.processingStatus !== 'failed') return { claimed: false, event };
+        if (event.processingStatus !== 'received' && event.processingStatus !== 'failed')
+          return { claimed: false, event };
         event.processingStatus = 'processing';
         event.processingStartedAt = new Date();
         event.failureCode = null;
@@ -43,11 +66,19 @@ export class TypeOrmPaymentProviderEventRepository implements PaymentProviderEve
     }
   }
 
-  async completeWithBusinessEffect(eventId: string, paymentId: string, effect: (manager: EntityManager) => Promise<void>): Promise<void> {
+  async completeWithBusinessEffect(
+    eventId: string,
+    paymentId: string,
+    effect: (manager: EntityManager) => Promise<void>,
+  ): Promise<void> {
     await this.dataSource.transaction(async (manager) => {
       const repository = manager.getRepository(PaymentProviderEventEntity);
-      const event = await repository.findOne({ where: { id: eventId }, lock: { mode: 'pessimistic_write' } });
-      if (!event || event.processingStatus !== 'processing') throw new Error('Payment provider event không ở trạng thái processing.');
+      const event = await repository.findOne({
+        where: { id: eventId },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (!event || event.processingStatus !== 'processing')
+        throw new Error('Payment provider event không ở trạng thái processing.');
       await effect(manager);
       event.paymentId = paymentId;
       event.processingStatus = 'processed';
@@ -66,14 +97,24 @@ export class TypeOrmPaymentProviderEventRepository implements PaymentProviderEve
   }
 
   findByProviderEvent(provider: string, providerEventId: string) {
-    return this.dataSource.getRepository(PaymentProviderEventEntity).findOneBy({ tenantId: '1', provider, providerEventId });
+    return this.dataSource
+      .getRepository(PaymentProviderEventEntity)
+      .findOneBy({ tenantId: '1', provider, providerEventId });
   }
 
-  private async setTerminalStatus(eventId: string, status: 'failed' | 'rejected', failureCode: string): Promise<void> {
+  private async setTerminalStatus(
+    eventId: string,
+    status: 'failed' | 'rejected',
+    failureCode: string,
+  ): Promise<void> {
     await this.dataSource.transaction(async (manager) => {
       const repository = manager.getRepository(PaymentProviderEventEntity);
-      const event = await repository.findOne({ where: { id: eventId }, lock: { mode: 'pessimistic_write' } });
-      if (!event || event.processingStatus !== 'processing') throw new Error('Payment provider event không ở trạng thái processing.');
+      const event = await repository.findOne({
+        where: { id: eventId },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (!event || event.processingStatus !== 'processing')
+        throw new Error('Payment provider event không ở trạng thái processing.');
       event.processingStatus = status;
       event.processedAt = new Date();
       event.failureCode = failureCode.slice(0, 100);

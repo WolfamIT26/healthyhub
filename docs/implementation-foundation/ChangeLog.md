@@ -1,5 +1,18 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.3.1] - 2026-08-13
+
+### Fixed / Đã sửa
+
+- Vite đọc `WEB_PORT` từ `.env.development`, bỏ CLI/config hard-code và bật `strictPort`.
+- NestJS resolve env từ workspace root, giữ raw keys sau validation và bind `API_PORT` qua `HealthyHubEnvironment`.
+- Docker Compose/scripts dùng cùng env authority cho listener, mapping, healthcheck, URL và origin.
+
+### Verification / Kiểm tra
+
+- Web `3100`, API `3001`, CORS `3100`, Compose config, lint/typecheck/test/build đều pass.
+- Không thay đổi business logic hoặc API contract.
+
 ## [0.3.0] - 2026-08-06
 
 ### Added / Đã thêm

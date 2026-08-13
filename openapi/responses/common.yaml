@@ -32,6 +32,18 @@ OrderCreated:
     application/json:
       schema:
         $ref: "../schemas/order.yaml#/OrderResponseEnvelope"
+CustomerOrdersOk:
+  description: "Danh sách Order persisted của Customer hiện tại, có pagination và filter whitelist."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/order.yaml#/CustomerOrderListResponseEnvelope"
+CustomerOrderDetailOk:
+  description: "Chi tiết Order snapshot của Customer owner cùng Payment/Shipping summary an toàn."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/order.yaml#/CustomerOrderDetailResponseEnvelope"
 Created:
   description: "Tạo mới thành công."
   headers:

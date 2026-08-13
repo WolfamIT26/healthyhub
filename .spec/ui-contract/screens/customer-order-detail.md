@@ -12,7 +12,7 @@ Tăng minh bạch trạng thái đơn, giảm hỗ trợ thủ công và khuyế
 
 | Route / Route | Purpose / Mục tiêu |
 | --- | --- |
-| `/account/orders/:orderId` | Chi tiết đơn của tôi. |
+| `/orders/:orderId` | Chi tiết đơn của tôi. |
 
 ## Permission / Phân quyền
 
@@ -21,9 +21,8 @@ Customer/member/VIP, owner only.
 ## Required API / API bắt buộc
 
 - `GET /api/v1/me/orders/{orderId}`.
-- `POST /api/v1/me/orders/{orderId}/cancel`.
-- `GET /api/v1/shipping/shipments/{shipmentId}/tracking`.
-- `GET /api/v1/payments/{paymentId}`.
+
+Trong Customer Orders V1, endpoint detail trả Order item/address snapshot cùng Payment/Shipping summary cần thiết. Cancel, tracking riêng và các action khác vẫn là future scope, không được suy diễn từ màn hình đọc.
 
 ## Required Data / Dữ liệu bắt buộc
 
@@ -108,4 +107,3 @@ Timeline có text status, action hủy có mô tả rõ hậu quả.
 ## SEO Metadata / SEO metadata
 
 Noindex vì là dữ liệu cá nhân.
-
