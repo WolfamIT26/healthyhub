@@ -5,7 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RequestContextMiddleware } from './common/middleware/request-context.middleware';
 import { RateLimitMiddleware } from './common/middleware/rate-limit.middleware';
 import { AppLoggerService } from './common/logging/app-logger.service';
-import { getValidatedEnvironment } from './config/environment';
+import { getValidatedEnvironment, validateEnvironmentSource } from './config/environment';
+import { resolveEnvironmentFilePaths } from './config/project-path';
 import { createTypeOrmOptions } from './database/typeorm.config';
 import { GatewayRegistryModule } from './gateways/gateway-registry.module';
 import { HealthModule } from './presentation/health/health.module';
@@ -24,9 +25,10 @@ const runtimeEnvironment = process.env.APP_ENV ?? process.env.NODE_ENV ?? 'devel
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      // Ưu tiên file đúng môi trường; `.env` là fallback local cho các biến chưa khai báo.
-      envFilePath: [`.env.${runtimeEnvironment}`, '.env'],
-      validate: (config) => getValidatedEnvironment(config),
+      // Resolve từ workspace root để npm workspace và process chạy trực tiếp dùng cùng nguồn env.
+      envFilePath: resolveEnvironmentFilePaths(runtimeEnvironment),
+      // Validate qua HealthyHubEnvironment nhưng giữ raw keys để @nestjs/config nạp vào process.env.
+      validate: validateEnvironmentSource,
     }),
     TypeOrmModule.forRootAsync({
       useFactory: () => createTypeOrmOptions(getValidatedEnvironment(process.env)),

@@ -9,6 +9,7 @@ Prompt 27.2 frontend behavior:
 - `/payment/vnpay/return` calls backend return handler and navigates to result.
 - `/payment/vnpay/result` reload/direct-access safe; it queries backend Payment state by `paymentId`.
 - UI never displays `paid` from browser query params alone.
+- Prompt 28 Customer Order list/detail hiển thị Payment status do backend trả từ persistence; Payment Result link tới `/orders/:orderId` nhưng không truyền status qua React memory.
 
 # Prompt 27.1A
 

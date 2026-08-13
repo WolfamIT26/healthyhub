@@ -26,9 +26,9 @@
     "openapi:validate": "node scripts/validate-openapi.mjs",
     "docs:check": "node scripts/check-docs.mjs",
     "secrets:check": "node scripts/check-secrets.mjs",
-    "docker:up": "docker compose up -d --build",
-    "docker:down": "docker compose down",
-    "docker:check": "node scripts/docker-startup-check.mjs",
+    "docker:up": "docker compose --env-file .env.development up -d --build",
+    "docker:down": "docker compose --env-file .env.development down",
+    "docker:check": "node --env-file=.env.development scripts/docker-startup-check.mjs",
     "audit:deps": "npm audit --registry=https://registry.npmjs.org --audit-level=high"
   },
   "devDependencies": {

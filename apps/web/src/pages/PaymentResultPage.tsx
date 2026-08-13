@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-import { Alert, Breadcrumb, Button, Card, ErrorState, LoadingState, buttonClassName } from '../components';
+import {
+  Alert,
+  Breadcrumb,
+  Button,
+  Card,
+  ErrorState,
+  LoadingState,
+  buttonClassName,
+} from '../components';
 import { paymentApi } from '../features/payment/paymentApi';
 import type { PaymentSummary } from '../features/payment/payment.types';
 import type { NormalizedApiError } from '../services/api/normalizeApiError';
@@ -59,16 +67,22 @@ export function PaymentResultPage() {
           description={
             <span>
               {error.message}{' '}
-              <Link className="font-semibold underline" to="/customer">
-                Về khu vực khách hàng
+              <Link className="font-semibold underline" to="/orders">
+                Về đơn hàng của tôi
               </Link>
             </span>
           }
           action={
             <div className="flex flex-wrap gap-3">
-              <Button onClick={() => { void refresh(); }}>Thử lại</Button>
-              <Link to="/customer" className={buttonClassName({ variant: 'secondary' })}>
-                Về khu vực khách hàng
+              <Button
+                onClick={() => {
+                  void refresh();
+                }}
+              >
+                Thử lại
+              </Button>
+              <Link to="/orders" className={buttonClassName({ variant: 'secondary' })}>
+                Về đơn hàng của tôi
               </Link>
             </div>
           }
@@ -81,15 +95,21 @@ export function PaymentResultPage() {
           <dl className="grid gap-4 sm:grid-cols-2">
             <PaymentMeta label="Payment ID" value={payment.id} />
             <PaymentMeta label="Order ID" value={payment.orderId} />
-            <PaymentMeta label="Phương thức" value={payment.method === 'vnpay' ? 'VNPAY Sandbox' : 'COD'} />
+            <PaymentMeta
+              label="Phương thức"
+              value={payment.method === 'vnpay' ? 'VNPAY Sandbox' : 'COD'}
+            />
             <PaymentMeta label="Số tiền" value={money.format(Number(payment.amount))} />
             <PaymentMeta label="Tham chiếu VNPAY" value={payment.providerReference ?? 'Chưa có'} />
-            <PaymentMeta label="Cập nhật lúc" value={datetime.format(new Date(payment.updatedAt))} />
+            <PaymentMeta
+              label="Cập nhật lúc"
+              value={datetime.format(new Date(payment.updatedAt))}
+            />
           </dl>
           <div className="flex flex-wrap gap-3">
             {payment.status === 'paid' ? (
-              <Link to="/customer" className={buttonClassName()}>
-                Về khu vực khách hàng
+              <Link to={`/orders/${payment.orderId}`} className={buttonClassName()}>
+                Xem đơn hàng
               </Link>
             ) : (
               <Link to="/cart" className={buttonClassName()}>
@@ -99,7 +119,13 @@ export function PaymentResultPage() {
             <Link to="/products" className={buttonClassName({ variant: 'secondary' })}>
               Tiếp tục mua sắm
             </Link>
-            <Button type="button" variant="ghost" onClick={() => { void refresh(); }}>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                void refresh();
+              }}
+            >
               Tải lại
             </Button>
           </div>
@@ -124,8 +150,12 @@ function PaymentShell({ children }: { children: React.ReactNode }) {
           ]}
         />
         <div className="mb-8 mt-5">
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary-700">Thanh toán</p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Trạng thái thanh toán</h1>
+          <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary-700">
+            Thanh toán
+          </p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+            Trạng thái thanh toán
+          </h1>
         </div>
         {children}
       </div>
@@ -136,7 +166,9 @@ function PaymentShell({ children }: { children: React.ReactNode }) {
 function PaymentMeta({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-card border border-neutral-200 bg-white p-4">
-      <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-500">{label}</dt>
+      <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-500">
+        {label}
+      </dt>
       <dd className="mt-2 break-all text-sm font-semibold text-neutral-950">{value}</dd>
     </div>
   );
@@ -157,8 +189,10 @@ function statusTitle(status: PaymentSummary['status']) {
 }
 
 function statusDescription(status: PaymentSummary['status']) {
-  if (status === 'paid') return 'VNPAY đã xác nhận giao dịch. Đơn hàng đã được chuyển sang trạng thái phù hợp.';
-  if (status === 'failed') return 'Giao dịch không thành công hoặc không thể xác minh với provider.';
+  if (status === 'paid')
+    return 'VNPAY đã xác nhận giao dịch. Đơn hàng đã được chuyển sang trạng thái phù hợp.';
+  if (status === 'failed')
+    return 'Giao dịch không thành công hoặc không thể xác minh với provider.';
   if (status === 'cancelled') return 'Người dùng đã hủy giao dịch trên cổng thanh toán.';
   return 'Giao dịch vẫn đang chờ xác minh hoặc đối soát với provider.';
 }

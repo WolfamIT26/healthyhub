@@ -516,12 +516,29 @@ paths:
         - $ref: "#/components/parameters/AcceptLanguageHeader"
         - $ref: "#/components/parameters/PageParam"
         - $ref: "#/components/parameters/PageSizeParam"
-        - $ref: "#/components/parameters/QParam"
-        - $ref: "#/components/parameters/SortParam"
-        - $ref: "#/components/parameters/FilterParam"
+        - name: orderStatus
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [new, confirmed]
+        - name: paymentStatus
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [unpaid, pending, paid, failed, cancelled]
+        - name: shippingStatus
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [pending]
+        - $ref: "#/components/parameters/DateFromParam"
+        - $ref: "#/components/parameters/DateToParam"
       responses:
         "200":
-          $ref: "#/components/responses/PaginatedOk"
+          $ref: "./responses/common.yaml#/CustomerOrdersOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -615,7 +632,7 @@ paths:
         - $ref: "#/components/parameters/UserIdPath"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/CustomerOrderDetailOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
