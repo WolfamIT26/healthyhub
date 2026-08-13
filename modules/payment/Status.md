@@ -4,6 +4,10 @@
 
 Lifecycle, mapping, provider-neutral gateway, checksum canonicalization, read-only browser return, authoritative IPN/callback, provider query và event dedupe đã pass automated/MySQL verification. COD remains executable and unchanged. E2E với VNPAY Sandbox thật bị chặn do runtime chưa có credentials và HTTPS public IPN callback.
 
+Prompt 28 chỉ đọc canonical Payment row trong Customer Order list/detail; không sửa lifecycle hoặc browser/IPN authority.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
 # Prompt 27.1A
 
 **Complete — VNPAY approved; payment event dedupe persistence enabled. Ready for Prompt 27.2.**

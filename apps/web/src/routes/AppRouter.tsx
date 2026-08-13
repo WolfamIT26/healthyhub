@@ -25,6 +25,8 @@ import { PaymentReturnPage } from '../pages/PaymentReturnPage';
 import { PaymentResultPage } from '../pages/PaymentResultPage';
 import { AccountAddressesPage } from '../pages/AccountAddressesPage';
 import { AccountProfilePage } from '../pages/AccountProfilePage';
+import { OrdersPage } from '../pages/OrdersPage';
+import { OrderDetailPage } from '../pages/OrderDetailPage';
 
 export function AppRouter() {
   return (
@@ -140,6 +142,22 @@ export function AppRouter() {
           element={
             <RouteGuard area="customer">
               <CustomerHomePage />
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <RouteGuard area="customer">
+              <OrdersPage />
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/orders/:orderId"
+          element={
+            <RouteGuard area="customer">
+              <OrderDetailPage />
             </RouteGuard>
           }
         />

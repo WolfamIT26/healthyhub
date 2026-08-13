@@ -27,26 +27,51 @@ const sizes: Record<ButtonSize, string> = {
   lg: 'min-h-12 px-5 py-3 text-base',
 };
 
-export function buttonClassName({ variant = 'primary', size = 'md', className }: { variant?: ButtonVariant; size?: ButtonSize; className?: string } = {}) {
+export function buttonClassName({
+  variant = 'primary',
+  size = 'md',
+  className,
+}: { variant?: ButtonVariant; size?: ButtonSize; className?: string } = {}) {
   return cn(
     'inline-flex items-center justify-center gap-2 rounded-control font-semibold transition-standard focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-reduce:transition-none',
-    variants[variant], sizes[size], className,
+    variants[variant],
+    sizes[size],
+    className,
   );
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { className, variant = 'primary', size = 'md', loading = false, loadingLabel = 'Đang xử lý…', disabled, children, ...props },
+  {
+    className,
+    variant = 'primary',
+    size = 'md',
+    loading = false,
+    loadingLabel = 'Đang xử lý…',
+    disabled,
+    children,
+    ...props
+  },
   ref,
 ) {
   return (
     <button
       ref={ref}
-      className={cn(buttonClassName({ variant, size, className }), 'disabled:cursor-not-allowed disabled:opacity-60')}
+      className={cn(
+        buttonClassName({ variant, size, className }),
+        'disabled:cursor-not-allowed disabled:opacity-60',
+      )}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       {...props}
     >
-      {loading ? <><Spinner size="sm" /><span>{loadingLabel}</span></> : children}
+      {loading ? (
+        <>
+          <Spinner size="sm" />
+          <span>{loadingLabel}</span>
+        </>
+      ) : (
+        children
+      )}
     </button>
   );
 });
@@ -58,11 +83,22 @@ export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
-  { label, size = 'md', className, children, ...props }, ref,
+  { label, size = 'md', className, children, ...props },
+  ref,
 ) {
   const dimensions = size === 'sm' ? 'h-9 w-9' : size === 'lg' ? 'h-12 w-12' : 'h-11 w-11';
   return (
-    <button ref={ref} type="button" aria-label={label} className={cn('inline-flex shrink-0 items-center justify-center rounded-control text-neutral-600 transition-standard hover:bg-neutral-100 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none', dimensions, className)} {...props}>
+    <button
+      ref={ref}
+      type="button"
+      aria-label={label}
+      className={cn(
+        'inline-flex shrink-0 items-center justify-center rounded-control text-neutral-600 transition-standard hover:bg-neutral-100 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none',
+        dimensions,
+        className,
+      )}
+      {...props}
+    >
       {children}
     </button>
   );

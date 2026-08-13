@@ -1,6 +1,6 @@
 # ChangeLog / Nhật ký thay đổi
 
-## [0.14.0] - 2026-08-13
+## [0.15.0] - 2026-08-13
 
 ### Added / Đã thêm
 
@@ -16,6 +16,39 @@
 
 - Saved Address chỉ prefill; Order/Shipment giữ immutable snapshot và Shipping fee authority không đổi.
 - `VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
+## [0.14.1] - 2026-08-13
+
+### Fixed / Đã sửa
+
+- Dùng `.env.development` tại workspace root làm file authority cho Vite, NestJS và Docker development scripts.
+- Bỏ Vite hard-code/CLI port `3000`, bind `WEB_PORT`, bật `strictPort` và giữ `VITE_API_BASE_URL` theo env.
+- NestJS nạp raw env qua `@nestjs/config`, validate bằng `HealthyHubEnvironment` rồi bind `API_PORT`.
+- Compose dùng biến cho Web/API listener, mapping, healthcheck, APP URL, CORS và Authentication origin.
+
+### Verification / Kiểm tra
+
+- Web HTTP 200 tại `3100`, API live HTTP 200 tại `3001`, CORS origin `3100` và strict-port collision PASS.
+- Lint, typecheck, 260 unit tests, build và Compose config validation PASS.
+- Không thay đổi business logic, database hoặc API contract.
+
+## [0.14.0] - 2026-08-13
+
+### Added / Đã thêm
+
+- Thêm Customer-only Order list/detail API trên persistence thật, owner isolation, pagination và status/date filters.
+- Thêm `/orders`, `/orders/:orderId`, Customer navigation và đầy đủ loading/empty/error/direct-route responsive states.
+- Thêm typed OpenAPI Order list/detail cùng unit/frontend/MySQL coverage cho Guest/Internal/Customer A-B/COD/VNPAY.
+
+### Security / Bảo mật
+
+- Owner derive từ JWT/CustomerProfile; không nhận `customerId`, not-owned trả 404 và không expose VNPAY secret/signature/raw metadata.
+
+### Verification / Kiểm tra
+
+- Workspace 254 unit tests và 10 MySQL integration tests PASS; lint/typecheck/build/OpenAPI/secrets/docs/diff cùng production preview direct-route smoke PASS.
+- `VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`.
+- Browser visual không chạy vì runtime không expose in-app Browser control; không fake PASS.
 
 ## [0.13.9] - 2026-08-12
 

@@ -285,8 +285,11 @@ export function CheckoutPage() {
           }
           action={
             <div className="flex flex-wrap gap-3">
-              <Link to="/customer" className={buttonClassName({ variant: 'secondary' })}>
-                Khu vực khách hàng
+              <Link
+                to={`/orders/${order.orderId}`}
+                className={buttonClassName({ variant: 'secondary' })}
+              >
+                Xem đơn hàng
               </Link>
               <Link to="/products" className={buttonClassName()}>
                 Tiếp tục mua sắm

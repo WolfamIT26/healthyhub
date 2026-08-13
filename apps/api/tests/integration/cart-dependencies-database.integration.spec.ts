@@ -66,9 +66,13 @@ describe.skipIf(!enabled)('Cart dependency MySQL integration', () => {
     const inventory = await runner.getTable('inventory_items');
     const customer = await runner.getTable('customer_profiles');
 
-    expect(product?.indices.some((index) => index.isUnique && index.columnNames.includes('slug'))).toBe(true);
+    expect(
+      product?.indices.some((index) => index.isUnique && index.columnNames.includes('slug')),
+    ).toBe(true);
     expect(inventory?.foreignKeys.some((key) => key.referencedTableName === 'products')).toBe(true);
-    expect(customer?.foreignKeys.some((key) => key.referencedTableName === 'user_accounts')).toBe(true);
+    expect(customer?.foreignKeys.some((key) => key.referencedTableName === 'user_accounts')).toBe(
+      true,
+    );
     await runner.release();
   });
 
@@ -80,54 +84,65 @@ describe.skipIf(!enabled)('Cart dependency MySQL integration', () => {
     const inventoryRepository = manager.getRepository(InventoryItemEntity);
     const customerRepository = manager.getRepository(CustomerProfileEntity);
 
-    const user = await userRepository.save(userRepository.create({
-      email: `cart-dependency-${suffix}@example.test`,
-      normalizedEmail: `cart-dependency-${suffix}@example.test`,
-      phone: null,
-      displayName: 'Cart Dependency Test',
-      passwordHash: 'integration-fixture-not-a-login-secret',
-      userStatus: 'active',
-      emailVerifiedAt: null,
-      lockedUntil: null,
-      lastLoginAt: null,
-    }));
-    const product = await productRepository.save(productRepository.create({
-      tenantId: '1',
-      brandId: null,
-      productCode: `CART-${suffix}`,
-      productName: 'Persisted Cart Product',
-      slug: `persisted-cart-product-${suffix}`,
-      basePrice: '125000.00',
-      sellableStatus: 'sellable',
-      productVisibility: 'public',
-      productStatus: 'active',
-    }));
-    const inventory = await inventoryRepository.save(inventoryRepository.create({
-      tenantId: '1',
-      productId: product.id,
-      availableQuantity: 5,
-      reservedQuantity: 0,
-      stockThreshold: 2,
-      stockStatus: 'available',
-    }));
-    const customer = await customerRepository.save(customerRepository.create({
-      tenantId: '1',
-      userAccountId: user.id,
-      customerCode: `CUS-INT-${suffix}`,
-      fullName: user.displayName,
-      contactInfo: { email: user.email },
-      customerStatus: 'active',
-      consentState: 'unknown',
-      marketingOptInStatus: 'not_opted_in',
-    }));
+    const user = await userRepository.save(
+      userRepository.create({
+        email: `cart-dependency-${suffix}@example.test`,
+        normalizedEmail: `cart-dependency-${suffix}@example.test`,
+        phone: null,
+        displayName: 'Cart Dependency Test',
+        passwordHash: 'integration-fixture-not-a-login-secret',
+        userStatus: 'active',
+        emailVerifiedAt: null,
+        lockedUntil: null,
+        lastLoginAt: null,
+      }),
+    );
+    const product = await productRepository.save(
+      productRepository.create({
+        tenantId: '1',
+        brandId: null,
+        productCode: `CART-${suffix}`,
+        productName: 'Persisted Cart Product',
+        slug: `persisted-cart-product-${suffix}`,
+        basePrice: '125000.00',
+        sellableStatus: 'sellable',
+        productVisibility: 'public',
+        productStatus: 'active',
+      }),
+    );
+    const inventory = await inventoryRepository.save(
+      inventoryRepository.create({
+        tenantId: '1',
+        productId: product.id,
+        availableQuantity: 5,
+        reservedQuantity: 0,
+        stockThreshold: 2,
+        stockStatus: 'available',
+      }),
+    );
+    const customer = await customerRepository.save(
+      customerRepository.create({
+        tenantId: '1',
+        userAccountId: user.id,
+        customerCode: `CUS-INT-${suffix}`,
+        fullName: user.displayName,
+        contactInfo: { email: user.email },
+        customerStatus: 'active',
+        consentState: 'unknown',
+        marketingOptInStatus: 'not_opted_in',
+      }),
+    );
 
     try {
-      const productReader = new ProductCommerceReader({ findById: (id) => productRepository.findOneBy({ id }) });
+      const productReader = new ProductCommerceReader({
+        findById: (id) => productRepository.findOneBy({ id }),
+      });
       const inventoryReader = new InventoryAvailabilityReader({
         findByProductId: (productId) => inventoryRepository.findOneBy({ productId }),
       });
       const ownerResolver = new CustomerOwnerResolver({
-        findActiveByUserAccountId: (userAccountId) => customerRepository.findOneBy({ userAccountId, customerStatus: 'active' }),
+        findActiveByUserAccountId: (userAccountId) =>
+          customerRepository.findOneBy({ userAccountId, customerStatus: 'active' }),
       });
 
       await expect(productReader.findSellableProduct(product.id)).resolves.toMatchObject({
@@ -145,13 +160,15 @@ describe.skipIf(!enabled)('Cart dependency MySQL integration', () => {
         status: 'UNAVAILABLE',
         availableQuantity: null,
       });
-      await expect(ownerResolver.resolve({
-        userAccountId: user.id,
-        sessionId: '1',
-        sessionPublicId: 'integration-session',
-        roles: ['CUSTOMER'],
-        permissionsVersion: 1,
-      })).resolves.toEqual({ customerProfileId: customer.id, userAccountId: user.id });
+      await expect(
+        ownerResolver.resolve({
+          userAccountId: user.id,
+          sessionId: '1',
+          sessionPublicId: 'integration-session',
+          roles: ['CUSTOMER'],
+          permissionsVersion: 1,
+        }),
+      ).resolves.toEqual({ customerProfileId: customer.id, userAccountId: user.id });
     } finally {
       await inventoryRepository.delete(inventory.id);
       await customerRepository.delete(customer.id);

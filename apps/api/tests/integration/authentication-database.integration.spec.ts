@@ -74,8 +74,16 @@ describe.skipIf(!enabled)('Authentication MySQL integration', () => {
     const runner = dataSource.createQueryRunner();
     const users = await runner.getTable('user_accounts');
     const sessions = await runner.getTable('authentication_sessions');
-    expect(users?.indices.some((index) => index.isUnique && index.columnNames.includes('normalized_email'))).toBe(true);
-    expect(sessions?.indices.some((index) => index.isUnique && index.columnNames.includes('refresh_token_hash'))).toBe(true);
+    expect(
+      users?.indices.some(
+        (index) => index.isUnique && index.columnNames.includes('normalized_email'),
+      ),
+    ).toBe(true);
+    expect(
+      sessions?.indices.some(
+        (index) => index.isUnique && index.columnNames.includes('refresh_token_hash'),
+      ),
+    ).toBe(true);
     await runner.release();
   });
 });

@@ -14,17 +14,32 @@ function LocationProbe() {
 
 function SearchHarness({ onSubmit }: { onSubmit?(query: string): void }) {
   const [value, setValue] = useState('');
-  return <><ProductSearch value={value} onValueChange={setValue} onSubmit={onSubmit} showEmptyError /><LocationProbe /></>;
+  return (
+    <>
+      <ProductSearch value={value} onValueChange={setValue} onSubmit={onSubmit} showEmptyError />
+      <LocationProbe />
+    </>
+  );
 }
 
 function renderSearch(onSubmit?: (query: string) => void) {
-  return render(<MemoryRouter initialEntries={['/']}><Routes><Route path="*" element={<SearchHarness onSubmit={onSubmit} />} /></Routes></MemoryRouter>);
+  return render(
+    <MemoryRouter initialEntries={['/']}>
+      <Routes>
+        <Route path="*" element={<SearchHarness onSubmit={onSubmit} />} />
+      </Routes>
+    </MemoryRouter>,
+  );
 }
 
 describe('Product Search discovery', () => {
   it('normalizes whitespace without removing Vietnamese accents', () => {
     expect(normalizeSearchQuery('  Sữa   hạt\n Việt  ')).toBe('Sữa hạt Việt');
-    expect(getProductSearchSuggestions('SỮA HẠNH NHÂN').some((item) => item.label === 'Sữa hạnh nhân không đường')).toBe(true);
+    expect(
+      getProductSearchSuggestions('SỮA HẠNH NHÂN').some(
+        (item) => item.label === 'Sữa hạnh nhân không đường',
+      ),
+    ).toBe(true);
   });
 
   it('limits discovery and search suggestions to eight', () => {
@@ -37,7 +52,10 @@ describe('Product Search discovery', () => {
     renderSearch(onSubmit);
     await userEvent.click(screen.getByRole('button', { name: 'Tìm kiếm' }));
     expect(screen.getByRole('alert')).toHaveTextContent('Hãy nhập tên sản phẩm');
-    await userEvent.type(screen.getByRole('combobox', { name: 'Tìm kiếm sản phẩm' }), '  sữa   hạt  ');
+    await userEvent.type(
+      screen.getByRole('combobox', { name: 'Tìm kiếm sản phẩm' }),
+      '  sữa   hạt  ',
+    );
     await userEvent.click(screen.getByRole('button', { name: 'Tìm kiếm' }));
     expect(onSubmit).toHaveBeenCalledWith('sữa hạt');
   });
@@ -47,13 +65,27 @@ describe('Product Search discovery', () => {
     const input = screen.getByRole('combobox', { name: 'Tìm kiếm sản phẩm' });
     await userEvent.type(input, 'hạnh nhân');
     await userEvent.click(screen.getByRole('button', { name: /Sữa hạnh nhân không đường/ }));
-    expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products/almond-milk-unsweetened');
+    expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent(
+      '/products/almond-milk-unsweetened',
+    );
   });
 
   it('offers category, brand and dietary filter destinations', () => {
-    expect(getProductSearchSuggestions('Sữa hạt').some((item) => item.href === '/products?category=plant-milk')).toBe(true);
-    expect(getProductSearchSuggestions('Mộc Nhiên').some((item) => item.href === '/products?brand=moc-nhien')).toBe(true);
-    expect(getProductSearchSuggestions('Không lactose').some((item) => item.href === '/products?dietary=lactose-free')).toBe(true);
+    expect(
+      getProductSearchSuggestions('Sữa hạt').some(
+        (item) => item.href === '/products?category=plant-milk',
+      ),
+    ).toBe(true);
+    expect(
+      getProductSearchSuggestions('Mộc Nhiên').some(
+        (item) => item.href === '/products?brand=moc-nhien',
+      ),
+    ).toBe(true);
+    expect(
+      getProductSearchSuggestions('Không lactose').some(
+        (item) => item.href === '/products?dietary=lactose-free',
+      ),
+    ).toBe(true);
   });
 
   it('supports ArrowDown, ArrowUp, Enter and Escape', async () => {
@@ -66,7 +98,9 @@ describe('Product Search discovery', () => {
     await userEvent.keyboard('{Escape}');
     expect(input).toHaveAttribute('aria-expanded', 'false');
     await userEvent.keyboard('{ArrowDown}{ArrowDown}{Enter}');
-    expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products/almond-milk-unsweetened');
+    expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent(
+      '/products/almond-milk-unsweetened',
+    );
   });
 
   it('clears the controlled value and restores discovery suggestions', async () => {

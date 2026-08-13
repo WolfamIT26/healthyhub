@@ -31,9 +31,7 @@ export class AuthenticationTokenService {
     });
     return {
       accessToken,
-      expiresAt: new Date(
-        Date.now() + this.env.authentication.accessTokenTtlSeconds * 1000,
-      ),
+      expiresAt: new Date(Date.now() + this.env.authentication.accessTokenTtlSeconds * 1000),
     };
   }
 

@@ -15,6 +15,4 @@ COPY . .
 
 RUN npm run build:packages && npm run build:api
 
-EXPOSE 3001
-
 CMD ["npm", "run", "start:prod", "--workspace", "@healthyhub/api"]

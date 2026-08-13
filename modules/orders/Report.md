@@ -32,3 +32,13 @@ Order không gọi VNPAY trực tiếp. Payment service chịu trách nhiệm ve
 ## Prompt 27.3 Verification / Kiểm tra Prompt 27.3
 
 MySQL flow xác nhận VNPAY amount lấy từ `orders.order_total` và phải khớp Payment/attempt. Browser return giữ Order `new/pending`; valid IPN mới chuyển `new → confirmed` và snapshot `paid` trong transaction có row locks. Duplicate IPN không double effect. OrderItem, Shipment và address snapshot không đổi. COD Order vẫn `new/pending` và không có provider attempt.
+
+## Prompt 28 Customer Orders V1 / Đơn hàng của tôi
+
+Hai API đọc Customer đã executable trên persistence hiện hữu. List/detail đều resolve CustomerProfile từ JWT, khóa tenant/owner trong repository query và không nhận owner ID từ frontend. List có pagination, filter status/date whitelist và stable sort. Detail trả OrderItem/price snapshots, Shipment/address snapshot, totals cùng Payment summary canonical; không trả provider secret/signature/raw event.
+
+Frontend `/orders` và `/orders/:orderId` có loading/empty/error/list/detail, filter/pagination URL-backed, badge trạng thái, breadcrumb/back navigation và responsive layout. Direct route gọi API theo `orderId`, không cần state từ Checkout. COD hiển thị `pending`; VNPAY chỉ hiển thị `paid` nếu Payment row authoritative đã ở `paid`.
+
+MySQL integration đã kiểm tra empty owner, populated/paginated/filter list, COD/VNPAY detail và Customer A không đọc được Customer B. Không có migration hoặc lifecycle mutation mới.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`

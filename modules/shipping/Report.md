@@ -18,3 +18,7 @@ Method duy nhất là `manual`, fee server-authoritative `0.00 VND`, không ETA/
 Không có Shipment persistence/fulfillment, provider API, Admin UI hoặc frontend Checkout trong prompt này.
 
 Chi tiết quyết định: [Decision.md](Decision.md).
+
+## Prompt 28 Read Usage / Sử dụng đọc ở Prompt 28
+
+Customer Order detail đọc `shipments` và immutable `shipping_addresses` snapshot đã persist để hiển thị method/status/fee/recipient/address. Không gọi provider, tracking service hoặc mutate fulfillment.

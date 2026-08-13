@@ -4,6 +4,10 @@
 
 Prompt 14 đã tạo foundation workspace cho HealthyHub. Phần build/lint/typecheck/test/OpenAPI/docs/secret đã pass; Docker/API ready đang bị chặn bởi môi trường local.
 
+Update 2026-08-13: port development đã dùng một authority duy nhất từ
+`.env.development`. Web bind `3100` qua `WEB_PORT`, API bind `3001` qua `API_PORT`, Vite
+`strictPort` đã được xác minh và API health/CORS smoke đều pass.
+
 ## Completed / Đã hoàn thành
 
 - Root npm workspace đã có cấu hình build, lint, format, typecheck, test và Docker scripts.
@@ -24,7 +28,8 @@ Prompt 14 đã tạo foundation workspace cho HealthyHub. Phần build/lint/type
 ## Verification Status / Trạng thái kiểm tra
 
 - Pass: format check, lint, typecheck, test, integration test, build, OpenAPI validation, docs check, secret check, `git diff --check`.
-- Pass: Web dev server start và trả HTTP 200 ở `http://127.0.0.1:3000`.
-- Blocked: Docker daemon chưa chạy nên chưa thể xác minh Docker Compose, MySQL container và phpMyAdmin container.
-- Blocked: API runtime với MySQL local bị từ chối user mẫu `healthyhub_user`; API build pass nhưng health ready chưa xác minh được vì credential database local không khớp.
+- Pass: Web dev server start và trả HTTP 200 ở `http://127.0.0.1:3100`; lần bind thứ hai fail rõ do `strictPort`.
+- Pass: API dev server đọc `API_PORT` và trả HTTP 200 ở `http://127.0.0.1:3001/api/v1/health/live`.
+- Pass: Docker Compose config resolve Web `3100:3100`, API `3001:3001` và các URL/origin từ `.env.development`.
+- Blocked: chưa xác minh container runtime MySQL/phpMyAdmin trong lần cập nhật port này.
 - Needs follow-up: `npm audit` chạy được, đã giảm từ 9 xuống 4 high vulnerabilities; phần còn lại nằm ở `@nestjs/swagger` kéo `js-yaml@5.2.1` và React Router audit range hiện tại.

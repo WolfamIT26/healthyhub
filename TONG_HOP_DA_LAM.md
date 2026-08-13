@@ -8,6 +8,26 @@
 
 File tổng hợp riêng: `docs/work-summaries/2026-08-13-01-prompt-29-customer-profile-address-v1.md`.
 
+## Development Port Environment Fix — 2026-08-13
+
+Đã sửa đường nạp environment để `.env.development` tại workspace root thật sự điều khiển
+Vite, NestJS và Docker development. Web bind `WEB_PORT=3100`, API bind
+`API_PORT=3001`, Vite bật `strictPort`; APP URL, API base URL, CORS và Authentication
+origin đồng bộ theo `3100`/`3001`. HTTP smoke, CORS, strict-port collision, Compose config,
+lint, typecheck, 260 unit tests và build đều pass. Không thay đổi business logic, database
+hoặc API contract.
+
+File tổng hợp riêng:
+`docs/work-summaries/2026-08-13-02-fix-development-port-environment.md`.
+
+## Customer Orders V1 — Prompt 28
+
+Đã triển khai Customer-only `GET /api/v1/me/orders` và detail theo `orderId`, derive owner từ JWT/CustomerProfile, pagination/filter whitelist và persisted OrderItem/Payment/Shipment/address snapshots. Frontend có `/orders`, `/orders/:orderId`, Customer navigation, loading/empty/error, status badge, URL-backed pagination/filter và direct reload từ server. COD/VNPAY hiển thị canonical Payment row; không suy luận `paid` từ browser return và không expose provider secret/signature/raw metadata.
+
+Automated verification PASS với 254 unit tests và 10 MySQL integration tests; lint/typecheck/build/OpenAPI/secrets/docs/diff cùng production preview direct-route smoke đều PASS. Browser visual không chạy do runtime không expose in-app Browser control, nên không fake PASS. `VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`. Không có migration và không bắt đầu Prompt 29.
+
+File tổng hợp riêng: `docs/work-summaries/2026-08-13-01-prompt-28-customer-orders-v1.md`.
+
 ## VNPAY Sandbox E2E Verification — Prompt 27.3
 
 Đã audit official VNPAY contract và sửa các lỗi trực tiếp: checksum URL encoding, read-only Return, authoritative IPN, terminal/reference/Order-Payment-attempt amount validation, status mapping, attempt resolution, locked transaction, provider-event concurrency/dedupe, QueryDr timeout và Docker/OpenAPI config. Automated unit/frontend/MySQL verification PASS; database đã kiểm tra Order/OrderItem/Payment/PaymentAttempt/Shipment/address/provider-event và COD regression. Sandbox E2E/IPN thật vẫn **BLOCKED — SANDBOX CREDENTIALS REQUIRED** vì local runtime chưa có terminal/hash secret/endpoints và public HTTPS IPN callback. Không thêm credential, không fake success và không bắt đầu Prompt 28.

@@ -69,11 +69,13 @@ function fromEnvelope(envelope: ApiErrorEnvelope, original: unknown): Normalized
 function getFriendlyMessage(code: string, fallback: string): string {
   const messages: Record<string, string> = {
     'AUTH.AUTHENTICATION.INVALID_CREDENTIALS': 'Email hoặc mật khẩu không chính xác.',
-    'AUTH.EMAIL_NOT_VERIFIED': 'Tài khoản của bạn chưa được xác minh. Vui lòng xác minh Email trước.',
+    'AUTH.EMAIL_NOT_VERIFIED':
+      'Tài khoản của bạn chưa được xác minh. Vui lòng xác minh Email trước.',
     'BUSINESS.AUTHENTICATION.ACCOUNT_LOCKED': 'Không thể đăng nhập. Vui lòng thử lại sau.',
     'BUSINESS.AUTHENTICATION.ACCOUNT_DISABLED': 'Không thể đăng nhập. Vui lòng thử lại sau.',
     'CONFLICT.AUTHENTICATION.EMAIL_ALREADY_EXISTS': 'Email này đã được sử dụng.',
-    'AUTH.AUTHENTICATION.RESET_TOKEN_INVALID': 'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.',
+    'AUTH.AUTHENTICATION.RESET_TOKEN_INVALID':
+      'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.',
     'AUTH.AUTHENTICATION.TOKEN_INVALID': 'Liên kết xác minh không hợp lệ hoặc đã hết hạn.',
     'PERMISSION.AUTHENTICATION.DENIED': 'Bạn không có quyền truy cập nội dung này.',
     'RATE_LIMIT.AUTHENTICATION.EXCEEDED': 'Bạn thao tác quá nhanh. Vui lòng thử lại sau.',

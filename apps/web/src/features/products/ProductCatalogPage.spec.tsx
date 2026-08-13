@@ -11,7 +11,15 @@ import { CartProvider } from '../cart/CartContext';
 
 vi.mock('../auth/AuthContext', () => ({ useAuth: vi.fn() }));
 
-const guestAuth = { status: 'guest' as const, actor: null, current: null, login: vi.fn(), logout: vi.fn(), hasRole: vi.fn(), hasPermission: vi.fn() };
+const guestAuth = {
+  status: 'guest' as const,
+  actor: null,
+  current: null,
+  login: vi.fn(),
+  logout: vi.fn(),
+  hasRole: vi.fn(),
+  hasPermission: vi.fn(),
+};
 
 function LocationProbe() {
   const location = useLocation();
@@ -19,7 +27,34 @@ function LocationProbe() {
 }
 
 function renderCatalog(entry = '/products', node = <ProductCatalogPage />) {
-  return render(<MemoryRouter initialEntries={[entry]}><WishlistProvider><CartProvider><Routes><Route path="/products" element={<>{node}<LocationProbe /></>} /><Route path="/products/:slug" element={<><p>Trang chi tiết foundation</p><LocationProbe /></>} /></Routes></CartProvider></WishlistProvider></MemoryRouter>);
+  return render(
+    <MemoryRouter initialEntries={[entry]}>
+      <WishlistProvider>
+        <CartProvider>
+          <Routes>
+            <Route
+              path="/products"
+              element={
+                <>
+                  {node}
+                  <LocationProbe />
+                </>
+              }
+            />
+            <Route
+              path="/products/:slug"
+              element={
+                <>
+                  <p>Trang chi tiết foundation</p>
+                  <LocationProbe />
+                </>
+              }
+            />
+          </Routes>
+        </CartProvider>
+      </WishlistProvider>
+    </MemoryRouter>,
+  );
 }
 
 describe('Product Catalog V1', () => {
@@ -30,7 +65,9 @@ describe('Product Catalog V1', () => {
 
   it('renders products, result summary and pagination', () => {
     renderCatalog();
-    expect(screen.getByRole('heading', { level: 1, name: 'Khám phá sản phẩm healthy' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Khám phá sản phẩm healthy' }),
+    ).toBeInTheDocument();
     expect(screen.getByText('24 sản phẩm')).toBeInTheDocument();
     expect(screen.getByText('Sữa yến mạch nguyên bản')).toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: 'Phân trang sản phẩm' })).toBeInTheDocument();
@@ -41,10 +78,16 @@ describe('Product Catalog V1', () => {
     const search = screen.getByRole('combobox', { name: 'Tìm kiếm trong danh mục sản phẩm' });
     await userEvent.type(search, 'sữa hạnh nhân');
     await userEvent.click(screen.getByRole('button', { name: 'Tìm sản phẩm' }));
-    await waitFor(() => expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products?search=s%E1%BB%AFa+h%E1%BA%A1nh+nh%C3%A2n'));
+    await waitFor(() =>
+      expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent(
+        '/products?search=s%E1%BB%AFa+h%E1%BA%A1nh+nh%C3%A2n',
+      ),
+    );
     expect(screen.getByText('Sữa hạnh nhân không đường')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Xóa nội dung tìm kiếm' }));
-    await waitFor(() => expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products'));
+    await waitFor(() =>
+      expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products'),
+    );
     expect(screen.getByText('24 sản phẩm')).toBeInTheDocument();
   });
 
@@ -53,7 +96,11 @@ describe('Product Catalog V1', () => {
     const search = screen.getByRole('combobox', { name: 'Tìm kiếm trong danh mục sản phẩm' });
     await userEvent.type(search, 'sữa');
     await userEvent.click(screen.getByRole('button', { name: 'Tìm sản phẩm' }));
-    await waitFor(() => expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products?search=s%E1%BB%AFa&category=plant-milk'));
+    await waitFor(() =>
+      expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent(
+        '/products?search=s%E1%BB%AFa&category=plant-milk',
+      ),
+    );
     expect(screen.getByLabelText('URL hiện tại')).not.toHaveTextContent('page=2');
   });
 
@@ -61,7 +108,11 @@ describe('Product Catalog V1', () => {
     renderCatalog();
     await userEvent.selectOptions(screen.getByLabelText('Danh mục'), 'plant-milk');
     await userEvent.click(screen.getByRole('checkbox', { name: 'Không lactose' }));
-    await waitFor(() => expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('category=plant-milk&dietary=lactose-free'));
+    await waitFor(() =>
+      expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent(
+        'category=plant-milk&dietary=lactose-free',
+      ),
+    );
     expect(screen.getByText('3 sản phẩm')).toBeInTheDocument();
   });
 
@@ -69,17 +120,26 @@ describe('Product Catalog V1', () => {
     renderCatalog('/products?brand=healthyhub-select');
     const minimum = screen.getByRole('spinbutton', { name: 'Giá tối thiểu' });
     await userEvent.type(minimum, '100000');
-    await waitFor(() => expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('minPrice=100000'));
+    await waitFor(() =>
+      expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('minPrice=100000'),
+    );
     expect(screen.getByText('2 sản phẩm')).toBeInTheDocument();
     await userEvent.click(screen.getAllByRole('button', { name: 'Xóa tất cả' })[0]);
-    await waitFor(() => expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products'));
+    await waitFor(() =>
+      expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products'),
+    );
     expect(screen.getByText('24 sản phẩm')).toBeInTheDocument();
   });
 
   it('sorts by price and resets page when sorting changes', async () => {
     renderCatalog('/products?page=2');
-    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Sắp xếp sản phẩm' }), 'price-desc');
-    await waitFor(() => expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products?sort=price-desc'));
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Sắp xếp sản phẩm' }),
+      'price-desc',
+    );
+    await waitFor(() =>
+      expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products?sort=price-desc'),
+    );
     const productLinks = screen.getAllByRole('link', { name: /^Xem chi tiết/ });
     expect(productLinks[0]).toHaveAccessibleName('Xem chi tiết Granola hạt và quả mọng');
   });
@@ -87,7 +147,9 @@ describe('Product Catalog V1', () => {
   it('changes page and preserves it in the URL', async () => {
     renderCatalog();
     await userEvent.click(screen.getByRole('button', { name: 'Trang 2' }));
-    await waitFor(() => expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products?page=2'));
+    await waitFor(() =>
+      expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products?page=2'),
+    );
     expect(screen.getByRole('button', { name: 'Trang 2' })).toHaveAttribute('aria-current', 'page');
   });
 
@@ -100,7 +162,9 @@ describe('Product Catalog V1', () => {
 
   it('navigates from a product card by slug', async () => {
     renderCatalog('/products?search=s%E1%BB%AFa+y%E1%BA%BFn+m%E1%BA%A1ch');
-    await userEvent.click(screen.getByRole('link', { name: 'Xem chi tiết Sữa yến mạch nguyên bản' }));
+    await userEvent.click(
+      screen.getByRole('link', { name: 'Xem chi tiết Sữa yến mạch nguyên bản' }),
+    );
     expect(await screen.findByText('Trang chi tiết foundation')).toBeInTheDocument();
     expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent('/products/oat-milk-original');
   });
@@ -117,9 +181,17 @@ describe('Product Catalog V1', () => {
 
   it('renders loading and error states instead of a blank screen', async () => {
     const retry = vi.fn();
-    const { rerender } = render(<MemoryRouter><ProductCatalogPage status="loading" /></MemoryRouter>);
+    const { rerender } = render(
+      <MemoryRouter>
+        <ProductCatalogPage status="loading" />
+      </MemoryRouter>,
+    );
     expect(screen.getByRole('status', { name: 'Đang tải sản phẩm' })).toBeInTheDocument();
-    rerender(<MemoryRouter><ProductCatalogPage status="error" onRetry={retry} /></MemoryRouter>);
+    rerender(
+      <MemoryRouter>
+        <ProductCatalogPage status="error" onRetry={retry} />
+      </MemoryRouter>,
+    );
     expect(screen.getByText('Không thể tải danh sách sản phẩm')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Thử lại' }));
     expect(retry).toHaveBeenCalledOnce();
@@ -127,11 +199,38 @@ describe('Product Catalog V1', () => {
 
   it.each([
     ['guest', guestAuth],
-    ['customer', { ...guestAuth, status: 'authenticated' as const, actor: { id: '1', email: 'customer@example.com', fullName: 'Customer', roles: ['CUSTOMER'] as Array<'CUSTOMER'>, isEmailVerified: true } }],
+    [
+      'customer',
+      {
+        ...guestAuth,
+        status: 'authenticated' as const,
+        actor: {
+          id: '1',
+          email: 'customer@example.com',
+          fullName: 'Customer',
+          roles: ['CUSTOMER'] as Array<'CUSTOMER'>,
+          isEmailVerified: true,
+        },
+      },
+    ],
   ])('renders the public catalog for %s state', (_label, auth) => {
     vi.mocked(useAuth).mockReturnValue(auth);
-    render(<MemoryRouter initialEntries={['/products']}><WishlistProvider><CartProvider><Routes><Route element={<PublicLayout />}><Route path="/products" element={<ProductCatalogPage />} /></Route></Routes></CartProvider></WishlistProvider></MemoryRouter>);
-    expect(screen.getByRole('heading', { level: 1, name: 'Khám phá sản phẩm healthy' })).toBeInTheDocument();
+    render(
+      <MemoryRouter initialEntries={['/products']}>
+        <WishlistProvider>
+          <CartProvider>
+            <Routes>
+              <Route element={<PublicLayout />}>
+                <Route path="/products" element={<ProductCatalogPage />} />
+              </Route>
+            </Routes>
+          </CartProvider>
+        </WishlistProvider>
+      </MemoryRouter>,
+    );
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Khám phá sản phẩm healthy' }),
+    ).toBeInTheDocument();
     expect(screen.getByText('24 sản phẩm')).toBeInTheDocument();
   });
 });

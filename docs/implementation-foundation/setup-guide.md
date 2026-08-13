@@ -47,9 +47,13 @@ npm run dev:web
 
 Mặc định:
 
-- Web: `http://localhost:3000`.
+- Web: `http://localhost:3100`.
 - API: `http://localhost:3001/api/v1`.
 - Swagger UI: `http://localhost:3001/api/docs`.
+
+Các giá trị này đến từ `.env.development`: `WEB_PORT=3100` điều khiển Vite và
+`API_PORT=3001` điều khiển NestJS. Vite bật `strictPort`, vì vậy port Web bị chiếm sẽ
+trả lỗi rõ ràng thay vì tự nhảy sang port API.
 
 ## Build / Build toàn bộ
 

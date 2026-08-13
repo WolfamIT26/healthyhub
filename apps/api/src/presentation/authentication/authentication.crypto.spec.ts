@@ -47,7 +47,11 @@ describe('AuthenticationCrypto', () => {
   });
 
   it('uses separate keyed identifier digests and token hashes', () => {
-    expect(crypto.identifierDigest('person@example.com')).not.toBe(crypto.digest('person@example.com'));
-    expect(crypto.identifierDigest('person@example.com')).toBe(crypto.identifierDigest('person@example.com'));
+    expect(crypto.identifierDigest('person@example.com')).not.toBe(
+      crypto.digest('person@example.com'),
+    );
+    expect(crypto.identifierDigest('person@example.com')).toBe(
+      crypto.identifierDigest('person@example.com'),
+    );
   });
 });

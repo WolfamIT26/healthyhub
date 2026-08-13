@@ -1,5 +1,4 @@
-import { readFileSync, existsSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { readFileSync } from 'node:fs';
 
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
@@ -12,12 +11,14 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ResponseEnvelopeInterceptor } from './common/interceptors/response-envelope.interceptor';
 import { AppLoggerService } from './common/logging/app-logger.service';
 import { getValidatedEnvironment } from './config/environment';
+import { resolveProjectFile } from './config/project-path';
 
 async function bootstrap(): Promise<void> {
-  const env = getValidatedEnvironment(process.env);
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
+  // ConfigModule đã nạp file môi trường ở workspace root trước khi bootstrap đọc config.
+  const env = getValidatedEnvironment(process.env);
   const logger = app.get(AppLoggerService);
 
   app.useLogger(logger);
@@ -88,20 +89,6 @@ function registerOpenApiDocs(
 
     response.type('application/yaml').send(readFileSync(openApiPath, 'utf8'));
   });
-}
-
-function resolveProjectFile(relativePath: string): string | null {
-  let currentDir = process.cwd();
-
-  while (currentDir !== dirname(currentDir)) {
-    const candidate = join(currentDir, relativePath);
-    if (existsSync(candidate)) {
-      return candidate;
-    }
-    currentDir = dirname(currentDir);
-  }
-
-  return null;
 }
 
 void bootstrap();

@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  Inject,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Headers, Inject, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 
@@ -24,7 +14,12 @@ import {
   ResetPasswordDto,
   TokenDto,
 } from './authentication.dto';
-import { AccessTokenGuard, parseCookies, RefreshCsrfGuard, RolesGuard } from './authentication.guards';
+import {
+  AccessTokenGuard,
+  parseCookies,
+  RefreshCsrfGuard,
+  RolesGuard,
+} from './authentication.guards';
 import { AuthenticationService } from './authentication.service';
 
 const REFRESH_COOKIE = '__Host-hh_refresh';
@@ -127,7 +122,11 @@ export class AuthenticationController {
     return this.authentication.current(auth);
   }
 
-  private deliverRefreshToken(result: Awaited<ReturnType<AuthenticationService['login']>>, response: Response, platform?: string) {
+  private deliverRefreshToken(
+    result: Awaited<ReturnType<AuthenticationService['login']>>,
+    response: Response,
+    platform?: string,
+  ) {
     if (platform?.toLowerCase() === 'mobile') return result;
     const refreshToken = result.refreshToken;
     if (refreshToken) {
@@ -151,8 +150,18 @@ export class AuthenticationController {
   }
 
   private clearCookies(response: Response): void {
-    response.clearCookie(REFRESH_COOKIE, { httpOnly: true, secure: true, sameSite: 'lax', path: '/' });
-    response.clearCookie(CSRF_COOKIE, { httpOnly: false, secure: true, sameSite: 'lax', path: '/' });
+    response.clearCookie(REFRESH_COOKIE, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+    });
+    response.clearCookie(CSRF_COOKIE, {
+      httpOnly: false,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+    });
   }
 
   private requestContext(request: Request, platform?: string) {

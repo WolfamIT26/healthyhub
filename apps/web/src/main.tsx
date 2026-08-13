@@ -16,7 +16,11 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <ToastProvider>
         <BrowserRouter>
           <AuthProvider>
-            <WishlistProvider><CartProvider><App /></CartProvider></WishlistProvider>
+            <WishlistProvider>
+              <CartProvider>
+                <App />
+              </CartProvider>
+            </WishlistProvider>
           </AuthProvider>
         </BrowserRouter>
       </ToastProvider>

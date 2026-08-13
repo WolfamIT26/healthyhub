@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
-import { PAYMENT_PROVIDER_EVENT_REPOSITORY, TypeOrmPaymentProviderEventRepository } from '../../data/payment/repositories';
+import {
+  PAYMENT_PROVIDER_EVENT_REPOSITORY,
+  TypeOrmPaymentProviderEventRepository,
+} from '../../data/payment/repositories';
 import { getValidatedEnvironment } from '../../config/environment';
 import { VnpayPaymentGateway } from '../../gateways/payment/vnpay-payment.gateway';
 

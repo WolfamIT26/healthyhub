@@ -20,11 +20,23 @@ const guestAuth = {
 };
 
 function renderHome() {
-  return render(<MemoryRouter><HomePage /></MemoryRouter>);
+  return render(
+    <MemoryRouter>
+      <HomePage />
+    </MemoryRouter>,
+  );
 }
 
 function renderPublicLayout() {
-  return render(<MemoryRouter><Routes><Route element={<PublicLayout />}><Route index element={<p>Nội dung trang chủ</p>} /></Route></Routes></MemoryRouter>);
+  return render(
+    <MemoryRouter>
+      <Routes>
+        <Route element={<PublicLayout />}>
+          <Route index element={<p>Nội dung trang chủ</p>} />
+        </Route>
+      </Routes>
+    </MemoryRouter>,
+  );
 }
 
 describe('Homepage V1', () => {
@@ -35,8 +47,13 @@ describe('Homepage V1', () => {
 
   it('renders the hero CTA, featured products and AI preview', () => {
     renderHome();
-    expect(screen.getByRole('heading', { level: 1, name: 'Chọn điều lành mạnh, theo cách dễ dàng hơn' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Khám phá sản phẩm' })).toHaveAttribute('href', '/products');
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Chọn điều lành mạnh, theo cách dễ dàng hơn' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Khám phá sản phẩm' })).toHaveAttribute(
+      'href',
+      '/products',
+    );
     expect(screen.getByRole('link', { name: 'Khám phá AI' })).toHaveAttribute('href', '/ai');
     expect(screen.getByText('Sữa yến mạch nguyên bản')).toBeInTheDocument();
     expect(screen.getByText('AI Product Finder')).toBeInTheDocument();
@@ -44,10 +61,20 @@ describe('Homepage V1', () => {
   });
 
   it('validates an empty product search and navigates a normalized keyword', async () => {
-    render(<MemoryRouter initialEntries={['/']}><Routes><Route path="/" element={<HomePage />} /><Route path="/products" element={<p>Kết quả sản phẩm</p>} /></Routes></MemoryRouter>);
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/products" element={<p>Kết quả sản phẩm</p>} />
+        </Routes>
+      </MemoryRouter>,
+    );
     await userEvent.click(screen.getByRole('button', { name: 'Tìm kiếm' }));
     expect(screen.getByRole('alert')).toHaveTextContent('Hãy nhập tên sản phẩm');
-    await userEvent.type(screen.getByRole('combobox', { name: 'Tìm kiếm sản phẩm từ trang chủ' }), '  sữa hạt  ');
+    await userEvent.type(
+      screen.getByRole('combobox', { name: 'Tìm kiếm sản phẩm từ trang chủ' }),
+      '  sữa hạt  ',
+    );
     await userEvent.click(screen.getByRole('button', { name: 'Tìm kiếm' }));
     expect(screen.getByText('Kết quả sản phẩm')).toBeInTheDocument();
   });
@@ -60,14 +87,29 @@ describe('Homepage V1', () => {
     expect(menuButton).toHaveAttribute('aria-expanded', 'false');
     await userEvent.click(menuButton);
     expect(screen.getByRole('navigation', { name: 'Điều hướng mobile' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Đóng menu' })).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('button', { name: 'Đóng menu' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
   });
 
   it('searches from the mobile header and closes the menu', async () => {
-    render(<MemoryRouter initialEntries={['/']}><Routes><Route element={<PublicLayout />}><Route index element={<p>Nội dung trang chủ</p>} /><Route path="products" element={<p>Trang catalog search</p>} /></Route></Routes></MemoryRouter>);
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route element={<PublicLayout />}>
+            <Route index element={<p>Nội dung trang chủ</p>} />
+            <Route path="products" element={<p>Trang catalog search</p>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    );
     await userEvent.click(screen.getByRole('button', { name: 'Mở menu' }));
     const mobileNavigation = screen.getByRole('navigation', { name: 'Điều hướng mobile' });
-    await userEvent.type(within(mobileNavigation).getByRole('combobox', { name: 'Tìm kiếm sản phẩm từ menu' }), '  granola  ');
+    await userEvent.type(
+      within(mobileNavigation).getByRole('combobox', { name: 'Tìm kiếm sản phẩm từ menu' }),
+      '  granola  ',
+    );
     await userEvent.click(within(mobileNavigation).getByRole('button', { name: 'Tìm' }));
     expect(await screen.findByText('Trang catalog search')).toBeInTheDocument();
     expect(screen.queryByRole('navigation', { name: 'Điều hướng mobile' })).not.toBeInTheDocument();
@@ -77,7 +119,13 @@ describe('Homepage V1', () => {
     vi.mocked(useAuth).mockReturnValue({
       ...guestAuth,
       status: 'authenticated',
-      actor: { id: 'customer-1', email: 'pending@example.com', fullName: 'Khách Healthy', roles: ['CUSTOMER'], isEmailVerified: false },
+      actor: {
+        id: 'customer-1',
+        email: 'pending@example.com',
+        fullName: 'Khách Healthy',
+        roles: ['CUSTOMER'],
+        isEmailVerified: false,
+      },
     });
     renderPublicLayout();
     const header = screen.getByRole('banner');

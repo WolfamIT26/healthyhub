@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 
 import { useAuth } from '../auth/AuthContext';
 import { cartApi } from './cartApi';
@@ -21,8 +29,13 @@ const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const auth = useAuth();
-  const actorId = auth.status === 'authenticated' && auth.hasRole('CUSTOMER') ? auth.actor?.id ?? null : null;
-  return <CartStateProvider key={actorId ?? 'guest'} enabled={Boolean(actorId)}>{children}</CartStateProvider>;
+  const actorId =
+    auth.status === 'authenticated' && auth.hasRole('CUSTOMER') ? (auth.actor?.id ?? null) : null;
+  return (
+    <CartStateProvider key={actorId ?? 'guest'} enabled={Boolean(actorId)}>
+      {children}
+    </CartStateProvider>
+  );
 }
 
 function CartStateProvider({ children, enabled }: { children: ReactNode; enabled: boolean }) {
@@ -32,36 +45,57 @@ function CartStateProvider({ children, enabled }: { children: ReactNode; enabled
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
 
   const reload = useCallback(async () => {
-    if (!enabled) { setCart(null); setLoading(false); setError(null); return; }
+    if (!enabled) {
+      setCart(null);
+      setLoading(false);
+      setError(null);
+      return;
+    }
     setLoading(true);
     setError(null);
-    try { setCart(await cartApi.get()); }
-    catch { setError('Không thể tải giỏ hàng từ máy chủ.'); }
-    finally { setLoading(false); }
+    try {
+      setCart(await cartApi.get());
+    } catch {
+      setError('Không thể tải giỏ hàng từ máy chủ.');
+    } finally {
+      setLoading(false);
+    }
   }, [enabled]);
 
-  useEffect(() => { void reload(); }, [reload]);
+  useEffect(() => {
+    void reload();
+  }, [reload]);
 
   const mutate = useCallback(async (key: string, operation: () => Promise<ServerCart>) => {
     setPendingItemId(key);
     setError(null);
-    try { setCart(await operation()); }
-    catch (mutationError) { setError('Không thể cập nhật giỏ hàng. Vui lòng thử lại.'); throw mutationError; }
-    finally { setPendingItemId(null); }
+    try {
+      setCart(await operation());
+    } catch (mutationError) {
+      setError('Không thể cập nhật giỏ hàng. Vui lòng thử lại.');
+      throw mutationError;
+    } finally {
+      setPendingItemId(null);
+    }
   }, []);
 
-  const value = useMemo<CartContextValue>(() => ({
-    cart,
-    items: cart?.items ?? [],
-    itemCount: cart?.itemCount ?? 0,
-    loading,
-    error,
-    pendingItemId,
-    reload,
-    add: (productId, quantity) => mutate(`product:${productId}`, () => cartApi.add(productId, quantity)),
-    update: (cartItemId, quantity) => mutate(cartItemId, () => cartApi.update(cartItemId, quantity)),
-    remove: (cartItemId) => mutate(cartItemId, () => cartApi.remove(cartItemId)),
-  }), [cart, error, loading, mutate, pendingItemId, reload]);
+  const value = useMemo<CartContextValue>(
+    () => ({
+      cart,
+      items: cart?.items ?? [],
+      itemCount: cart?.itemCount ?? 0,
+      loading,
+      error,
+      pendingItemId,
+      reload,
+      add: (productId, quantity) =>
+        mutate(`product:${productId}`, () => cartApi.add(productId, quantity)),
+      update: (cartItemId, quantity) =>
+        mutate(cartItemId, () => cartApi.update(cartItemId, quantity)),
+      remove: (cartItemId) => mutate(cartItemId, () => cartApi.remove(cartItemId)),
+    }),
+    [cart, error, loading, mutate, pendingItemId, reload],
+  );
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 

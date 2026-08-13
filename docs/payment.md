@@ -2,7 +2,7 @@
 
 ## Status
 
-**Prompt 27.3 Automated Verification PASS — Sandbox E2E BLOCKED.**
+**Prompt 28 dùng lại canonical persisted Payment state; không thay đổi Payment authority.**
 
 HealthyHub hiện có hai phương thức thanh toán được backend công bố:
 
@@ -45,7 +45,9 @@ Hai endpoint Sandbox public được ghi trong file example; giá trị credenti
 
 ## Boundary / Giới hạn
 
-Không dùng production credential, không đưa secret vào frontend, không fake success, không triển khai refund/admin settlement và không bắt đầu Prompt 28.
+Không dùng production credential, không đưa secret vào frontend, không fake success và không triển khai refund/admin settlement. Customer Order detail chỉ trả Payment method/status/amount, paid timestamp và provider reference an toàn; không trả signature, secret hoặc raw provider metadata.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
 
 ## Official References / Nguồn chính thức
 
