@@ -28,3 +28,5 @@
 Guest Cart token/merge, coupon, validate action, Checkout, inventory reservation/mutation, Order, Payment và Wishlist persistence.
 
 Chi tiết: [Cart documentation](../../docs/cart.md).
+
+Prompt 31 keeps this commerce boundary unchanged. Catalog/Detail now supply persisted Product IDs, while Cart continues to revalidate current Product price/sellable state and Inventory availability on the server.

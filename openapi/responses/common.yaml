@@ -14,6 +14,54 @@ Ok:
       examples:
         success:
           $ref: "../examples/common.yaml#/Success"
+ProductListOk:
+  description: "Product Catalog public authoritative, có server pagination/filter/search/sort."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/product.yaml#/ProductListResponseEnvelope"
+ProductDetailOk:
+  description: "Product detail public với content, media và Inventory availability authoritative."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/product.yaml#/ProductDetailResponseEnvelope"
+ProductOptionsOk:
+  description: "Category, Brand và dietary options public cho Product discovery."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/product.yaml#/ProductOptionsResponseEnvelope"
+CategoryListOk:
+  description: "Category public paginated theo display authority."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/product.yaml#/CategoryListResponseEnvelope"
+CategoryTreeOk:
+  description: "Category public tree theo parent và display authority."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/product.yaml#/CategoryTreeResponseEnvelope"
+CategoryDetailOk:
+  description: "Category public detail an toàn."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/product.yaml#/CategoryDetailResponseEnvelope"
+BrandListOk:
+  description: "Brand public paginated."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/product.yaml#/BrandListResponseEnvelope"
+BrandDetailOk:
+  description: "Brand public detail an toàn."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/product.yaml#/BrandDetailResponseEnvelope"
 CartOk:
   description: "Cart read model authoritative từ Product, Inventory và Cart persistence."
   content:

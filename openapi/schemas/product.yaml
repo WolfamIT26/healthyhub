@@ -1,0 +1,307 @@
+ProductFilterOption:
+  type: object
+  additionalProperties: false
+  required: [id, slug, name]
+  properties:
+    id: { type: string, pattern: "^[1-9][0-9]*$" }
+    slug: { type: string, pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+    name: { type: string }
+ProductNutrition:
+  type: [object, "null"]
+  additionalProperties: false
+  required: [servingSize, calories, protein, carbohydrates, fat, sugar, note]
+  properties:
+    servingSize: { type: [string, "null"] }
+    calories: { type: [string, "null"] }
+    protein: { type: [string, "null"] }
+    carbohydrates: { type: [string, "null"] }
+    fat: { type: [string, "null"] }
+    sugar: { type: [string, "null"] }
+    note: { type: [string, "null"] }
+ProductIngredient:
+  type: object
+  additionalProperties: false
+  required: [name, description, nutritionNote]
+  properties:
+    name: { type: string }
+    description: { type: [string, "null"] }
+    nutritionNote: { type: [string, "null"] }
+ProductMedia:
+  type: object
+  additionalProperties: false
+  required: [id, url, role, label]
+  properties:
+    id: { type: string, pattern: "^[1-9][0-9]*$" }
+    url: { type: string }
+    role: { type: string }
+    label: { type: string }
+PublicProduct:
+  type: object
+  additionalProperties: false
+  required:
+    - id
+    - slug
+    - sku
+    - name
+    - shortDescription
+    - description
+    - usageNote
+    - storageNote
+    - category
+    - brand
+    - price
+    - currency
+    - availability
+    - sellable
+    - featured
+    - dietaryTags
+    - ingredients
+    - allergenInformation
+    - nutrition
+    - media
+    - createdAt
+    - updatedAt
+  properties:
+    id: { type: string, pattern: "^[1-9][0-9]*$" }
+    slug: { type: string, pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+    sku: { type: string }
+    name: { type: string }
+    shortDescription: { type: string }
+    description: { type: [string, "null"] }
+    usageNote: { type: [string, "null"] }
+    storageNote: { type: [string, "null"] }
+    category: { $ref: "#/ProductFilterOption" }
+    brand:
+      oneOf:
+        - { $ref: "#/ProductFilterOption" }
+        - { type: "null" }
+    price: { type: string, pattern: "^[0-9]+\.[0-9]{2}$" }
+    currency: { type: string, const: VND }
+    availability:
+      type: string
+      enum: [in_stock, low_stock, out_of_stock, unavailable]
+    sellable: { type: boolean }
+    featured: { type: boolean }
+    dietaryTags:
+      type: array
+      uniqueItems: true
+      items:
+        type: string
+        enum: [low-sugar, sugar-free, high-protein, vegan, vegetarian, lactose-free, gluten-free, organic]
+    ingredients:
+      type: array
+      items: { $ref: "#/ProductIngredient" }
+    allergenInformation:
+      type: array
+      uniqueItems: true
+      items: { type: string }
+    nutrition: { $ref: "#/ProductNutrition" }
+    media:
+      type: array
+      items: { $ref: "#/ProductMedia" }
+    createdAt: { type: string, format: date-time }
+    updatedAt: { type: string, format: date-time }
+PublicProductDetail:
+  allOf:
+    - { $ref: "#/PublicProduct" }
+    - type: object
+      additionalProperties: false
+      required: [relatedProducts]
+      properties:
+        relatedProducts:
+          type: array
+          maxItems: 4
+          items: { $ref: "#/PublicProduct" }
+PublicProductList:
+  type: object
+  additionalProperties: false
+  required: [items, page, pageSize, totalItems, totalPages]
+  properties:
+    items:
+      type: array
+      items: { $ref: "#/PublicProduct" }
+    page: { type: integer, minimum: 1 }
+    pageSize: { type: integer, minimum: 1, maximum: 60 }
+    totalItems: { type: integer, minimum: 0 }
+    totalPages: { type: integer, minimum: 0 }
+PublicProductOptions:
+  type: object
+  additionalProperties: false
+  required: [categories, brands, dietary]
+  properties:
+    categories:
+      type: array
+      items: { $ref: "#/ProductFilterOption" }
+    brands:
+      type: array
+      items: { $ref: "#/ProductFilterOption" }
+    dietary:
+      type: array
+      uniqueItems: true
+      items:
+        type: string
+        enum: [low-sugar, sugar-free, high-protein, vegan, vegetarian, lactose-free, gluten-free, organic]
+PublicCategory:
+  type: object
+  additionalProperties: false
+  required: [id, slug, name, description, displayOrder, parent]
+  properties:
+    id: { type: string, pattern: "^[1-9][0-9]*$" }
+    slug: { type: string, pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+    name: { type: string }
+    description: { type: [string, "null"] }
+    displayOrder: { type: integer, minimum: 0 }
+    parent:
+      oneOf:
+        - { $ref: "#/ProductFilterOption" }
+        - { type: "null" }
+PublicCategoryTreeNode:
+  allOf:
+    - { $ref: "#/PublicCategory" }
+    - type: object
+      additionalProperties: false
+      required: [children]
+      properties:
+        children:
+          type: array
+          items: { $ref: "#/PublicCategoryTreeNode" }
+PublicBrand:
+  type: object
+  additionalProperties: false
+  required: [id, slug, name, origin, description]
+  properties:
+    id: { type: string, pattern: "^[1-9][0-9]*$" }
+    slug: { type: string, pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+    name: { type: string }
+    origin: { type: [string, "null"] }
+    description: { type: [string, "null"] }
+PublicCategoryList:
+  type: object
+  additionalProperties: false
+  required: [items, page, pageSize, totalItems, totalPages]
+  properties:
+    items:
+      type: array
+      items: { $ref: "#/PublicCategory" }
+    page: { type: integer, minimum: 1 }
+    pageSize: { type: integer, minimum: 1, maximum: 60 }
+    totalItems: { type: integer, minimum: 0 }
+    totalPages: { type: integer, minimum: 0 }
+PublicBrandList:
+  type: object
+  additionalProperties: false
+  required: [items, page, pageSize, totalItems, totalPages]
+  properties:
+    items:
+      type: array
+      items: { $ref: "#/PublicBrand" }
+    page: { type: integer, minimum: 1 }
+    pageSize: { type: integer, minimum: 1, maximum: 60 }
+    totalItems: { type: integer, minimum: 0 }
+    totalPages: { type: integer, minimum: 0 }
+ProductListResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data: { $ref: "#/PublicProductList" }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }
+ProductDetailResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data: { $ref: "#/PublicProductDetail" }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }
+ProductOptionsResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data: { $ref: "#/PublicProductOptions" }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }
+CategoryListResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data: { $ref: "#/PublicCategoryList" }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }
+CategoryTreeResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data:
+      type: array
+      items: { $ref: "#/PublicCategoryTreeNode" }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }
+CategoryDetailResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data: { $ref: "#/PublicCategory" }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }
+BrandListResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data: { $ref: "#/PublicBrandList" }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }
+BrandDetailResponseEnvelope:
+  type: object
+  additionalProperties: false
+  required: [success, status, message, data, metadata, requestId, traceId, contractVersion]
+  properties:
+    success: { type: boolean, const: true }
+    status: { type: string, const: success }
+    message: { type: string }
+    data: { $ref: "#/PublicBrand" }
+    metadata: { $ref: "./common.yaml#/ResponseMetadata" }
+    requestId: { type: string }
+    traceId: { type: string }
+    contractVersion: { type: string, const: v1 }

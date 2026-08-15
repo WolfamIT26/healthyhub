@@ -93,8 +93,14 @@ function CartFlow({ entry }: { entry: string }) {
         <CartProvider>
           <CartTestControls />
           <Routes>
-            <Route path="/products" element={<ProductCatalogPage />} />
-            <Route path="/products/:slug" element={<ProductDetailPage />} />
+            <Route
+              path="/products"
+              element={<ProductCatalogPage products={catalogProducts} status="success" />}
+            />
+            <Route
+              path="/products/:slug"
+              element={<ProductDetailPage products={catalogProducts} status="success" />}
+            />
             <Route
               path="/cart"
               element={

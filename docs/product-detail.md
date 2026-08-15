@@ -1,42 +1,21 @@
 # HealthyHub Product Detail V1
 
-**Status:** Complete — Visual Browser Verification Blocked
-
 ## Phạm vi
 
-Route `/products/:slug` resolve sản phẩm từ typed presentation data của Product Catalog V1. Cart và Wishlist actions dùng persistence API hiện hữu; Product detail, Review và AI runtime vẫn không được giả lập trong trang.
+Route `/products/:slug` giữ UX Prompt 22 và resolve trực tiếp bằng `GET /api/v1/public/products/{productId}`; `{productId}` nhận numeric ID hoặc canonical slug. Direct URL/reload không phụ thuộc React memory.
 
-## Nội dung
+## Dữ liệu authoritative
 
-- Gallery responsive với main media, thumbnail có active state và keyboard control. Product chỉ có một media sẽ không render thumbnail dư thừa.
-- Tên, brand, category, SKU, giá, giá gốc, phần trăm giảm, rating, review count, stock status, badge và mô tả ngắn.
-- Dietary tags dùng label tiếng Việt từ Product model.
-- Nutrition table chỉ hiển thị field tồn tại và giữ nguyên đơn vị từ data source.
-- Ingredients, allergen, storage/use note và long description chỉ render khi presentation data có giá trị.
-- Review chỉ hiển thị summary; không tạo nội dung review giả.
-- Related Products dùng rule presentation đơn giản: cùng category, loại sản phẩm hiện tại, tối đa 4 item.
+API trả Product/Category/Brand identity, persisted price/content, dietary tags, ingredient/allergen, nutrition, public media và Inventory availability. Media bị ẩn/inactive không được join. Khi chưa có public media, UI dùng visual fallback rõ ràng thay vì tạo URL giả.
 
-## Commerce và AI foundation
+Related Products do backend chọn cùng primary Category, loại Product hiện tại và tối đa 4 item. Invalid/hidden/private/inactive Product trả not-found; lỗi transport khác có ErrorState + Retry.
 
-- Quantity selector giới hạn presentation 1–10 và truyền quantity vào transient Cart foundation.
-- Add to Cart và Wishlist action dùng frontend foundation, giải thích rõ chưa có server persistence. Add to Cart bị vô hiệu hóa khi sản phẩm hết hàng; Wishlist vẫn cho phép lưu sản phẩm hết hàng.
-- Hỏi AI/So sánh dẫn tới route foundation kèm slug, không chạy AI runtime.
+## Commerce và boundary
 
-## Model
+Add to Cart tiếp tục gửi Product ID thật; Cart server tái kiểm tra Product/Inventory. Wishlist dùng Product authority hiện hữu. Frontend không suy luận giá, sellable hoặc availability. Review và AI runtime chưa executable nên không có rating/review/recommendation giả.
 
-`ProductPresentationModel` được mở rộng bằng các field optional:
+## Accessibility
 
-- `images: ProductMediaPresentation[]`
-- `nutrition?: ProductNutritionPresentation`
-- `ingredients`, `allergenInformation`
-- `storageNote`, `usageNote`, `longDescription`
+Trang giữ Breadcrumb, một H1, gallery keyboard/`aria-pressed`, nutrition table, status text và disabled action semantics. Layout responsive một cột trên mobile/tablet và hai cột từ desktop.
 
-Gallery hiện dùng visual fallback có alt/label vì chưa có Product Media API. Nutrition/ingredient V1 là presentation data tập trung tại `catalog.data.ts`; ghi chú trên UI yêu cầu đối chiếu nhãn khi dữ liệu chính thức sẵn sàng.
-
-## States và accessibility
-
-- Loading skeleton, found, not found và error/retry.
-- Một H1; Breadcrumb hợp lệ; semantic section/table/caption.
-- Gallery dùng button, `aria-pressed`, alt/aria-label và focus-visible.
-- Stock status luôn có text; action disabled có `aria-describedby`.
-- Layout một cột trên mobile/tablet và gallery + summary hai cột từ desktop.
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`

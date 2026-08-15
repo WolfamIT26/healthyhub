@@ -3,3 +3,5 @@
 Prompt 30 bổ sung `wishlists`/`wishlist_items`, TypeORM repository và four Customer API operations. Membership là server authority; current Product price/public state và Inventory availability được đọc tại request time.
 
 Customer lock cộng DB uniqueness ngăn concurrent duplicate. Owner derive từ JWT/active CustomerProfile, foreign item không được lộ và response không chứa internal Wishlist/customer/audit metadata. Frontend provider keyed theo actor nên logout/account switch clear memory trong khi dữ liệu server được bảo toàn.
+
+Prompt 31 replaces Catalog/Detail/Search production fixtures with Product API authority; Wishlist membership and add/remove contract remain unchanged and regression tests pass.

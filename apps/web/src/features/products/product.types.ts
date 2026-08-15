@@ -1,4 +1,4 @@
-export type ProductStockStatus = 'in_stock' | 'low_stock' | 'out_of_stock';
+export type ProductStockStatus = 'in_stock' | 'low_stock' | 'out_of_stock' | 'unavailable';
 export type DietaryTag =
   | 'low-sugar'
   | 'sugar-free'
@@ -46,10 +46,11 @@ export interface ProductPresentationModel {
   price: number;
   originalPrice?: number;
   discountPercent?: number;
-  rating: number;
-  reviewCount: number;
-  soldCount: number;
+  rating?: number;
+  reviewCount?: number;
+  soldCount?: number;
   stockStatus: ProductStockStatus;
+  sellable: boolean;
   featured: boolean;
   badges: string[];
   dietaryTags: DietaryTag[];
@@ -69,14 +70,14 @@ export interface CatalogQuery {
   dietary: DietaryTag[];
   minPrice?: number;
   maxPrice?: number;
-  availability: '' | ProductStockStatus;
+  availability: '' | Exclude<ProductStockStatus, 'unavailable'>;
   sort: CatalogSort;
   page: number;
   limit: number;
 }
 
 export type CatalogSort =
-  'featured' | 'newest' | 'price-asc' | 'price-desc' | 'best-selling' | 'rating';
+  'featured' | 'newest' | 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc';
 
 export const dietaryTagLabels: Record<DietaryTag, string> = {
   'low-sugar': 'Ít đường',
@@ -93,4 +94,5 @@ export const stockStatusLabels: Record<ProductStockStatus, string> = {
   in_stock: 'Còn hàng',
   low_stock: 'Sắp hết hàng',
   out_of_stock: 'Hết hàng',
+  unavailable: 'Không còn khả dụng',
 };

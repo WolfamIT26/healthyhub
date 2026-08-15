@@ -23,10 +23,11 @@ File này theo dõi trạng thái bộ API Specification của HealthyHub.
 
 API Specification hoàn thành ở mức tài liệu thiết kế để làm đầu vào cho OpenAPI, Backend và Frontend ở các bước sau.
 
+Prompt 31 Product/Category/Brand public read subset is executable and aligned with exact OpenAPI schemas; operation inventory remains 196.
+
 ## Not Included / Không bao gồm
 
 - Chưa tạo OpenAPI hoặc Swagger.
 - Chưa viết controller, service, repository, DTO code hoặc entity.
 - Chưa viết validation runtime.
 - Chưa tạo migration hoặc SQL.
-

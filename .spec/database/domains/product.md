@@ -12,15 +12,19 @@ Lưu dữ liệu sản phẩm healthy, nội dung mô tả, thành phần, cản
 | `product_contents` | Nội dung mô tả, SEO và hướng dẫn sử dụng. |
 | `product_ingredients` | Thành phần, dinh dưỡng, cảnh báo dị ứng. |
 | `product_media_links` | Liên kết sản phẩm với media. |
+| `product_dietary_tags` | Dietary tags được whitelist cho filter/catalog. |
+| `product_nutrition_facts` | Nutrition presentation theo một Product. |
 
 ## Logical Entity Design / Thiết kế entity logic
 
 | Entity | PK | Main Attributes / Thuộc tính chính | FK / Tham chiếu | Data Status |
 | --- | --- | --- | --- | --- |
-| `products` | `id` | `tenant_id`, `product_code`, `product_name`, `slug`, `base_price`, `sellable_status`, `product_visibility`, `product_status` | `brand_id` -> Brand nullable | draft, active, hidden, discontinued |
+| `products` | `id` | `tenant_id`, `product_code`, `product_name`, `slug`, `base_price`, `sellable_status`, `product_visibility`, `product_status`, `is_featured` | `brand_id` -> Brand nullable | draft, active, hidden, discontinued |
 | `product_contents` | `id` | `tenant_id`, `description`, `summary`, `usage_note`, `seo_title`, `seo_description`, `content_status` | `product_id` | draft, review, published |
 | `product_ingredients` | `id` | `tenant_id`, `ingredient_name`, `ingredient_description`, `nutrition_note`, `allergy_warning`, `display_order` | `product_id` | active, hidden |
 | `product_media_links` | `id` | `tenant_id`, `media_role`, `display_order`, `link_status` | `product_id`, `media_asset_id` -> Media | active, inactive |
+| `product_dietary_tags` | `id` | `tenant_id`, `dietary_tag` | `product_id` | whitelist dietary value |
+| `product_nutrition_facts` | `id` | serving size, calorie/macronutrient text, note | `product_id` | current public nutrition presentation |
 
 ## Relationship & Cardinality / Quan hệ và số lượng
 

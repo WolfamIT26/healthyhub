@@ -8,6 +8,8 @@
 | `product_contents` | Nội dung mô tả/SEO của sản phẩm. |
 | `product_ingredients` | Thành phần và cảnh báo dị ứng. |
 | `product_media_links` | Liên kết sản phẩm với media. |
+| `product_dietary_tags` | Dietary tag whitelist cho Product public. |
+| `product_nutrition_facts` | Nutrition presentation cho Product public. |
 
 ## Common Audit Columns / Cột audit chung
 
@@ -25,10 +27,12 @@ Mọi bảng dùng `id BIGINT UNSIGNED NOT NULL`, `tenant_id BIGINT UNSIGNED NOT
 | `products` | `sellable_status` | `VARCHAR(32)` | No | `unavailable` | sellable/out_of_stock/preorder. |
 | `products` | `product_visibility` | `VARCHAR(32)` | No | `hidden` | public/hidden/private. |
 | `products` | `product_status` | `VARCHAR(32)` | No | `draft` | draft/active/discontinued. |
+| `products` | `is_featured` | `TINYINT(1)` | No | `0` | Public featured ordering. |
 | `product_contents` | `product_id` | `BIGINT UNSIGNED` | No | None | FK Product. |
 | `product_contents` | `description` | `TEXT` | No | None | Mô tả. |
 | `product_contents` | `summary` | `VARCHAR(500)` | Yes | `NULL` | Tóm tắt. |
 | `product_contents` | `usage_note` | `TEXT` | Yes | `NULL` | Lưu ý dùng. |
+| `product_contents` | `storage_note` | `TEXT` | Yes | `NULL` | Lưu ý bảo quản. |
 | `product_contents` | `seo_title` | `VARCHAR(255)` | Yes | `NULL` | SEO. |
 | `product_contents` | `seo_description` | `VARCHAR(500)` | Yes | `NULL` | SEO. |
 | `product_contents` | `content_status` | `VARCHAR(32)` | No | `draft` | draft/review/published. |
@@ -43,6 +47,11 @@ Mọi bảng dùng `id BIGINT UNSIGNED NOT NULL`, `tenant_id BIGINT UNSIGNED NOT
 | `product_media_links` | `media_role` | `VARCHAR(64)` | No | `gallery` | main/gallery/nutrition. |
 | `product_media_links` | `display_order` | `INT UNSIGNED` | No | `0` | Sắp xếp. |
 | `product_media_links` | `link_status` | `VARCHAR(32)` | No | `active` | active/inactive. |
+| `product_dietary_tags` | `product_id` | `BIGINT UNSIGNED` | No | None | FK Product. |
+| `product_dietary_tags` | `dietary_tag` | `VARCHAR(32)` | No | None | Approved tag enum. |
+| `product_nutrition_facts` | `product_id` | `BIGINT UNSIGNED` | No | None | One row per Product. |
+| `product_nutrition_facts` | `serving_size`, `calories`, `protein`, `carbohydrates`, `fat`, `sugar` | `VARCHAR(100)` | Yes | `NULL` | Preserve published units/text. |
+| `product_nutrition_facts` | `note` | `VARCHAR(500)` | Yes | `NULL` | Public qualification. |
 
 ## Keys & Constraints / Khóa và ràng buộc
 
@@ -52,6 +61,8 @@ Mọi bảng dùng `id BIGINT UNSIGNED NOT NULL`, `tenant_id BIGINT UNSIGNED NOT
 | `product_contents` | `id` | `product_id` | One published content per product by migration rule | `content_status` allowed | `idx_product_contents_product_status`, `ft_product_contents_text` |
 | `product_ingredients` | `id` | `product_id` | `(tenant_id, product_id, ingredient_name)` | `display_order >= 0` | `idx_product_ingredients_product_order`, `ft_product_ingredients_name` |
 | `product_media_links` | `id` | `product_id`, `media_asset_id` | `(tenant_id, product_id, media_asset_id, media_role)` | `display_order >= 0` | `idx_product_media_product_role`, `idx_product_media_media` |
+| `product_dietary_tags` | `id` | `product_id` | `(tenant_id, product_id, dietary_tag)` | dietary whitelist | `idx_product_dietary_tag_product` |
+| `product_nutrition_facts` | `id` | `product_id` | `(tenant_id, product_id)` | None | unique Product lookup |
 
 ## Full Text & Generated Columns / Full text và generated column
 

@@ -1,5 +1,5 @@
-import { catalogProducts, productBrands, productCategories } from './catalog.data';
-import { dietaryTagLabels, type DietaryTag } from './product.types';
+import type { ProductOptions } from './productApi';
+import { dietaryTagLabels, type ProductPresentationModel } from './product.types';
 
 export type ProductSearchSuggestionType = 'query' | 'product' | 'category' | 'brand' | 'dietary';
 
@@ -18,36 +18,36 @@ const moneyFormatter = new Intl.NumberFormat('vi-VN', {
   currency: 'VND',
   maximumFractionDigits: 0,
 });
-const dietaryEntries = Object.entries(dietaryTagLabels) as Array<[DietaryTag, string]>;
 
 export function normalizeSearchQuery(value: string) {
   return value.trim().replace(/\s+/g, ' ').slice(0, 100);
 }
 
-export function getProductSearchSuggestions(
+export function buildProductSearchSuggestions(
   rawQuery: string,
+  products: ProductPresentationModel[],
+  options: ProductOptions,
   limit = 8,
 ): ProductSearchSuggestion[] {
   const normalized = normalizeSearchQuery(rawQuery);
   const query = normalized.toLocaleLowerCase('vi-VN');
-  if (!query) {
+  if (!query)
     return [
-      ...productCategories.slice(0, 4).map((item) => ({
+      ...options.categories.slice(0, 4).map((item) => ({
         id: `category-${item.id}`,
         type: 'category' as const,
         label: item.name,
         meta: 'Danh mục gợi ý',
-        href: `/products?category=${item.id}`,
+        href: `/products?category=${item.slug}`,
       })),
-      ...dietaryEntries.slice(0, 3).map(([value, label]) => ({
+      ...options.dietary.slice(0, 3).map((value) => ({
         id: `dietary-${value}`,
         type: 'dietary' as const,
-        label,
+        label: dietaryTagLabels[value],
         meta: 'Đặc điểm sản phẩm',
         href: `/products?dietary=${value}`,
       })),
     ].slice(0, limit);
-  }
 
   const suggestions: ProductSearchSuggestion[] = [
     {
@@ -58,49 +58,45 @@ export function getProductSearchSuggestions(
       href: `/products?search=${encodeURIComponent(normalized)}`,
     },
   ];
-  for (const category of productCategories)
+  for (const category of options.categories)
     if (category.name.toLocaleLowerCase('vi-VN').includes(query))
       suggestions.push({
         id: `category-${category.id}`,
         type: 'category',
         label: category.name,
         meta: 'Danh mục',
-        href: `/products?category=${category.id}`,
+        href: `/products?category=${category.slug}`,
       });
-  for (const brand of productBrands)
+  for (const brand of options.brands)
     if (brand.name.toLocaleLowerCase('vi-VN').includes(query))
       suggestions.push({
         id: `brand-${brand.id}`,
         type: 'brand',
         label: brand.name,
         meta: 'Thương hiệu',
-        href: `/products?brand=${brand.id}`,
+        href: `/products?brand=${brand.slug}`,
       });
-  for (const [value, label] of dietaryEntries)
+  for (const dietary of options.dietary) {
+    const label = dietaryTagLabels[dietary];
     if (label.toLocaleLowerCase('vi-VN').includes(query))
       suggestions.push({
-        id: `dietary-${value}`,
+        id: `dietary-${dietary}`,
         type: 'dietary',
         label,
         meta: 'Đặc điểm sản phẩm',
-        href: `/products?dietary=${value}`,
-      });
-  for (const product of catalogProducts) {
-    const searchable =
-      `${product.name} ${product.category.name} ${product.brand.name} ${product.shortDescription} ${product.dietaryTags.map((tag) => dietaryTagLabels[tag]).join(' ')}`.toLocaleLowerCase(
-        'vi-VN',
-      );
-    if (searchable.includes(query))
-      suggestions.push({
-        id: `product-${product.id}`,
-        type: 'product',
-        label: product.name,
-        meta: `${product.category.name} · ${product.brand.name}`,
-        href: `/products/${product.slug}`,
-        visual: product.visualFallback,
-        price: moneyFormatter.format(product.price),
+        href: `/products?dietary=${dietary}`,
       });
   }
+  for (const product of products)
+    suggestions.push({
+      id: `product-${product.id}`,
+      type: 'product',
+      label: product.name,
+      meta: `${product.category.name} · ${product.brand.name}`,
+      href: `/products/${product.slug}`,
+      visual: product.visualFallback,
+      price: moneyFormatter.format(product.price),
+    });
   return suggestions
     .filter(
       (item, index, items) =>

@@ -1,5 +1,15 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## Product Backend / Catalog Authority V1 — Prompt 31
+
+Đã chuyển Product Catalog, Product Detail và keyword Search discovery sang MySQL/API source of truth. Public Product API dùng Product/Category/Brand/Content/Dietary/Nutrition/Media persistence, server pagination/search/filter/sort và Inventory availability; hidden/inactive Product, internal metadata, raw media storage key và client-controlled price/stock đều bị loại khỏi boundary. Related Products do backend chọn cùng primary Category.
+
+Catalog/Detail vẫn giữ URL/direct reload/loading/error/empty UX. Search debounce và abort stale request. Cart/Wishlist tiếp tục dùng Product ID authority và regression pass. Prompt 31 không mở Admin CRUD, upload, Inventory mutation, Review, Promotion/Supplier hoặc AI.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
+File tổng hợp riêng: `docs/work-summaries/2026-08-13-01-prompt-31-product-backend-catalog-authority-v1.md`.
+
 ## Wishlist Persistence V1 — Prompt 30
 
 Đã chuyển Wishlist Prompt 24 sang MySQL source of truth với Customer-only list/add/remove API, JWT→CustomerProfile ownership, Product validation và current Inventory availability. Customer row lock cùng DB uniqueness ngăn double-click/concurrent duplicate. Frontend shared context initial-fetch/refetch từ server; reload/login lại giữ Wishlist, logout/account switch không leak state và không xóa server data. Route `/wishlist`, Catalog/Detail heart UX, guest prompt, unverified access và out-of-stock presentation được giữ nguyên; không dùng browser storage.

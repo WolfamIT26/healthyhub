@@ -16,16 +16,16 @@ import {
   Skeleton,
 } from '../components';
 import {
-  catalogProducts,
-  productBrands,
-  productCategories,
-} from '../features/products/catalog.data';
-import {
   catalogQueryToParams,
   countActiveFilters,
   filterAndSortProducts,
   parseCatalogQuery,
 } from '../features/products/catalog.utils';
+import {
+  productApi,
+  type ProductListResult,
+  type ProductOptions,
+} from '../features/products/productApi';
 import { ProductFilters } from '../features/products/ProductFilters';
 import { ProductSearch } from '../features/products/ProductSearch';
 import {
@@ -46,8 +46,8 @@ const moneyFormatter = new Intl.NumberFormat('vi-VN', {
 });
 
 export function ProductCatalogPage({
-  products = catalogProducts,
-  status = 'success',
+  products,
+  status,
   onRetry,
 }: {
   products?: ProductPresentationModel[];
@@ -58,6 +58,41 @@ export function ProductCatalogPage({
   const query = useMemo(() => parseCatalogQuery(searchParams), [searchParams]);
   const [searchDraft, setSearchDraft] = useState(query.search);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [requestVersion, setRequestVersion] = useState(0);
+  const [apiStatus, setApiStatus] = useState<CatalogStatus>('loading');
+  const [result, setResult] = useState<ProductListResult>({
+    items: [],
+    page: 1,
+    pageSize: 20,
+    totalItems: 0,
+    totalPages: 0,
+  });
+  const [options, setOptions] = useState<ProductOptions>({
+    categories: [],
+    brands: [],
+    dietary: [],
+  });
+  const controlled = products !== undefined || status !== undefined;
+  const effectiveOptions = useMemo<ProductOptions>(() => {
+    if (!controlled) return options;
+    const source = products ?? [];
+    return {
+      categories: Array.from(
+        new Map(
+          source.map((product) => [
+            product.category.id,
+            { ...product.category, slug: product.category.id },
+          ]),
+        ).values(),
+      ),
+      brands: Array.from(
+        new Map(
+          source.map((product) => [product.brand.id, { ...product.brand, slug: product.brand.id }]),
+        ).values(),
+      ),
+      dietary: Array.from(new Set(source.flatMap((product) => product.dietaryTags))),
+    };
+  }, [controlled, options, products]);
 
   useEffect(() => setSearchDraft(query.search), [query.search]);
   useEffect(() => {
@@ -70,13 +105,38 @@ export function ProductCatalogPage({
     };
   }, [query.search]);
 
-  const filteredProducts = useMemo(() => filterAndSortProducts(products, query), [products, query]);
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / query.limit));
-  const currentPage = Math.min(query.page, totalPages);
-  const pageItems = filteredProducts.slice(
-    (currentPage - 1) * query.limit,
-    currentPage * query.limit,
+  useEffect(() => {
+    if (controlled) return;
+    const controller = new AbortController();
+    setApiStatus('loading');
+    void Promise.all([
+      productApi.list(query, controller.signal),
+      productApi.options(controller.signal),
+    ])
+      .then(([nextResult, nextOptions]) => {
+        setResult(nextResult);
+        setOptions(nextOptions);
+        setApiStatus('success');
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setApiStatus('error');
+      });
+    return () => controller.abort();
+  }, [controlled, query, requestVersion]);
+
+  const filteredProducts = useMemo(
+    () => (controlled ? filterAndSortProducts(products ?? [], query) : result.items),
+    [controlled, products, query, result.items],
   );
+  const totalPages = controlled
+    ? Math.max(1, Math.ceil(filteredProducts.length / query.limit))
+    : Math.max(1, result.totalPages);
+  const currentPage = Math.min(query.page, totalPages);
+  const pageItems = controlled
+    ? filteredProducts.slice((currentPage - 1) * query.limit, currentPage * query.limit)
+    : result.items;
+  const totalItems = controlled ? filteredProducts.length : result.totalItems;
+  const effectiveStatus = status ?? apiStatus;
   const activeFilterCount = countActiveFilters(query);
 
   function updateQuery(patch: Partial<CatalogQuery>, resetPage = true) {
@@ -109,8 +169,7 @@ export function ProductCatalogPage({
               Khám phá sản phẩm healthy
             </h1>
             <p className="mt-3 leading-7 text-neutral-600">
-              Tìm kiếm, lọc và so sánh thông tin trình bày. Catalog V1 chưa kết nối Product API hoặc
-              giỏ hàng.
+              Tìm kiếm và lọc trên Product Catalog được xác minh từ máy chủ HealthyHub.
             </p>
           </div>
           <ProductSearch
@@ -128,7 +187,7 @@ export function ProductCatalogPage({
       <div className="container py-8 sm:py-10">
         <div className="flex flex-col gap-4 border-b border-neutral-200 pb-6 lg:flex-row lg:items-end lg:justify-between">
           <div aria-live="polite">
-            <p className="text-lg font-bold text-neutral-950">{filteredProducts.length} sản phẩm</p>
+            <p className="text-lg font-bold text-neutral-950">{totalItems} sản phẩm</p>
             {query.search ? (
               <p className="mt-1 text-sm text-neutral-600">Kết quả cho “{query.search}”</p>
             ) : null}
@@ -154,10 +213,10 @@ export function ProductCatalogPage({
               >
                 <option value="featured">Nổi bật</option>
                 <option value="newest">Mới nhất</option>
+                <option value="name-asc">Tên A → Z</option>
+                <option value="name-desc">Tên Z → A</option>
                 <option value="price-asc">Giá thấp → cao</option>
                 <option value="price-desc">Giá cao → thấp</option>
-                <option value="best-selling">Bán chạy</option>
-                <option value="rating">Đánh giá cao</option>
               </Select>
             </label>
             <label className="flex flex-col gap-1 text-sm font-semibold text-neutral-800">
@@ -178,7 +237,12 @@ export function ProductCatalogPage({
         </div>
 
         {activeFilterCount || query.search ? (
-          <ActiveFilters query={query} onChange={updateQuery} onClear={clearFilters} />
+          <ActiveFilters
+            query={query}
+            options={effectiveOptions}
+            onChange={updateQuery}
+            onClear={clearFilters}
+          />
         ) : null}
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
@@ -187,21 +251,32 @@ export function ProductCatalogPage({
               <h2 className="mb-5 text-lg font-bold text-neutral-950">
                 Bộ lọc {activeFilterCount ? `(${activeFilterCount})` : ''}
               </h2>
-              <ProductFilters query={query} onChange={updateQuery} onClear={clearFilters} />
+              <ProductFilters
+                query={query}
+                options={effectiveOptions}
+                onChange={updateQuery}
+                onClear={clearFilters}
+              />
             </Card>
           </aside>
           <section aria-labelledby="catalog-results-title" className="min-w-0">
             <h2 id="catalog-results-title" className="sr-only">
               Kết quả sản phẩm
             </h2>
-            {status === 'loading' ? (
+            {effectiveStatus === 'loading' ? (
               <CatalogSkeleton />
-            ) : status === 'error' ? (
+            ) : effectiveStatus === 'error' ? (
               <ErrorState
                 title="Không thể tải danh sách sản phẩm"
                 description="Nguồn dữ liệu tạm thời chưa sẵn sàng. Bộ lọc hiện tại vẫn được giữ lại."
                 action={
-                  <Button type="button" onClick={onRetry}>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      onRetry?.();
+                      setRequestVersion((value) => value + 1);
+                    }}
+                  >
                     Thử lại
                   </Button>
                 }
@@ -252,6 +327,7 @@ export function ProductCatalogPage({
       >
         <ProductFilters
           query={query}
+          options={effectiveOptions}
           onChange={updateQuery}
           onClear={clearFilters}
           onApply={() => setFilterOpen(false)}
@@ -284,8 +360,10 @@ function CatalogProductCard({ product }: { product: ProductPresentationModel }) 
       }
       details={
         <>
-          <span aria-label={`${product.rating} trên 5 sao`}>★ {product.rating.toFixed(1)}</span>
-          <span>({product.reviewCount} đánh giá)</span>
+          {product.rating !== undefined ? (
+            <span aria-label={`${product.rating} trên 5 sao`}>★ {product.rating.toFixed(1)}</span>
+          ) : null}
+          {product.reviewCount !== undefined ? <span>({product.reviewCount} đánh giá)</span> : null}
           <span
             className={
               product.stockStatus === 'out_of_stock'
@@ -312,7 +390,7 @@ function CatalogProductCard({ product }: { product: ProductPresentationModel }) 
             compact
             productId={product.id}
             productName={product.name}
-            disabled={product.stockStatus === 'out_of_stock'}
+            disabled={!product.sellable}
           />
           <WishlistButton compact productId={product.id} productName={product.name} />
         </div>
@@ -323,15 +401,17 @@ function CatalogProductCard({ product }: { product: ProductPresentationModel }) 
 
 function ActiveFilters({
   query,
+  options,
   onChange,
   onClear,
 }: {
   query: CatalogQuery;
+  options: ProductOptions;
   onChange(patch: Partial<CatalogQuery>): void;
   onClear(): void;
 }) {
-  const category = productCategories.find((item) => item.id === query.category);
-  const brand = productBrands.find((item) => item.id === query.brand);
+  const category = options.categories.find((item) => item.slug === query.category);
+  const brand = options.brands.find((item) => item.slug === query.brand);
   const chips: Array<{ key: string; label: string; clear(): void }> = [];
   if (query.search)
     chips.push({

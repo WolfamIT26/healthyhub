@@ -486,6 +486,7 @@ export const catalogProducts: ProductPresentationModel[] = seeds.map((seed, inde
     reviewCount,
     soldCount: reviewCount * 3 + index * 7,
     stockStatus,
+    sellable: stockStatus !== 'out_of_stock',
     featured,
     badges: featured ? ['Nổi bật'] : discountPercent ? [`Giảm ${discountPercent}%`] : [],
     dietaryTags,

@@ -1,13 +1,15 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useAuth } from '../auth/AuthContext';
 import { ProductCatalogPage } from '../../pages/ProductCatalogPage';
 import { PublicLayout } from '../../shared/layouts/PublicLayout';
 import { WishlistProvider } from '../wishlist/WishlistContext';
 import { CartProvider } from '../cart/CartContext';
+import { catalogProducts, productBrands, productCategories } from './catalog.data';
+import { productApi } from './productApi';
 
 vi.mock('../auth/AuthContext', () => ({ useAuth: vi.fn() }));
 vi.mock('../wishlist/wishlistApi', () => ({
@@ -39,7 +41,10 @@ function LocationProbe() {
   return <output aria-label="URL hiện tại">{`${location.pathname}${location.search}`}</output>;
 }
 
-function renderCatalog(entry = '/products', node = <ProductCatalogPage />) {
+function renderCatalog(
+  entry = '/products',
+  node = <ProductCatalogPage products={catalogProducts} status="success" />,
+) {
   return render(
     <MemoryRouter initialEntries={[entry]}>
       <WishlistProvider>
@@ -71,6 +76,8 @@ function renderCatalog(entry = '/products', node = <ProductCatalogPage />) {
 }
 
 describe('Product Catalog V1', () => {
+  afterEach(() => vi.restoreAllMocks());
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useAuth).mockReturnValue(guestAuth);
@@ -84,6 +91,37 @@ describe('Product Catalog V1', () => {
     expect(screen.getByText('24 sản phẩm')).toBeInTheDocument();
     expect(screen.getByText('Sữa yến mạch nguyên bản')).toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: 'Phân trang sản phẩm' })).toBeInTheDocument();
+  });
+
+  it('loads the production catalog from the Product API with the URL query', async () => {
+    const product = catalogProducts[1];
+    const list = vi.spyOn(productApi, 'list').mockResolvedValue({
+      items: [product],
+      page: 1,
+      pageSize: 20,
+      totalItems: 1,
+      totalPages: 1,
+    });
+    vi.spyOn(productApi, 'options').mockResolvedValue({
+      categories: productCategories.map((item) => ({ ...item, slug: item.id })),
+      brands: productBrands.map((item) => ({ ...item, slug: item.id })),
+      dietary: ['lactose-free'],
+    });
+
+    renderCatalog(
+      '/products?search=h%E1%BA%A1nh+nh%C3%A2n&category=plant-milk&sort=price-asc',
+      <ProductCatalogPage />,
+    );
+
+    expect(await screen.findByText(product.name)).toBeInTheDocument();
+    expect(list).toHaveBeenCalledWith(
+      expect.objectContaining({
+        search: 'hạnh nhân',
+        category: 'plant-milk',
+        sort: 'price-asc',
+      }),
+      expect.any(AbortSignal),
+    );
   });
 
   it('searches, syncs the URL and clears search', async () => {
@@ -234,7 +272,10 @@ describe('Product Catalog V1', () => {
           <CartProvider>
             <Routes>
               <Route element={<PublicLayout />}>
-                <Route path="/products" element={<ProductCatalogPage />} />
+                <Route
+                  path="/products"
+                  element={<ProductCatalogPage products={catalogProducts} status="success" />}
+                />
               </Route>
             </Routes>
           </CartProvider>

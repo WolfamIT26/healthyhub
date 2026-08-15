@@ -1,5 +1,10 @@
 # API Specification ChangeLog / Nhật ký thay đổi API Specification
 
+## [1.2.0] - 2026-08-13
+
+- Refined executable Product public query, numeric-ID/slug detail, safe response and Inventory availability boundaries for Prompt 31.
+- Refined Category/Brand public pagination, search, tree/detail and safe response contracts without adding operations.
+
 ## [1.1.0] - 2026-08-06
 
 ### Changed / Đã thay đổi

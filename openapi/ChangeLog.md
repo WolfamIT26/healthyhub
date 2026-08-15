@@ -1,5 +1,11 @@
 # OpenAPI ChangeLog / Lịch sử thay đổi OpenAPI
 
+## 2026-08-13 - Product Backend / Catalog Authority V1
+
+- Added exact Product/Category/Brand public schemas and endpoint-specific responses.
+- Replaced generic Product query parameters with executable pagination/search/filter/sort whitelist and numeric-ID/slug paths.
+- Kept the operation inventory at 196 across 23 domains.
+
 ## 2026-08-13 - Customer Profile & Address V1
 
 - Replaced generic Customer self schemas with typed Profile/Address contracts.

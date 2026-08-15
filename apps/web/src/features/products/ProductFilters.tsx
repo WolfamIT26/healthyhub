@@ -1,7 +1,7 @@
 import { useId } from 'react';
 
 import { Button, Checkbox, FormField, Input, Select } from '../../components';
-import { productBrands, productCategories } from './catalog.data';
+import type { ProductOptions } from './productApi';
 import {
   dietaryTagLabels,
   stockStatusLabels,
@@ -13,11 +13,13 @@ const dietaryOptions = Object.entries(dietaryTagLabels) as Array<[DietaryTag, st
 
 export function ProductFilters({
   query,
+  options,
   onChange,
   onClear,
   onApply,
 }: {
   query: CatalogQuery;
+  options: ProductOptions;
   onChange(patch: Partial<CatalogQuery>): void;
   onClear(): void;
   onApply?: () => void;
@@ -38,8 +40,8 @@ export function ProductFilters({
           onChange={(event) => onChange({ category: event.target.value })}
         >
           <option value="">Tất cả danh mục</option>
-          {productCategories.map((category) => (
-            <option key={category.id} value={category.id}>
+          {options.categories.map((category) => (
+            <option key={category.id} value={category.slug}>
               {category.name}
             </option>
           ))}
@@ -52,8 +54,8 @@ export function ProductFilters({
           onChange={(event) => onChange({ brand: event.target.value })}
         >
           <option value="">Tất cả thương hiệu</option>
-          {productBrands.map((brand) => (
-            <option key={brand.id} value={brand.id}>
+          {options.brands.map((brand) => (
+            <option key={brand.id} value={brand.slug}>
               {brand.name}
             </option>
           ))}
@@ -97,14 +99,16 @@ export function ProductFilters({
       <fieldset>
         <legend className="text-sm font-semibold text-neutral-800">Chế độ ăn</legend>
         <div className="mt-2 grid grid-cols-1">
-          {dietaryOptions.map(([value, label]) => (
-            <Checkbox
-              key={value}
-              label={label}
-              checked={query.dietary.includes(value)}
-              onChange={(event) => toggleDietary(value, event.target.checked)}
-            />
-          ))}
+          {dietaryOptions
+            .filter(([value]) => options.dietary.includes(value))
+            .map(([value, label]) => (
+              <Checkbox
+                key={value}
+                label={label}
+                checked={query.dietary.includes(value)}
+                onChange={(event) => toggleDietary(value, event.target.checked)}
+              />
+            ))}
         </div>
       </fieldset>
       <FormField id={`${fieldId}-availability`} label="Tình trạng hàng">

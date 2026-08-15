@@ -1,5 +1,9 @@
 # Database ChangeLog / Nhật ký thay đổi Logical Database Design
 
+## [0.2.0] - 2026-08-13
+
+- Added executable Product dietary/nutrition and featured-state clarification for Prompt 31 while preserving Product/Category/Brand ownership.
+
 ## [0.1.0] - 2026-08-06
 
 ### Added / Đã thêm
