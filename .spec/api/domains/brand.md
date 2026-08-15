@@ -87,6 +87,7 @@ Brand API quản lý thương hiệu/nhà sản xuất, logo, mô tả và trạ
 ## Pagination / Phân trang
 
 - Public/admin list dùng page pagination.
+- Prompt 31 public list mặc định 20, tối đa 60.
 
 ## Filter / Lọc
 
@@ -99,6 +100,11 @@ Brand API quản lý thương hiệu/nhà sản xuất, logo, mô tả và trạ
 ## Sort / Sắp xếp
 
 - Default sort theo name asc public, updatedAt desc admin.
+
+## Prompt 31 Executable Contract
+
+- Public list hỗ trợ `page`, `pageSize`, `q`; detail nhận numeric ID hoặc slug.
+- Chỉ active Brand được trả; response gồm ID, slug, name, origin/description public và không có audit metadata.
 
 ## Upload / Upload
 
@@ -124,4 +130,3 @@ Không áp dụng.
 ## AI Endpoint / Endpoint AI
 
 Không áp dụng trực tiếp.
-

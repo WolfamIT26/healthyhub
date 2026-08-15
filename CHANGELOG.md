@@ -1,5 +1,23 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.17.0] - 2026-08-13
+
+### Added / Đã thêm
+
+- Thêm Product/Category/Brand/Content/Dietary/Nutrition/Media public-read persistence và 3 migration Prompt 31.
+- Thêm typed Product list/detail/options, Category list/tree/detail và Brand list/detail API.
+- Thêm server pagination/search/filter/sort, Inventory availability integration và safe media boundary.
+
+### Changed / Đã thay đổi
+
+- Catalog, Product Detail và Search discovery dùng Product API thật; URL/reload/UX Prompt 21–23 giữ nguyên.
+- Cart/Wishlist tiếp tục dùng Product ID authority; frontend không quyết định giá, sellable hoặc stock.
+
+### Notes / Ghi chú
+
+- Không triển khai Admin CRUD, upload, Inventory mutation, Review, Promotion, Supplier hoặc AI.
+- `VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
 ## [0.16.0] - 2026-08-13
 
 ### Added / Đã thêm

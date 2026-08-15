@@ -21,4 +21,5 @@ export class ProductEntity extends BaseAuditEntity {
   productVisibility!: 'public' | 'hidden' | 'private';
   @Column({ name: 'product_status', type: 'varchar', length: 32, default: 'draft' })
   productStatus!: 'draft' | 'active' | 'discontinued';
+  @Column({ name: 'is_featured', type: 'boolean', default: false }) isFeatured!: boolean;
 }

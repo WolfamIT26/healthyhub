@@ -32,6 +32,7 @@ Mỗi file tổng hợp nên có:
 
 ## Summary Index / Danh sách file tổng hợp
 
+- [Prompt 31 - Product Backend / Catalog Authority V1](2026-08-13-01-prompt-31-product-backend-catalog-authority-v1.md).
 - [Prompt 30 - Wishlist Persistence V1](2026-08-13-01-prompt-30-wishlist-persistence-v1.md).
 - [Prompt 29 - Customer Profile & Address V1](2026-08-13-01-prompt-29-customer-profile-address-v1.md).
 - [Fix - Development Port Environment](2026-08-13-02-fix-development-port-environment.md).

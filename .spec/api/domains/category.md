@@ -89,6 +89,7 @@ Category API quản lý danh mục sản phẩm, cây danh mục, thứ tự hi�
 
 - Admin list dùng page pagination.
 - Public tree có thể không phân trang nếu size nhỏ.
+- Prompt 31 public list dùng page mặc định 1, pageSize tối đa 60; tree không phân trang.
 
 ## Filter / Lọc
 
@@ -101,6 +102,12 @@ Category API quản lý danh mục sản phẩm, cây danh mục, thứ tự hi�
 ## Sort / Sắp xếp
 
 - Default sort theo `displayOrder`, sau đó name.
+
+## Prompt 31 Executable Contract
+
+- Public list hỗ trợ `page`, `pageSize`, `q`; detail nhận numeric ID hoặc slug.
+- Public tree trả parent/children từ persistence và chỉ gồm active/public Category.
+- `category_display_rules` kênh web là display-order authority; không trả audit/status nội bộ.
 
 ## Upload / Upload
 
@@ -126,4 +133,3 @@ Không áp dụng.
 ## AI Endpoint / Endpoint AI
 
 Không áp dụng trực tiếp. AI Search có thể dùng category source qua AI API.
-

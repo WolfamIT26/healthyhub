@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import {
@@ -14,7 +14,7 @@ import {
   ProductCard,
   Skeleton,
 } from '../components';
-import { catalogProducts } from '../features/products/catalog.data';
+import { productApi, type ProductDetailResult } from '../features/products/productApi';
 import {
   dietaryTagLabels,
   stockStatusLabels,
@@ -32,8 +32,8 @@ const moneyFormatter = new Intl.NumberFormat('vi-VN', {
 });
 
 export function ProductDetailPage({
-  products = catalogProducts,
-  status = 'success',
+  products,
+  status,
   onRetry,
 }: {
   products?: ProductPresentationModel[];
@@ -41,7 +41,42 @@ export function ProductDetailPage({
   onRetry?: () => void;
 }) {
   const { slug = '' } = useParams();
-  const product = products.find((item) => item.slug === slug);
+  const controlled = products !== undefined || status !== undefined;
+  const [requestVersion, setRequestVersion] = useState(0);
+  const [apiStatus, setApiStatus] = useState<ProductDetailStatus>('loading');
+  const [notFound, setNotFound] = useState(false);
+  const [result, setResult] = useState<ProductDetailResult | null>(null);
+  const product = controlled ? products?.find((item) => item.slug === slug) : result?.product;
+  const relatedProducts = controlled
+    ? (products ?? []).filter(
+        (item) => item.id !== product?.id && item.category.id === product?.category.id,
+      )
+    : (result?.relatedProducts ?? []);
+  const effectiveStatus = status ?? apiStatus;
+
+  useEffect(() => {
+    if (controlled || !slug) return;
+    const controller = new AbortController();
+    setApiStatus('loading');
+    setNotFound(false);
+    void productApi
+      .detail(slug, controller.signal)
+      .then((nextResult) => {
+        setResult(nextResult);
+        setApiStatus('success');
+      })
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) return;
+        setNotFound(
+          typeof error === 'object' &&
+            error !== null &&
+            'statusCode' in error &&
+            error.statusCode === 404,
+        );
+        setApiStatus('error');
+      });
+    return () => controller.abort();
+  }, [controlled, requestVersion, slug]);
 
   useEffect(() => {
     const previousTitle = document.title;
@@ -53,15 +88,21 @@ export function ProductDetailPage({
     };
   }, [product]);
 
-  if (status === 'loading') return <ProductDetailSkeleton />;
-  if (status === 'error')
+  if (effectiveStatus === 'loading') return <ProductDetailSkeleton />;
+  if (effectiveStatus === 'error' && !notFound)
     return (
       <main className="container flex flex-1 items-center py-16">
         <ErrorState
           title="Không thể tải thông tin sản phẩm"
           description="Nguồn dữ liệu tạm thời chưa sẵn sàng. Vui lòng thử lại."
           action={
-            <Button type="button" onClick={onRetry}>
+            <Button
+              type="button"
+              onClick={() => {
+                onRetry?.();
+                setRequestVersion((value) => value + 1);
+              }}
+            >
               Thử lại
             </Button>
           }
@@ -83,25 +124,18 @@ export function ProductDetailPage({
       </main>
     );
 
-  return <ProductDetailContent product={product} products={products} />;
+  return <ProductDetailContent product={product} relatedProducts={relatedProducts} />;
 }
 
 function ProductDetailContent({
   product,
-  products,
+  relatedProducts,
 }: {
   product: ProductPresentationModel;
-  products: ProductPresentationModel[];
+  relatedProducts: ProductPresentationModel[];
 }) {
   const [quantity, setQuantity] = useState(1);
-  const outOfStock = product.stockStatus === 'out_of_stock';
-  const relatedProducts = useMemo(
-    () =>
-      products
-        .filter((item) => item.id !== product.id && item.category.id === product.category.id)
-        .slice(0, 4),
-    [product, products],
-  );
+  const outOfStock = !product.sellable;
   const visibleBadges = Array.from(
     new Set([product.discountPercent ? `Giảm ${product.discountPercent}%` : '', ...product.badges]),
   )
@@ -147,15 +181,19 @@ function ProductDetailContent({
               {product.name}
             </h1>
             <p className="mt-2 text-sm text-neutral-500">Mã sản phẩm: {product.sku}</p>
-            <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-neutral-600">
-              <span
-                className="font-semibold text-accent-dark"
-                aria-label={`${product.rating} trên 5 sao`}
-              >
-                ★ {product.rating.toFixed(1)}
-              </span>
-              <span>{product.reviewCount} đánh giá</span>
-            </div>
+            {product.rating !== undefined ? (
+              <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-neutral-600">
+                <span
+                  className="font-semibold text-accent-dark"
+                  aria-label={`${product.rating} trên 5 sao`}
+                >
+                  ★ {product.rating.toFixed(1)}
+                </span>
+                {product.reviewCount !== undefined ? (
+                  <span>{product.reviewCount} đánh giá</span>
+                ) : null}
+              </div>
+            ) : null}
             <p className="mt-5 text-base leading-7 text-neutral-700">{product.shortDescription}</p>
             <Divider />
             <div className="my-6 flex flex-wrap items-baseline gap-3">
@@ -278,7 +316,7 @@ function ProductDetailContent({
               </ul>
             ) : (
               <p className="mt-4 text-neutral-600">
-                Thông tin thành phần chưa có trong dữ liệu presentation.
+                Thông tin thành phần chưa được công bố trong Product API.
               </p>
             )}
             {product.allergenInformation ? (
@@ -298,19 +336,10 @@ function ProductDetailContent({
           <Card>
             <h2 className="text-2xl font-bold text-neutral-950">Đánh giá sản phẩm</h2>
             <div className="mt-4 flex flex-wrap items-end gap-3">
-              <span className="text-4xl font-bold text-neutral-950">
-                {product.rating.toFixed(1)}
-              </span>
-              <span className="pb-1 text-accent-dark" aria-hidden="true">
-                ★★★★★
-              </span>
-              <span className="pb-1 text-sm text-neutral-600">
-                Từ {product.reviewCount} lượt đánh giá tổng hợp presentation
-              </span>
+              <span className="text-sm text-neutral-600">Chưa có dữ liệu Review public.</span>
             </div>
             <Alert tone="info" className="mt-5">
-              Review API chưa được triển khai nên Product Detail V1 không hiển thị nội dung đánh giá
-              giả.
+              Review API chưa được triển khai nên không hiển thị điểm hoặc nội dung đánh giá giả.
             </Alert>
           </Card>
           <Card className="bg-gradient-to-br from-primary-50 to-secondary-100">

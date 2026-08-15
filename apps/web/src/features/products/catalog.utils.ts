@@ -5,17 +5,16 @@ import type {
   ProductPresentationModel,
   ProductStockStatus,
 } from './product.types';
-import { productBrands, productCategories } from './catalog.data';
 import { dietaryTagLabels } from './product.types';
 import { normalizeSearchQuery } from './search.utils';
 
 const allowedSorts: CatalogSort[] = [
   'featured',
   'newest',
+  'name-asc',
+  'name-desc',
   'price-asc',
   'price-desc',
-  'best-selling',
-  'rating',
 ];
 const allowedDietary: DietaryTag[] = [
   'low-sugar',
@@ -27,7 +26,9 @@ const allowedDietary: DietaryTag[] = [
   'gluten-free',
   'organic',
 ];
-const allowedStock: ProductStockStatus[] = ['in_stock', 'low_stock', 'out_of_stock'];
+type CatalogAvailability = Exclude<ProductStockStatus, 'unavailable'>;
+
+const allowedStock: CatalogAvailability[] = ['in_stock', 'low_stock', 'out_of_stock'];
 const allowedLimits = [12, 20, 40, 60];
 
 function positiveNumber(value: string | null) {
@@ -40,13 +41,13 @@ export function parseCatalogQuery(params: URLSearchParams): CatalogQuery {
   const page = Math.max(1, Math.floor(Number(params.get('page')) || 1));
   const requestedLimit = Math.floor(Number(params.get('limit')) || 20);
   const sort = params.get('sort') as CatalogSort | null;
-  const availability = params.get('availability') as ProductStockStatus | null;
+  const availability = params.get('availability') as CatalogAvailability | null;
   const category = params.get('category') ?? params.get('categoryId') ?? '';
   const brand = params.get('brand') ?? '';
   return {
     search: normalizeSearchQuery(params.get('search') ?? params.get('q') ?? ''),
-    category: productCategories.some((item) => item.id === category) ? category : '',
-    brand: productBrands.some((item) => item.id === brand) ? brand : '',
+    category: /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(category) ? category : '',
+    brand: /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(brand) ? brand : '',
     dietary: (params.get('dietary') ?? '')
       .split(',')
       .filter((value): value is DietaryTag => allowedDietary.includes(value as DietaryTag)),
@@ -93,12 +94,14 @@ export function filterAndSortProducts(products: ProductPresentationModel[], quer
   });
   return [...filtered].sort((left, right) => {
     if (query.sort === 'newest') return Date.parse(right.createdAt) - Date.parse(left.createdAt);
+    if (query.sort === 'name-asc') return left.name.localeCompare(right.name, 'vi-VN');
+    if (query.sort === 'name-desc') return right.name.localeCompare(left.name, 'vi-VN');
     if (query.sort === 'price-asc') return left.price - right.price;
     if (query.sort === 'price-desc') return right.price - left.price;
-    if (query.sort === 'best-selling') return right.soldCount - left.soldCount;
-    if (query.sort === 'rating')
-      return right.rating - left.rating || right.reviewCount - left.reviewCount;
-    return Number(right.featured) - Number(left.featured) || right.soldCount - left.soldCount;
+    return (
+      Number(right.featured) - Number(left.featured) ||
+      (right.soldCount ?? 0) - (left.soldCount ?? 0)
+    );
   });
 }
 

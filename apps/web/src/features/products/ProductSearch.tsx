@@ -1,12 +1,13 @@
-import { useId, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, SearchInput } from '../../components';
 import {
-  getProductSearchSuggestions,
+  buildProductSearchSuggestions,
   normalizeSearchQuery,
   type ProductSearchSuggestion,
 } from './search.utils';
+import { productApi } from './productApi';
 
 export function ProductSearch({
   value,
@@ -39,7 +40,40 @@ export function ProductSearch({
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [emptyError, setEmptyError] = useState(false);
-  const suggestions = useMemo(() => getProductSearchSuggestions(value), [value]);
+  const [suggestions, setSuggestions] = useState<ProductSearchSuggestion[]>([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      const normalized = normalizeSearchQuery(value);
+      const listRequest = normalized
+        ? productApi.list(
+            {
+              search: normalized,
+              category: '',
+              brand: '',
+              dietary: [],
+              availability: '',
+              sort: 'featured',
+              page: 1,
+              limit: 6,
+            },
+            controller.signal,
+          )
+        : Promise.resolve({ items: [] });
+      void Promise.all([listRequest, productApi.options(controller.signal)])
+        .then(([result, options]) => {
+          setSuggestions(buildProductSearchSuggestions(value, result.items, options));
+        })
+        .catch(() => {
+          if (!controller.signal.aborted) setSuggestions([]);
+        });
+    }, 250);
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [value]);
 
   function closeSuggestions() {
     setOpen(false);

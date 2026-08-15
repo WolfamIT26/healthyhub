@@ -1,5 +1,10 @@
 # Physical Database ChangeLog / Nhật ký thay đổi Physical Database Design
 
+## [1.2.0] - 2026-08-13
+
+- Added Product featured, storage note, dietary tags and nutrition fact columns/tables implemented by Prompt 31 migrations.
+- Confirmed persisted Category display rule and one-active-primary Product/Category constraint.
+
 ## [1.1.0] - 2026-08-06
 
 ### Changed / Đã thay đổi

@@ -1799,14 +1799,55 @@ paths:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/PageSizeParam"
-        - $ref: "#/components/parameters/QParam"
-        - $ref: "#/components/parameters/SortParam"
-        - $ref: "#/components/parameters/FilterParam"
+        - name: page
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: pageSize
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 60, default: 20 }
+        - name: q
+          in: query
+          required: false
+          schema: { type: string, maxLength: 100 }
+        - name: category
+          in: query
+          required: false
+          schema: { type: string, maxLength: 191 }
+        - name: brand
+          in: query
+          required: false
+          schema: { type: string, maxLength: 191 }
+        - name: dietary
+          in: query
+          required: false
+          description: "Một hoặc nhiều dietary tag phân cách bằng dấu phẩy; Product phải có đủ mọi tag."
+          schema:
+            type: string
+            pattern: "^(low-sugar|sugar-free|high-protein|vegan|vegetarian|lactose-free|gluten-free|organic)(,(low-sugar|sugar-free|high-protein|vegan|vegetarian|lactose-free|gluten-free|organic))*$"
+        - name: minPrice
+          in: query
+          required: false
+          schema: { type: number, minimum: 0, multipleOf: 0.01 }
+        - name: maxPrice
+          in: query
+          required: false
+          schema: { type: number, minimum: 0, multipleOf: 0.01 }
+        - name: availability
+          in: query
+          required: false
+          schema: { type: string, enum: [in_stock, low_stock, out_of_stock] }
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [featured, newest, name-asc, name-desc, price-asc, price-desc]
+            default: featured
       responses:
         "200":
-          $ref: "#/components/responses/PaginatedOk"
+          $ref: "./responses/common.yaml#/ProductListOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "422":
@@ -1838,10 +1879,16 @@ paths:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/ProductIdPath"
+        - name: productId
+          in: path
+          required: true
+          description: "Public Product numeric ID hoặc canonical slug."
+          schema:
+            type: string
+            pattern: "^(?:[1-9][0-9]*|[a-z0-9]+(?:-[a-z0-9]+)*)$"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/ProductDetailOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "422":
@@ -1877,7 +1924,7 @@ paths:
         - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/ProductOptionsOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "422":
@@ -2316,14 +2363,21 @@ paths:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/PageSizeParam"
-        - $ref: "#/components/parameters/QParam"
-        - $ref: "#/components/parameters/SortParam"
-        - $ref: "#/components/parameters/FilterParam"
+        - name: page
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: pageSize
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 60, default: 20 }
+        - name: q
+          in: query
+          required: false
+          schema: { type: string, maxLength: 100 }
       responses:
         "200":
-          $ref: "#/components/responses/PaginatedOk"
+          $ref: "./responses/common.yaml#/CategoryListOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "422":
@@ -2355,14 +2409,9 @@ paths:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/PageSizeParam"
-        - $ref: "#/components/parameters/QParam"
-        - $ref: "#/components/parameters/SortParam"
-        - $ref: "#/components/parameters/FilterParam"
       responses:
         "200":
-          $ref: "#/components/responses/PaginatedOk"
+          $ref: "./responses/common.yaml#/CategoryTreeOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "422":
@@ -2394,10 +2443,16 @@ paths:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/CategoryIdPath"
+        - name: categoryId
+          in: path
+          required: true
+          description: "Public Category numeric ID hoặc canonical slug."
+          schema:
+            type: string
+            pattern: "^(?:[1-9][0-9]*|[a-z0-9]+(?:-[a-z0-9]+)*)$"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/CategoryDetailOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "422":
@@ -2731,14 +2786,21 @@ paths:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/PageSizeParam"
-        - $ref: "#/components/parameters/QParam"
-        - $ref: "#/components/parameters/SortParam"
-        - $ref: "#/components/parameters/FilterParam"
+        - name: page
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: pageSize
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 60, default: 20 }
+        - name: q
+          in: query
+          required: false
+          schema: { type: string, maxLength: 100 }
       responses:
         "200":
-          $ref: "#/components/responses/PaginatedOk"
+          $ref: "./responses/common.yaml#/BrandListOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "422":
@@ -2770,10 +2832,16 @@ paths:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/BrandIdPath"
+        - name: brandId
+          in: path
+          required: true
+          description: "Public Brand numeric ID hoặc canonical slug."
+          schema:
+            type: string
+            pattern: "^(?:[1-9][0-9]*|[a-z0-9]+(?:-[a-z0-9]+)*)$"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/BrandDetailOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "422":

@@ -1,11 +1,36 @@
 import { useState } from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { catalogProducts, productBrands, productCategories } from './catalog.data';
 import { ProductSearch } from './ProductSearch';
-import { getProductSearchSuggestions, normalizeSearchQuery } from './search.utils';
+import { productApi, type ProductOptions } from './productApi';
+import { buildProductSearchSuggestions, normalizeSearchQuery } from './search.utils';
+
+vi.mock('./productApi', () => ({
+  productApi: {
+    list: vi.fn(),
+    detail: vi.fn(),
+    options: vi.fn(),
+  },
+}));
+
+const productOptions: ProductOptions = {
+  categories: productCategories.map((item) => ({ ...item, slug: item.id })),
+  brands: productBrands.map((item) => ({ ...item, slug: item.id })),
+  dietary: [
+    'low-sugar',
+    'sugar-free',
+    'high-protein',
+    'vegan',
+    'vegetarian',
+    'lactose-free',
+    'gluten-free',
+    'organic',
+  ],
+};
 
 function LocationProbe() {
   const location = useLocation();
@@ -33,18 +58,42 @@ function renderSearch(onSubmit?: (query: string) => void) {
 }
 
 describe('Product Search discovery', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(productApi.options).mockResolvedValue(productOptions);
+    vi.mocked(productApi.list).mockImplementation(async (query) => {
+      const keyword = normalizeSearchQuery(query.search).toLocaleLowerCase('vi-VN');
+      const items = catalogProducts
+        .filter((product) =>
+          `${product.name} ${product.category.name} ${product.brand.name}`
+            .toLocaleLowerCase('vi-VN')
+            .includes(keyword),
+        )
+        .slice(0, query.limit);
+      return {
+        items,
+        page: 1,
+        pageSize: query.limit,
+        totalItems: items.length,
+        totalPages: 1,
+      };
+    });
+  });
+
   it('normalizes whitespace without removing Vietnamese accents', () => {
     expect(normalizeSearchQuery('  Sữa   hạt\n Việt  ')).toBe('Sữa hạt Việt');
     expect(
-      getProductSearchSuggestions('SỮA HẠNH NHÂN').some(
+      buildProductSearchSuggestions('SỮA HẠNH NHÂN', catalogProducts, productOptions).some(
         (item) => item.label === 'Sữa hạnh nhân không đường',
       ),
     ).toBe(true);
   });
 
   it('limits discovery and search suggestions to eight', () => {
-    expect(getProductSearchSuggestions('')).toHaveLength(7);
-    expect(getProductSearchSuggestions('sữa').length).toBeLessThanOrEqual(8);
+    expect(buildProductSearchSuggestions('', [], productOptions)).toHaveLength(7);
+    expect(
+      buildProductSearchSuggestions('sữa', catalogProducts, productOptions).length,
+    ).toBeLessThanOrEqual(8);
   });
 
   it('submits a normalized text query and validates an empty query', async () => {
@@ -64,25 +113,43 @@ describe('Product Search discovery', () => {
     renderSearch();
     const input = screen.getByRole('combobox', { name: 'Tìm kiếm sản phẩm' });
     await userEvent.type(input, 'hạnh nhân');
-    await userEvent.click(screen.getByRole('button', { name: /Sữa hạnh nhân không đường/ }));
+    await userEvent.click(await screen.findByRole('button', { name: /Sữa hạnh nhân không đường/ }));
+    expect(productApi.list).toHaveBeenCalledWith(
+      expect.objectContaining({ search: 'hạnh nhân', limit: 6 }),
+      expect.any(AbortSignal),
+    );
     expect(screen.getByLabelText('URL hiện tại')).toHaveTextContent(
       '/products/almond-milk-unsweetened',
     );
   });
 
+  it('debounces discovery and aborts a stale Product request when the query changes', async () => {
+    renderSearch();
+    const input = screen.getByRole('combobox', { name: 'Tìm kiếm sản phẩm' });
+    await userEvent.type(input, 'sữa');
+    await waitFor(() => expect(productApi.list).toHaveBeenCalledTimes(1));
+    const firstSignal = vi.mocked(productApi.list).mock.calls[0][1];
+
+    await userEvent.clear(input);
+    await userEvent.type(input, 'hạnh nhân');
+    await waitFor(() => expect(productApi.list).toHaveBeenCalledTimes(2));
+
+    expect(firstSignal?.aborted).toBe(true);
+  });
+
   it('offers category, brand and dietary filter destinations', () => {
     expect(
-      getProductSearchSuggestions('Sữa hạt').some(
+      buildProductSearchSuggestions('Sữa hạt', [], productOptions).some(
         (item) => item.href === '/products?category=plant-milk',
       ),
     ).toBe(true);
     expect(
-      getProductSearchSuggestions('Mộc Nhiên').some(
+      buildProductSearchSuggestions('Mộc Nhiên', [], productOptions).some(
         (item) => item.href === '/products?brand=moc-nhien',
       ),
     ).toBe(true);
     expect(
-      getProductSearchSuggestions('Không lactose').some(
+      buildProductSearchSuggestions('Không lactose', [], productOptions).some(
         (item) => item.href === '/products?dietary=lactose-free',
       ),
     ).toBe(true);
@@ -92,6 +159,7 @@ describe('Product Search discovery', () => {
     renderSearch();
     const input = screen.getByRole('combobox', { name: 'Tìm kiếm sản phẩm' });
     await userEvent.type(input, 'hạnh nhân');
+    await screen.findByRole('button', { name: /Sữa hạnh nhân không đường/ });
     await userEvent.keyboard('{ArrowDown}{ArrowDown}');
     expect(input).toHaveAttribute('aria-activedescendant');
     await userEvent.keyboard('{ArrowUp}');
@@ -109,6 +177,6 @@ describe('Product Search discovery', () => {
     await userEvent.type(input, 'sữa');
     await userEvent.click(screen.getByRole('button', { name: 'Xóa nội dung tìm kiếm' }));
     expect(input).toHaveValue('');
-    expect(screen.getByText('Khám phá')).toBeInTheDocument();
+    expect(await screen.findByText('Khám phá')).toBeInTheDocument();
   });
 });

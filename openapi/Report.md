@@ -51,6 +51,13 @@
 - Thay generic schemas ở sáu Customer self operations, bỏ pagination/filter khỏi hai singleton/small-list reads.
 - Giữ owner/JWT/idempotency/error boundary và operation inventory 196/196.
 
+## Prompt 31 / Prompt 31
+
+- Thêm `schemas/product.yaml` cho Product list/detail/options, Category list/tree/detail và Brand list/detail.
+- Exact Product query whitelist gồm pagination, q, Category/Brand/dietary/price/availability và approved sort.
+- Numeric Product/Category/Brand ID hoặc canonical slug được mô tả rõ; không expose internal Product/Inventory/Media metadata.
+- Giữ operation inventory 196/196.
+
 ## Limits / Giới hạn
 
 - Chưa chạy semantic OpenAPI validator chuyên dụng vì framework hiện chưa có dependency validator và Prompt yêu cầu không cài thêm công nghệ mới.

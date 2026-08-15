@@ -72,6 +72,7 @@ Product API quản lý sản phẩm healthy, thông tin bán hàng, trạng thá
 - Public list item: name, image, price, summary, stock status, visible attributes.
 - Public detail: thông tin bán hàng, thành phần, category/brand summary, media public và review summary nếu include.
 - Admin detail: thêm status, audit summary, internal notes và inventory link theo quyền.
+- Prompt 31 executable public response dùng Product/Category/Brand/Content/Ingredient/Dietary/Nutrition/Media persistence; không trả cost, supplier, audit metadata hoặc raw storage key.
 
 ## Error Contract / Contract lỗi
 
@@ -100,7 +101,7 @@ Product API quản lý sản phẩm healthy, thông tin bán hàng, trạng thá
 
 ## Filter / Lọc
 
-- Public: `categoryId`, `brandId`, `price`, `stockStatus`, `productStatus` public-safe.
+- Public executable: `category`, `brand` (numeric ID hoặc slug), `dietary` (all-match), `minPrice`, `maxPrice`, `availability`.
 - Admin: thêm `productStatus`, `createdAt`, `updatedAt`, `visibility`.
 
 ## Search / Tìm kiếm
@@ -112,7 +113,15 @@ Product API quản lý sản phẩm healthy, thông tin bán hàng, trạng thá
 
 - Public default: featured trước, sau đó updated hoặc best-selling khi có dữ liệu.
 - Admin default: `updatedAt` desc.
-- Cho phép sort theo price, name, createdAt, updatedAt nếu được whitelist.
+- Prompt 31 whitelist: `featured`, `newest`, `name-asc`, `name-desc`, `price-asc`, `price-desc`; luôn có Product ID tie-breaker.
+- Không bật `rating`/`best-selling` cho tới khi Review/sales read model executable.
+
+## Prompt 31 Executable Contract
+
+- `GET /api/v1/public/products`: page mặc định 1, pageSize mặc định 20/tối đa 60; `q` tối đa 100 ký tự.
+- `GET /api/v1/public/products/{productId}`: `{productId}` nhận BIGINT hoặc canonical slug; hidden/inactive/deleted trả 404.
+- `GET /api/v1/public/products/options`: Category, Brand và dietary option public-safe cho Catalog/Search.
+- Availability/sellable do Product + Inventory authority quyết định; browser không gửi hoặc override giá/stock.
 
 ## Upload / Upload
 
@@ -140,4 +149,3 @@ Không áp dụng trực tiếp.
 ## AI Endpoint / Endpoint AI
 
 AI product summary, ingredient explanation và recommendation nằm ở AI API. Product API chỉ cung cấp source contract cho AI khi có quyền.
-

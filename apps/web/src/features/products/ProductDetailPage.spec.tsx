@@ -1,13 +1,15 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useAuth } from '../auth/AuthContext';
 import { ProductDetailPage } from '../../pages/ProductDetailPage';
 import { PublicLayout } from '../../shared/layouts/PublicLayout';
 import { WishlistProvider } from '../wishlist/WishlistContext';
 import { CartProvider } from '../cart/CartContext';
+import { catalogProducts } from './catalog.data';
+import { productApi } from './productApi';
 
 vi.mock('../auth/AuthContext', () => ({ useAuth: vi.fn() }));
 vi.mock('../wishlist/wishlistApi', () => ({
@@ -34,7 +36,10 @@ const guestAuth = {
   hasPermission: vi.fn(),
 };
 
-function renderDetail(slug = 'oat-milk-original', node = <ProductDetailPage />) {
+function renderDetail(
+  slug = 'oat-milk-original',
+  node = <ProductDetailPage products={catalogProducts} status="success" />,
+) {
   return render(
     <MemoryRouter initialEntries={[`/products/${slug}`]}>
       <WishlistProvider>
@@ -49,6 +54,8 @@ function renderDetail(slug = 'oat-milk-original', node = <ProductDetailPage />) 
 }
 
 describe('Product Detail V1', () => {
+  afterEach(() => vi.restoreAllMocks());
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useAuth).mockReturnValue(guestAuth);
@@ -63,6 +70,21 @@ describe('Product Detail V1', () => {
     expect(screen.getByText('Mã sản phẩm: HH-0001')).toBeInTheDocument();
     expect(screen.getByText((content) => content.includes('69.000'))).toBeInTheDocument();
     expect(screen.getByText('Tình trạng: Còn hàng')).toBeInTheDocument();
+  });
+
+  it('loads the production detail and related products from the Product API', async () => {
+    const detail = vi.spyOn(productApi, 'detail').mockResolvedValue({
+      product: catalogProducts[0],
+      relatedProducts: catalogProducts.slice(1, 3),
+    });
+
+    renderDetail('oat-milk-original', <ProductDetailPage />);
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Sữa yến mạch nguyên bản' }),
+    ).toBeInTheDocument();
+    expect(detail).toHaveBeenCalledWith('oat-milk-original', expect.any(AbortSignal));
+    expect(screen.getByText('Sữa hạnh nhân không đường')).toBeInTheDocument();
   });
 
   it('renders a Product not-found state for an invalid slug', () => {
@@ -217,7 +239,10 @@ describe('Product Detail V1', () => {
           <CartProvider>
             <Routes>
               <Route element={<PublicLayout />}>
-                <Route path="/products/:slug" element={<ProductDetailPage />} />
+                <Route
+                  path="/products/:slug"
+                  element={<ProductDetailPage products={catalogProducts} status="success" />}
+                />
               </Route>
             </Routes>
           </CartProvider>

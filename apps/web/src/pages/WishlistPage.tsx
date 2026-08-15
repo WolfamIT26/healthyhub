@@ -10,7 +10,6 @@ import {
   ProductCard,
   Skeleton,
 } from '../components';
-import { catalogProducts } from '../features/products/catalog.data';
 import { WishlistButton } from '../features/wishlist/WishlistButton';
 import { useWishlist } from '../features/wishlist/WishlistContext';
 import type { WishlistAvailability } from '../features/wishlist/wishlist.types';
@@ -76,27 +75,20 @@ export function WishlistPage() {
         {!wishlist.loading && wishlist.items.length > 0 ? (
           <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {wishlist.items.map((item) => {
-              const catalog = catalogProducts.find(
-                (product) => product.id === item.product.productId,
-              );
               const name = item.product.name ?? 'Sản phẩm không còn khả dụng';
               const availability = item.product.availability;
               return (
                 <ProductCard
                   key={item.wishlistItemId}
                   name={name}
-                  category={
-                    catalog
-                      ? `${catalog.category.name} · ${catalog.brand.name}`
-                      : 'Sản phẩm HealthyHub'
-                  }
+                  category="Sản phẩm HealthyHub"
                   price={
                     item.product.currentPrice
                       ? moneyFormatter.format(Number(item.product.currentPrice))
                       : 'Không còn niêm yết'
                   }
-                  imageUrl={item.product.thumbnail ?? catalog?.thumbnail ?? undefined}
-                  imageFallback={catalog?.visualFallback ?? '♡'}
+                  imageUrl={item.product.thumbnail ?? undefined}
+                  imageFallback="♡"
                   badge={
                     availability === 'OUT_OF_STOCK' || availability === 'UNAVAILABLE' ? (
                       <Badge tone="error">{availabilityLabels[availability]}</Badge>

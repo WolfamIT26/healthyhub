@@ -115,8 +115,14 @@ function renderFlow(entry = '/products') {
             Mở Wishlist test
           </Link>
           <Routes>
-            <Route path="/products" element={<ProductCatalogPage />} />
-            <Route path="/products/:slug" element={<ProductDetailPage />} />
+            <Route
+              path="/products"
+              element={<ProductCatalogPage products={catalogProducts} status="success" />}
+            />
+            <Route
+              path="/products/:slug"
+              element={<ProductDetailPage products={catalogProducts} status="success" />}
+            />
             <Route
               path="/wishlist"
               element={
