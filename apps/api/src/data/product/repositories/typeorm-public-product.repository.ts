@@ -48,6 +48,7 @@ type RawProduct = {
   brandSlug: string | null;
   brandName: string | null;
   stockStatus: PublicProductBaseRecord['stockStatus'];
+  availableQuantity: string | number | null;
 };
 
 @Injectable()
@@ -325,7 +326,7 @@ export class TypeOrmPublicProductRepository implements PublicCatalogRepository {
       .leftJoin(
         InventoryItemEntity,
         'inventory',
-        'inventory.product_id = product.id AND inventory.deleted_at IS NULL',
+        'inventory.product_id = product.id AND inventory.tenant_id = product.tenant_id AND inventory.deleted_at IS NULL',
       )
       .where('product.tenant_id = :tenantId', { tenantId: '1' })
       .andWhere("product.product_status = 'active'")
@@ -355,6 +356,7 @@ export class TypeOrmPublicProductRepository implements PublicCatalogRepository {
       'brand.brand_slug AS brandSlug',
       'brand.brand_name AS brandName',
       'inventory.stock_status AS stockStatus',
+      'inventory.available_quantity AS availableQuantity',
     ]);
   }
 
@@ -444,6 +446,7 @@ export class TypeOrmPublicProductRepository implements PublicCatalogRepository {
           ? { id: String(row.brandId), slug: row.brandSlug, name: row.brandName }
           : null,
       stockStatus: row.stockStatus,
+      availableQuantity: row.availableQuantity === null ? null : Number(row.availableQuantity),
     };
   }
 }

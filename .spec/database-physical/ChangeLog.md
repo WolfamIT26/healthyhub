@@ -1,5 +1,14 @@
 # Physical Database ChangeLog / Nhật ký thay đổi Physical Database Design
 
+## [1.4.0] - 2026-08-21
+
+- Added executable `stock_reservations` migration contract with Order/Inventory `RESTRICT` FKs, positive quantity, status check, unique business identity and transition indexes.
+- Recorded that VNPAY pending has no Inventory-owned `expires_at` until Payment owns an authoritative timeout transition.
+
+## [1.3.0] - 2026-08-21
+
+- Audited executable Inventory FK, tenant/Product uniqueness, unsigned/check quantity constraints and recorded that Prompt 32 requires no migration.
+
 ## [1.2.0] - 2026-08-13
 
 - Added Product featured, storage note, dietary tags and nutrition fact columns/tables implemented by Prompt 31 migrations.

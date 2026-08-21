@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { InventoryStockMutationError } from '../../data/inventory/repositories';
 import { CustomerOwnerResolutionError } from '../../domain/commerce-dependencies/customer-owner.resolver';
 import { PaymentMethodReader } from '../../domain/payment/payment-method.reader';
 import { ShippingQuoteService } from '../../domain/shipping/shipping-quote.service';
@@ -249,6 +250,16 @@ describe('OrderCreationService', () => {
     await expect(
       state.service.createOrderFromCheckout(auth, 'checkout-attempt-001', state.input),
     ).rejects.toThrow('transaction rolled back');
+  });
+
+  it('maps a locked stock race to the canonical insufficient-stock response', async () => {
+    const state = setup();
+    state.repository.createSnapshot.mockRejectedValue(
+      new InventoryStockMutationError('INSUFFICIENT_STOCK', 'concurrent order won'),
+    );
+    await expect(
+      state.service.createOrderFromCheckout(auth, 'checkout-stock-race', state.input),
+    ).rejects.toMatchObject({ response: { code: 'ORDER.INSUFFICIENT_STOCK' } });
   });
 
   it('keeps persisted Order snapshots unchanged when Product authority later changes', async () => {

@@ -8,12 +8,14 @@ import * as cartEntities from '../../src/data/cart/entities';
 import { CustomerAddressEntity, CustomerProfileEntity } from '../../src/data/customer/entities';
 import * as customerEntities from '../../src/data/customer/entities';
 import { TypeOrmCustomerRepository } from '../../src/data/customer/repositories';
+import { InventoryItemEntity, StockReservationEntity } from '../../src/data/inventory/entities';
 import * as inventoryEntities from '../../src/data/inventory/entities';
 import { OrderEntity, OrderItemEntity } from '../../src/data/order/entities';
 import * as orderEntities from '../../src/data/order/entities';
 import { TypeOrmOrderRepository } from '../../src/data/order/repositories';
 import { PaymentEntity } from '../../src/data/payment/entities';
 import * as paymentEntities from '../../src/data/payment/entities';
+import { ProductEntity } from '../../src/data/product/entities';
 import * as productEntities from '../../src/data/product/entities';
 import { ShipmentEntity, ShippingAddressEntity } from '../../src/data/shipping/entities';
 import * as shippingEntities from '../../src/data/shipping/entities';
@@ -28,6 +30,7 @@ import { CreatePaymentProviderEvents1760000005000 } from '../../src/database/mig
 import { EnableVnpaySandbox1760000006000 } from '../../src/database/migrations/1760000006000-enable-vnpay-sandbox';
 import { EnableOrderConfirmation1760000007000 } from '../../src/database/migrations/1760000007000-enable-order-confirmation';
 import { EnableCustomerProfileAddressV11760000008000 } from '../../src/database/migrations/1760000008000-enable-customer-profile-address-v1';
+import { EnableInventoryStockLifecycleV11760000013000 } from '../../src/database/migrations/1760000013000-enable-inventory-stock-lifecycle-v1';
 import { createTypeOrmOptions } from '../../src/database/typeorm.config';
 import { CustomerOwnerResolver } from '../../src/domain/commerce-dependencies/customer-owner.resolver';
 import { ShippingQuoteService } from '../../src/domain/shipping/shipping-quote.service';
@@ -53,6 +56,7 @@ describe.skipIf(!enabled)('Customer Profile and Address MySQL integration', () =
         EnableVnpaySandbox1760000006000,
         EnableOrderConfirmation1760000007000,
         EnableCustomerProfileAddressV11760000008000,
+        EnableInventoryStockLifecycleV11760000013000,
       ],
       entities: [
         ...Object.values(authenticationEntities),
@@ -79,6 +83,8 @@ describe.skipIf(!enabled)('Customer Profile and Address MySQL integration', () =
     const users = dataSource.getRepository(UserAccountEntity);
     const customers = dataSource.getRepository(CustomerProfileEntity);
     const addresses = dataSource.getRepository(CustomerAddressEntity);
+    const products = dataSource.getRepository(ProductEntity);
+    const inventories = dataSource.getRepository(InventoryItemEntity);
     const createdUsers = await users.save(
       ['a', 'b'].map((label) =>
         users.create({
@@ -121,6 +127,8 @@ describe.skipIf(!enabled)('Customer Profile and Address MySQL integration', () =
     const authB = actor(createdUsers[1].id);
     let cart: CartEntity | null = null;
     let orderId: string | null = null;
+    let product: ProductEntity | null = null;
+    let inventory: InventoryItemEntity | null = null;
 
     try {
       await service.updateProfile(authA, `profile-update-${suffix}`, {
@@ -178,6 +186,29 @@ describe.skipIf(!enabled)('Customer Profile and Address MySQL integration', () =
           updatedBy: createdUsers[0].id,
         }),
       );
+      product = await products.save(
+        products.create({
+          tenantId: '1',
+          brandId: null,
+          productCode: `PROFILE-${suffix}`,
+          productName: 'Snapshot Fixture',
+          slug: `profile-${suffix}`,
+          basePrice: '125000.00',
+          sellableStatus: 'sellable',
+          productVisibility: 'public',
+          productStatus: 'active',
+        }),
+      );
+      inventory = await inventories.save(
+        inventories.create({
+          tenantId: '1',
+          productId: product.id,
+          availableQuantity: 1,
+          reservedQuantity: 0,
+          stockThreshold: 0,
+          stockStatus: 'available',
+        }),
+      );
       const order = await new TypeOrmOrderRepository(dataSource).createSnapshot({
         customerProfileId: createdCustomers[0].id,
         cartId: cart.id,
@@ -188,7 +219,7 @@ describe.skipIf(!enabled)('Customer Profile and Address MySQL integration', () =
         actorUserAccountId: createdUsers[0].id,
         items: [
           {
-            productId: null,
+            productId: product.id,
             productName: 'Snapshot Fixture',
             sku: 'SNAPSHOT-FIXTURE',
             unitPrice: '125000.00',
@@ -235,9 +266,12 @@ describe.skipIf(!enabled)('Customer Profile and Address MySQL integration', () =
         await dataSource.getRepository(ShipmentEntity).delete({ orderId });
         await dataSource.getRepository(PaymentEntity).delete({ orderId });
         await dataSource.getRepository(OrderItemEntity).delete({ orderId });
+        await dataSource.getRepository(StockReservationEntity).delete({ orderId });
         await dataSource.getRepository(OrderEntity).delete(orderId);
       }
       if (cart) await dataSource.getRepository(CartEntity).delete(cart.id);
+      if (inventory) await inventories.delete(inventory.id);
+      if (product) await products.delete(product.id);
       await addresses
         .createQueryBuilder()
         .delete()

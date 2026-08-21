@@ -1,5 +1,46 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.19.0] - 2026-08-21
+
+### Added / Đã thêm
+
+- Thêm `stock_reservations` và `InventoryStockMutationRepository` cho reserve/consume/release/restock Order-scoped.
+- Thêm unique tenant/Order/Inventory business identity, pessimistic row locks và transaction-owned stock effects.
+
+### Changed / Đã thay đổi
+
+- Order creation reserve stock atomically; COD consume ngay tại OrderPlaced.
+- Verified VNPAY paid IPN consume, failed/cancelled release; late paid reacquire fail-closed. Browser return giữ read-only.
+- Cập nhật MySQL fixtures để mọi Order snapshot dùng Product/Inventory authority thật.
+
+### Scope / Phạm vi
+
+- Không thêm Admin Inventory UI/API, adjustment, warehouse, supplier, purchase order hoặc Prompt 33.
+- Order cancellation/refund runtime chưa tồn tại; internal idempotent restock được giữ cho future authoritative transition.
+
+### Verification / Kiểm tra
+
+- Format/lint/typecheck/build PASS; 318 unit tests và 10 MySQL files/13 integration tests PASS.
+- Migration state 14/14 applied; OpenAPI 196 operations, secrets/docs/diff checks PASS.
+
+## [0.18.0] - 2026-08-21
+
+### Changed / Đã thay đổi
+
+- Chuẩn hóa Product public availability bằng Inventory evaluator dùng chung; zero quantity luôn out-of-stock và quantity không xuất hiện trong public response.
+- Scope Inventory lookup/join theo tenant và giữ `inventory_items` là authority duy nhất.
+- Cart update tiếp tục reject vượt stock/Product unavailable; Cart có Product không đọc được không còn bị coi hợp lệ.
+
+### Documentation / Tài liệu
+
+- Hoàn thiện bộ module Inventory, `.spec`, root inventory guide và tài liệu Product/Cart/Order/Payment liên quan.
+- Ghi Stock Mutation và Order Stock Integration **BLOCKED** do thiếu canonical reservation/deduction/release, COD confirmation và cancellation/restock lifecycle.
+
+### Verification / Kiểm tra
+
+- Format, lint, typecheck, build, 315 unit tests và 10 MySQL files/13 integration tests PASS.
+- Migration state 13/13 applied; OpenAPI 196 operations, secrets và docs checks PASS.
+
 ## [0.17.0] - 2026-08-13
 
 ### Added / Đã thêm

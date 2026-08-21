@@ -1,5 +1,15 @@
 # Feature Specifications ChangeLog / Nhật ký thay đổi đặc tả tính năng
 
+## 2026-08-21 / Prompt 32.1
+
+- Mở Inventory stock mutation và Order stock integration cho executable COD/VNPAY flows.
+- Chốt transaction ownership, canonical idempotency identity, concurrent no-oversell và browser-return no-effect.
+
+## 2026-08-21 / Prompt 32
+
+- Ghi Inventory executable read authority cho Product/Cart/Order validation.
+- Ghi Stock Mutation và Order Stock Integration BLOCKED do thiếu lifecycle reservation/deduction/release.
+
 ## 2026-08-06 / Prompt 06
 
 ### Added / Đã thêm
@@ -20,4 +30,3 @@
 - Không tạo API.
 - Không tạo frontend/backend.
 - Không tạo UI.
-

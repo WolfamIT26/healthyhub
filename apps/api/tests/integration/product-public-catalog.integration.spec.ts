@@ -299,6 +299,24 @@ describe.skipIf(!enabled)('Product public catalog MySQL integration', () => {
         allergenInformation: ['Có chứa yến mạch.'],
       });
       expect(detail.relatedProducts.every((item) => item.id !== createdProducts[0].id)).toBe(true);
+
+      await inventory.update(
+        { productId: createdProducts[1].id },
+        { availableQuantity: 0, stockStatus: 'available' },
+      );
+      const zeroStockDetail = await service.detail(createdProducts[1].slug);
+      expect(zeroStockDetail).toMatchObject({ availability: 'out_of_stock', sellable: false });
+      expect(zeroStockDetail).not.toHaveProperty('availableQuantity');
+      const outOfStock = await service.list({
+        page: 1,
+        pageSize: 20,
+        category: category.slug,
+        availability: 'out_of_stock',
+        dietary: [],
+        sort: 'featured',
+      });
+      expect(outOfStock.items.map((item) => item.id)).toContain(createdProducts[1].id);
+
       await expect(service.detail(createdProducts[2].slug)).rejects.toMatchObject({ status: 404 });
       const categoryDirectory = await service.categories({ page: 1, pageSize: 20 });
       expect(categoryDirectory.items).toContainEqual(

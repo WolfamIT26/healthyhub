@@ -1,5 +1,8 @@
 # Payment Decisions — Prompt 27.1
 
+- Prompt 32.1: only verified provider outcome may mutate VNPAY stock; browser return remains read-only.
+- Paid consumes, failed/cancelled releases, and late failed→paid must reacquire stock atomically before confirming Order.
+
 ## Provider Decision
 
 **APPROVED: VNPAY cho HealthyHub V1.** Quyết định này mở khóa foundation cấu hình, registry và dedupe persistence. Adapter/kết nối thật, ký request, xác minh IPN và tạo payment URL thuộc Prompt 27.2; chưa được triển khai tại đây.
@@ -52,3 +55,4 @@ Payment service returns a policy effect; it does not directly mutate arbitrary O
 - Reference, amount and currency must equal authoritative Payment before transition.
 - Browser Return URL chỉ phục vụ điều hướng/UX và không được cập nhật trạng thái thanh toán. IPN đã xác minh hoặc provider query mới là server authority.
 - Event persistence dùng khóa duy nhất `(tenant_id, provider, provider_event_id)`, chỉ lưu SHA-256 payload hash, không lưu raw payload/signature.
+- Prompt 32 không mở rộng provider-event business effect sang Inventory. Duplicate IPN protection cho Payment/Order không tự quyết định stock deduction/release timing.

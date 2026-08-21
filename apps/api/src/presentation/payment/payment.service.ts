@@ -4,6 +4,7 @@ import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 
 import type { AuthenticatedRequestContext } from '../../common/types/request-with-context';
+import { InventoryStockMutationRepository } from '../../data/inventory/repositories';
 import {
   PAYMENT_PROVIDER_EVENT_REPOSITORY,
   type PaymentProviderEventClaim,
@@ -70,6 +71,7 @@ export class PaymentService {
     private readonly mapping: OrderPaymentMappingPolicy,
     @Inject(PAYMENT_PROVIDER_EVENT_REPOSITORY)
     private readonly providerEvents: PaymentProviderEventRepository,
+    private readonly stockMutations: InventoryStockMutationRepository,
   ) {}
 
   listMethods(): readonly PaymentMethodReadModel[] {
@@ -400,6 +402,22 @@ export class PaymentService {
     const nextStatus = normalizeVnpayStatus(outcome.status);
     if (nextStatus !== 'pending') {
       this.lifecycle.assertTransition(aggregate.payment.paymentStatus, nextStatus);
+    }
+
+    if (nextStatus === 'paid') {
+      await this.stockMutations.consumeForOrder(
+        manager,
+        aggregate.order.id,
+        actorUserAccountId ?? null,
+        aggregate.order.tenantId,
+      );
+    } else if (nextStatus === 'failed' || nextStatus === 'cancelled') {
+      await this.stockMutations.releaseForOrder(
+        manager,
+        aggregate.order.id,
+        actorUserAccountId ?? null,
+        aggregate.order.tenantId,
+      );
     }
 
     aggregate.payment.providerReference = outcome.providerReference;

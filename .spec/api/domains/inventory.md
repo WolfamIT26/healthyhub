@@ -4,6 +4,8 @@
 
 Inventory API quản lý tồn kho, khả năng bán, cảnh báo tồn kho, điều chỉnh tồn kho và lịch sử movement. Domain này chỉ dành cho staff/manager/admin, public chỉ nhận stock status gián tiếp qua Product API.
 
+Prompt 32.1 không mở các Admin endpoints design-only bên dưới. Stock mutation là internal capability được gọi trong Order/verified Payment transactions; operation inventory vẫn 196.
+
 ## Endpoint List / Danh sách endpoint
 
 | Method / Method | URI / URI | Purpose / Mục tiêu | Auth / Xác thực | Permission / Quyền |
@@ -122,3 +124,9 @@ Không áp dụng trong Prompt 10.
 
 AI inventory insight thuộc AI/Analytics API, Inventory API chỉ cung cấp source dữ liệu theo quyền.
 
+## Prompt 32.1 Executable Contract / Contract chạy Prompt 32.1
+
+- Không thêm public Inventory endpoint; Product API chỉ trả `availability`/`sellable` và không trả quantity.
+- Cart/Order gọi internal Inventory authority phía server, không nhận availability từ client; Order/verified Payment flow gọi internal stock mutation capability trong caller-owned transaction.
+- Không dùng browser return làm stock authority và không thêm public operation.
+- Các Admin Inventory endpoint ở trên vẫn là design contract, chưa executable trong Prompt 32.1. Exact adjustment payload/idempotency persistence và permission implementation cần prompt riêng; Admin Inventory UI bị loại khỏi scope.

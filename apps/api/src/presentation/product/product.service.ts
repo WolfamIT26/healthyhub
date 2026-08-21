@@ -8,6 +8,7 @@ import {
   PUBLIC_CATALOG_REPOSITORY,
   type PublicCatalogRepository,
 } from '../../data/product/repositories';
+import { evaluateInventoryAvailability } from '../../domain/commerce-dependencies/inventory-availability.reader';
 import type { PublicDirectoryQueryDto, PublicProductQueryDto } from './product.dto';
 import { ProductException } from './product.exception';
 
@@ -200,15 +201,22 @@ export class ProductService {
   }
 
   private availability(product: PublicProductBaseRecord): PublicProductAvailability {
-    if (product.sellableStatus === 'out_of_stock' || product.stockStatus === 'out_of_stock')
-      return 'out_of_stock';
-    if (
-      product.sellableStatus !== 'sellable' ||
-      !product.stockStatus ||
-      product.stockStatus === 'disabled'
-    )
-      return 'unavailable';
-    return product.stockStatus === 'low_stock' ? 'low_stock' : 'in_stock';
+    if (product.sellableStatus === 'out_of_stock') return 'out_of_stock';
+    if (product.sellableStatus !== 'sellable') return 'unavailable';
+    const inventory = evaluateInventoryAvailability(
+      product.stockStatus === null || product.availableQuantity === null
+        ? null
+        : {
+            stockStatus: product.stockStatus,
+            availableQuantity: product.availableQuantity,
+            deletedAt: null,
+          },
+      1,
+    );
+    if (inventory.status === 'OUT_OF_STOCK') return 'out_of_stock';
+    if (inventory.status === 'LOW_STOCK') return 'low_stock';
+    if (inventory.status === 'AVAILABLE') return 'in_stock';
+    return 'unavailable';
   }
 
   private validatePriceRange(query: PublicProductQueryDto) {

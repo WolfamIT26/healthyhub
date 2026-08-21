@@ -1,5 +1,14 @@
 # Domain ChangeLog / Nhật ký thay đổi Domain Model
 
+## [0.3.0] - 2026-08-21
+
+- Approved Prompt 32.1 OrderPlaced reservation, immediate COD consumption and verified VNPAY consume/release lifecycle.
+- Added late-paid reacquire and authoritative cancellation/refund release/restock rules without inventing missing runtime transitions.
+
+## [0.2.0] - 2026-08-21
+
+- Refined Inventory V1 authority, zero-stock rule và explicit Order mutation blocker.
+
 ## [0.1.0] - 2026-08-06
 
 ### Added / Đã thêm

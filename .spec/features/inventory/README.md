@@ -8,7 +8,7 @@
 | Dependency | Products, Orders |
 | Version | MVP |
 | Owner | Manager, Staff |
-| Status | Draft for business specification |
+| Status | Executable read + Order stock mutation authority |
 
 ## Overview / Tổng quan
 
@@ -86,3 +86,13 @@ Customer xem trạng thái public. Staff cập nhật giới hạn. Manager/Admi
 - Multi-location stock.
 - Supplier reorder suggestion.
 
+## Prompt 32.1 Executable Boundary / Ranh giới chạy Prompt 32.1
+
+- `inventory_items` và `InventoryAvailabilityReader` là source of truth cho stock quantity/availability.
+- Zero quantity luôn out-of-stock; missing/deleted/disabled Inventory unavailable.
+- Product public chỉ trả availability/sellable, không trả internal quantity.
+- Cart add/update và Order create revalidate server-side.
+- OrderPlaced reserve stock atomically cho COD/VNPAY; concurrent row locks ngăn oversell.
+- COD consume ngay; VNPAY pending giữ active, verified paid consume, failed/cancelled release.
+- Browser return không có stock effect; duplicate IPN không double effect.
+- Internal restock idempotent đã có; Order cancellation/refund runtime chưa tồn tại nên không tạo trigger giả.

@@ -26,3 +26,5 @@ Development seed idempotent tạo Product BIGINT 1–24 và Inventory tương �
 - Unverified Customer dùng Add/Get/Update/Remove bình thường; email verification chỉ gate Checkout.
 - Server không tin client price, total, stock hoặc ownership.
 - Không localStorage/sessionStorage, Inventory reservation/mutation, Checkout, Coupon, Order hay Payment.
+
+Prompt 32.1 override cho downstream lifecycle: Cart vẫn không mutate stock; `POST /orders` reserve từ persisted Cart trong Order-owned transaction.

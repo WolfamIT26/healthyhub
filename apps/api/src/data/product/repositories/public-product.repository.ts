@@ -35,6 +35,7 @@ export interface PublicProductBaseRecord {
   category: { id: string; slug: string; name: string };
   brand: { id: string; slug: string; name: string } | null;
   stockStatus: 'available' | 'low_stock' | 'out_of_stock' | 'disabled' | null;
+  availableQuantity: number | null;
 }
 
 export interface PublicProductDetails {

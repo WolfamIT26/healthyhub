@@ -25,8 +25,12 @@
 
 ## Explicitly deferred
 
-Guest Cart token/merge, coupon, validate action, Checkout, inventory reservation/mutation, Order, Payment và Wishlist persistence.
+Guest Cart token/merge, coupon và validate action. Cart không reserve stock; Order creation sở hữu reservation theo Prompt 32.1.
 
 Chi tiết: [Cart documentation](../../docs/cart.md).
 
 Prompt 31 keeps this commerce boundary unchanged. Catalog/Detail now supply persisted Product IDs, while Cart continues to revalidate current Product price/sellable state and Inventory availability on the server.
+
+Prompt 32 adds update-quantity regression coverage and ensures an unreadable persisted Product makes Cart invalid. Cart still does not reserve or mutate stock.
+
+Prompt 32.1 keeps Cart unchanged: Product/Inventory regression passes, while reservation begins only after authoritative Order creation starts its transaction.

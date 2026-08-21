@@ -5,6 +5,7 @@ import {
   TypeOrmInventoryAvailabilityRepository,
   TypeOrmProductCommerceRepository,
 } from '../../data/commerce-dependencies/typeorm-commerce-dependency.repositories';
+import { InventoryStockMutationRepository } from '../../data/inventory/repositories';
 import { CUSTOMER_OWNER_REPOSITORY, CustomerOwnerResolver } from './customer-owner.resolver';
 import {
   INVENTORY_AVAILABILITY_REPOSITORY,
@@ -22,8 +23,14 @@ import { PRODUCT_COMMERCE_REPOSITORY, ProductCommerceReader } from './product-co
     { provide: CUSTOMER_OWNER_REPOSITORY, useClass: TypeOrmCustomerOwnerRepository },
     ProductCommerceReader,
     InventoryAvailabilityReader,
+    InventoryStockMutationRepository,
     CustomerOwnerResolver,
   ],
-  exports: [ProductCommerceReader, InventoryAvailabilityReader, CustomerOwnerResolver],
+  exports: [
+    ProductCommerceReader,
+    InventoryAvailabilityReader,
+    InventoryStockMutationRepository,
+    CustomerOwnerResolver,
+  ],
 })
 export class CommerceDependenciesModule {}

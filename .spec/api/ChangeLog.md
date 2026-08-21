@@ -1,5 +1,15 @@
 # API Specification ChangeLog / Nhật ký thay đổi API Specification
 
+## [1.4.0] - 2026-08-21
+
+- Recorded internal Prompt 32.1 Order/Payment stock lifecycle without adding a public/Admin Inventory operation.
+- Operation inventory remains 196; Admin Inventory endpoints stay design-only.
+
+## [1.3.0] - 2026-08-21
+
+- Clarified Prompt 32 internal Inventory read authority and public quantity non-disclosure.
+- Kept Admin Inventory operations design-only; no OpenAPI operation changed.
+
 ## [1.2.0] - 2026-08-13
 
 - Refined executable Product public query, numeric-ID/slug detail, safe response and Inventory availability boundaries for Prompt 31.

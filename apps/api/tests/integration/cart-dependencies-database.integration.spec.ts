@@ -120,6 +120,24 @@ describe.skipIf(!enabled)('Cart dependency MySQL integration', () => {
         stockStatus: 'available',
       }),
     );
+    await expect(
+      manager.query(
+        'INSERT INTO inventory_items (tenant_id, product_id, available_quantity, reserved_quantity, stock_threshold, stock_status) VALUES (?, ?, ?, 0, 0, ?)',
+        ['1', '9223372036854775807', 1, 'available'],
+      ),
+    ).rejects.toBeDefined();
+    await expect(
+      manager.query(
+        'INSERT INTO inventory_items (tenant_id, product_id, available_quantity, reserved_quantity, stock_threshold, stock_status) VALUES (?, ?, ?, 0, 0, ?)',
+        ['1', product.id, -1, 'available'],
+      ),
+    ).rejects.toBeDefined();
+    await expect(
+      manager.query(
+        'INSERT INTO inventory_items (tenant_id, product_id, available_quantity, reserved_quantity, stock_threshold, stock_status) VALUES (?, ?, ?, 0, 0, ?)',
+        ['1', product.id, 1, 'available'],
+      ),
+    ).rejects.toBeDefined();
     const customer = await customerRepository.save(
       customerRepository.create({
         tenantId: '1',

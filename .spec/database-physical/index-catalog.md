@@ -45,7 +45,9 @@ Tài liệu này gom các index vật lý quan trọng để prompt sinh migrati
 | `inventory_items` | Unique | `uq_inventory_items_tenant_product` | `tenant_id`, `product_id` | Một tồn kho chính mỗi product ở MVP. |
 | `inventory_items` | Composite | `idx_inventory_product_status` | `tenant_id`, `product_id`, `stock_status` | Kiểm tra khả năng bán. |
 | `stock_adjustments` | Composite | `idx_stock_adjustments_item_time` | `tenant_id`, `inventory_item_id`, `adjusted_at` | Lịch sử tồn kho. |
-| `stock_reservations` | Composite | `idx_stock_reservations_item_status` | `tenant_id`, `inventory_item_id`, `reservation_status`, `expires_at` | Reservation checkout. |
+| `stock_reservations` | Unique | `uq_stock_reservations_tenant_order_item` | `tenant_id`, `order_id`, `inventory_item_id` | Canonical Order stock idempotency identity. |
+| `stock_reservations` | Composite | `idx_stock_reservations_item_status` | `tenant_id`, `inventory_item_id`, `reservation_status` | Lock/transition theo Inventory item. |
+| `stock_reservations` | Composite | `idx_stock_reservations_order_status` | `tenant_id`, `order_id`, `reservation_status` | Load lifecycle theo Order. |
 | `carts` | Composite | `idx_carts_customer_status` | `tenant_id`, `customer_profile_id`, `cart_status` | Lấy active cart. |
 | `carts` | Composite | `idx_carts_guest_status` | `tenant_id`, `guest_session_reference`, `cart_status` | Lấy guest cart. |
 | `cart_items` | Composite | `idx_cart_items_cart` | `tenant_id`, `cart_id`, `item_status` | Hiển thị giỏ. |

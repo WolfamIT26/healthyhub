@@ -8,6 +8,7 @@ import {
   type AuthenticationRepository,
 } from '../../data/authentication/repositories';
 import { CART_REPOSITORY, type CartRepository } from '../../data/cart/repositories';
+import { InventoryStockMutationError } from '../../data/inventory/repositories';
 import {
   ORDER_REPOSITORY,
   type OrderRepository,
@@ -196,6 +197,18 @@ export class OrderCreationService {
     } catch (error) {
       const raced = await this.orders.findByIdempotency(owner.customerProfileId, keyHash);
       if (raced) return this.resolveIdempotent(raced, requestHash);
+      if (error instanceof InventoryStockMutationError) {
+        if (error.code === 'INSUFFICIENT_STOCK') {
+          this.fail(
+            HttpStatus.CONFLICT,
+            'ORDER.INSUFFICIENT_STOCK',
+            'Tồn kho không đủ để tạo đơn hàng.',
+          );
+        }
+        if (error.code === 'INVENTORY_UNAVAILABLE') {
+          this.fail(HttpStatus.CONFLICT, 'ORDER.CART_INVALID', 'Giỏ hàng không còn hợp lệ.');
+        }
+      }
       throw error;
     }
   }

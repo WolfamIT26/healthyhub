@@ -8,7 +8,9 @@ import * as authenticationEntities from '../../src/data/authentication/entities'
 import * as cartEntities from '../../src/data/cart/entities';
 import { CustomerProfileEntity } from '../../src/data/customer/entities';
 import * as customerEntities from '../../src/data/customer/entities';
+import { InventoryItemEntity, StockReservationEntity } from '../../src/data/inventory/entities';
 import * as inventoryEntities from '../../src/data/inventory/entities';
+import { InventoryStockMutationRepository } from '../../src/data/inventory/repositories';
 import { OrderEntity, OrderItemEntity } from '../../src/data/order/entities';
 import * as orderEntities from '../../src/data/order/entities';
 import { TypeOrmOrderRepository } from '../../src/data/order/repositories';
@@ -19,6 +21,7 @@ import {
 } from '../../src/data/payment/entities';
 import * as paymentEntities from '../../src/data/payment/entities';
 import { TypeOrmPaymentProviderEventRepository } from '../../src/data/payment/repositories';
+import { ProductEntity } from '../../src/data/product/entities';
 import * as productEntities from '../../src/data/product/entities';
 import { ShipmentEntity, ShippingAddressEntity } from '../../src/data/shipping/entities';
 import * as shippingEntities from '../../src/data/shipping/entities';
@@ -76,6 +79,9 @@ describe.skipIf(!enabled)('VNPAY Payment MySQL integration', () => {
     const shipments = dataSource.getRepository(ShipmentEntity);
     const addresses = dataSource.getRepository(ShippingAddressEntity);
     const events = dataSource.getRepository(PaymentProviderEventEntity);
+    const products = dataSource.getRepository(ProductEntity);
+    const inventories = dataSource.getRepository(InventoryItemEntity);
+    const reservations = dataSource.getRepository(StockReservationEntity);
     const user = await users.save(
       users.create({
         email: `vnpay-${suffix}@example.test`,
@@ -101,6 +107,39 @@ describe.skipIf(!enabled)('VNPAY Payment MySQL integration', () => {
         marketingOptInStatus: 'not_opted_in',
       }),
     );
+    const createdProducts = await products.save(
+      [
+        ['VNPAY', '125000.00'],
+        ['COD', '50000.00'],
+        ['FAILED', '75000.00'],
+      ].map(([label, price]) =>
+        products.create({
+          tenantId: '1',
+          brandId: null,
+          productCode: `${label}-${suffix}`,
+          productName: `${label} Stock Lifecycle Product`,
+          slug: `${label.toLowerCase()}-${suffix}`,
+          basePrice: price,
+          sellableStatus: 'sellable',
+          productVisibility: 'public',
+          productStatus: 'active',
+        }),
+      ),
+    );
+    const createdInventories = await inventories.save(
+      createdProducts.map((product, index) =>
+        inventories.create({
+          tenantId: '1',
+          productId: product.id,
+          availableQuantity: index === 2 ? 1 : 2,
+          reservedQuantity: 0,
+          stockThreshold: 0,
+          stockStatus: 'available',
+        }),
+      ),
+    );
+    const [vnpayProduct, codProduct, failedProduct] = createdProducts;
+    const [vnpayInventory, codInventory, failedInventory] = createdInventories;
     const orderRepository = new TypeOrmOrderRepository(dataSource);
     const vnpayAggregate = await orderRepository.createSnapshot({
       customerProfileId: customer.id,
@@ -112,7 +151,7 @@ describe.skipIf(!enabled)('VNPAY Payment MySQL integration', () => {
       actorUserAccountId: user.id,
       items: [
         {
-          productId: null,
+          productId: vnpayProduct.id,
           productName: 'VNPAY Snapshot Product',
           sku: `VNP${suffix}`.slice(0, 64),
           unitPrice: '125000.00',
@@ -147,9 +186,9 @@ describe.skipIf(!enabled)('VNPAY Payment MySQL integration', () => {
       actorUserAccountId: user.id,
       items: [
         {
-          productId: null,
+          productId: codProduct.id,
           productName: 'COD Regression Product',
-          sku: null,
+          sku: codProduct.productCode,
           unitPrice: '50000.00',
           quantity: 1,
           lineTotal: '50000.00',
@@ -161,6 +200,36 @@ describe.skipIf(!enabled)('VNPAY Payment MySQL integration', () => {
         fee: '0.00',
         address: {
           recipientName: 'Nguyễn Văn COD',
+          phone: '0901234567',
+          addressText: JSON.stringify({ countryCode: 'VN', addressLine: '12 Nguyễn Huệ' }),
+          note: null,
+        },
+      },
+    });
+    const failedAggregate = await orderRepository.createSnapshot({
+      customerProfileId: customer.id,
+      cartId: null,
+      orderCode: `HHFAILED${suffix}`.slice(0, 64),
+      orderTotal: '75000.00',
+      idempotencyKeyHash: createHashFixture(`failed-key-${suffix}`),
+      requestHash: createHashFixture(`failed-request-${suffix}`),
+      actorUserAccountId: user.id,
+      items: [
+        {
+          productId: failedProduct.id,
+          productName: 'Failed VNPAY Product',
+          sku: failedProduct.productCode,
+          unitPrice: '75000.00',
+          quantity: 1,
+          lineTotal: '75000.00',
+        },
+      ],
+      payment: { method: 'vnpay', amount: '75000.00', status: 'pending' },
+      shipping: {
+        method: 'manual',
+        fee: '0.00',
+        address: {
+          recipientName: 'Nguyễn Văn Failed',
           phone: '0901234567',
           addressText: JSON.stringify({ countryCode: 'VN', addressLine: '12 Nguyễn Huệ' }),
           note: null,
@@ -185,12 +254,33 @@ describe.skipIf(!enabled)('VNPAY Payment MySQL integration', () => {
       new PaymentLifecyclePolicy(),
       new OrderPaymentMappingPolicy(),
       providerEvents,
+      new InventoryStockMutationRepository(),
     );
     const actor = authentication(user.id);
-    const createdOrderIds = [vnpayAggregate.order.id, codAggregate.order.id];
-    let createdProviderReference: string | null = null;
+    const createdOrderIds = [
+      vnpayAggregate.order.id,
+      codAggregate.order.id,
+      failedAggregate.order.id,
+    ];
+    const createdProviderReferences: string[] = [];
 
     try {
+      expect(await inventories.findOneByOrFail({ id: vnpayInventory.id })).toMatchObject({
+        availableQuantity: 1,
+        reservedQuantity: 1,
+      });
+      expect(
+        await reservations.findOneByOrFail({ orderId: vnpayAggregate.order.id }),
+      ).toMatchObject({ reservationStatus: 'active', reservedQuantity: 1 });
+      expect(await inventories.findOneByOrFail({ id: codInventory.id })).toMatchObject({
+        availableQuantity: 1,
+        reservedQuantity: 0,
+      });
+      expect(await reservations.findOneByOrFail({ orderId: codAggregate.order.id })).toMatchObject({
+        reservationStatus: 'consumed',
+        reservedQuantity: 1,
+      });
+
       const intent = await service.createIntent(
         actor,
         `payment-attempt-${suffix}`,
@@ -204,7 +294,7 @@ describe.skipIf(!enabled)('VNPAY Payment MySQL integration', () => {
       const persistedAttempt = await attempts.findOneByOrFail({
         paymentId: vnpayAggregate.payment.id,
       });
-      createdProviderReference = persistedAttempt.providerReference;
+      createdProviderReferences.push(persistedAttempt.providerReference);
       const paidSignal = signedVnpayQuery(
         {
           vnp_TmnCode: paymentEnvironment.payment.vnpay.tmnCode,
@@ -239,6 +329,13 @@ describe.skipIf(!enabled)('VNPAY Payment MySQL integration', () => {
         orderStatus: 'new',
         paymentStatusSnapshot: 'pending',
       });
+      expect(await inventories.findOneByOrFail({ id: vnpayInventory.id })).toMatchObject({
+        availableQuantity: 1,
+        reservedQuantity: 1,
+      });
+      expect(
+        await reservations.findOneByOrFail({ orderId: vnpayAggregate.order.id }),
+      ).toMatchObject({ reservationStatus: 'active' });
 
       const mismatchedSignal = signedVnpayQuery(
         {
@@ -295,6 +392,13 @@ describe.skipIf(!enabled)('VNPAY Payment MySQL integration', () => {
         attemptStatus: 'paid',
         providerTransactionNo: '222222222',
       });
+      expect(await inventories.findOneByOrFail({ id: vnpayInventory.id })).toMatchObject({
+        availableQuantity: 1,
+        reservedQuantity: 0,
+      });
+      expect(
+        await reservations.findOneByOrFail({ orderId: vnpayAggregate.order.id }),
+      ).toMatchObject({ reservationStatus: 'consumed', consumedAt: expect.any(Date) });
       const shipment = await shipments.findOneByOrFail({ orderId: vnpayAggregate.order.id });
       expect(shipment).toMatchObject({ shippingFee: '0.00', shippingStatus: 'pending' });
       const address = await addresses.findOneByOrFail({ shipmentId: shipment.id });
@@ -343,18 +447,113 @@ describe.skipIf(!enabled)('VNPAY Payment MySQL integration', () => {
         paymentStatusSnapshot: 'pending',
       });
       expect(await attempts.countBy({ paymentId: codAggregate.payment.id })).toBe(0);
+
+      await service.createIntent(
+        actor,
+        `payment-attempt-failed-${suffix}`,
+        { orderId: failedAggregate.order.id, paymentMethod: 'vnpay' },
+        '127.0.0.1',
+      );
+      const failedAttempt = await attempts.findOneByOrFail({
+        paymentId: failedAggregate.payment.id,
+      });
+      createdProviderReferences.push(failedAttempt.providerReference);
+      const failedSignal = signedVnpayQuery(
+        {
+          vnp_TmnCode: paymentEnvironment.payment.vnpay.tmnCode,
+          vnp_TxnRef: failedAttempt.providerReference,
+          vnp_Amount: '7500000',
+          vnp_OrderInfo: 'Thanh toan don hang HealthyHub that bai',
+          vnp_ResponseCode: '99',
+          vnp_TransactionStatus: '02',
+          vnp_TransactionNo: '333333333',
+          vnp_PayDate: '20260812120500',
+        },
+        paymentEnvironment.payment.vnpay.hashSecret,
+      );
+      await expect(service.processVnpayIpn(failedSignal)).resolves.toEqual({
+        rspCode: '00',
+        message: 'Confirm Success',
+      });
+      await expect(service.processVnpayIpn(failedSignal)).resolves.toEqual({
+        rspCode: '00',
+        message: 'Confirm Success',
+      });
+      expect(await payments.findOneByOrFail({ id: failedAggregate.payment.id })).toMatchObject({
+        paymentStatus: 'failed',
+      });
+      expect(await orders.findOneByOrFail({ id: failedAggregate.order.id })).toMatchObject({
+        orderStatus: 'new',
+        paymentStatusSnapshot: 'failed',
+      });
+      expect(await inventories.findOneByOrFail({ id: failedInventory.id })).toMatchObject({
+        availableQuantity: 1,
+        reservedQuantity: 0,
+      });
+      expect(
+        await reservations.findOneByOrFail({ orderId: failedAggregate.order.id }),
+      ).toMatchObject({ reservationStatus: 'released', releasedAt: expect.any(Date) });
+
+      const latePaidSignal = signedVnpayQuery(
+        {
+          vnp_TmnCode: paymentEnvironment.payment.vnpay.tmnCode,
+          vnp_TxnRef: failedAttempt.providerReference,
+          vnp_Amount: '7500000',
+          vnp_OrderInfo: 'Thanh toan muon sau ket qua that bai',
+          vnp_ResponseCode: '00',
+          vnp_TransactionStatus: '00',
+          vnp_TransactionNo: '444444444',
+          vnp_PayDate: '20260812121000',
+        },
+        paymentEnvironment.payment.vnpay.hashSecret,
+      );
+      await expect(service.processVnpayIpn(latePaidSignal)).resolves.toEqual({
+        rspCode: '00',
+        message: 'Confirm Success',
+      });
+      await expect(service.processVnpayIpn(latePaidSignal)).resolves.toEqual({
+        rspCode: '00',
+        message: 'Confirm Success',
+      });
+      expect(await payments.findOneByOrFail({ id: failedAggregate.payment.id })).toMatchObject({
+        paymentStatus: 'paid',
+      });
+      expect(await orders.findOneByOrFail({ id: failedAggregate.order.id })).toMatchObject({
+        orderStatus: 'confirmed',
+        paymentStatusSnapshot: 'paid',
+      });
+      expect(await inventories.findOneByOrFail({ id: failedInventory.id })).toMatchObject({
+        availableQuantity: 0,
+        reservedQuantity: 0,
+        stockStatus: 'out_of_stock',
+      });
+      expect(
+        await reservations.findOneByOrFail({ orderId: failedAggregate.order.id }),
+      ).toMatchObject({
+        reservationStatus: 'consumed',
+        releasedAt: expect.any(Date),
+        reacquiredAt: expect.any(Date),
+        consumedAt: expect.any(Date),
+      });
     } finally {
-      if (createdProviderReference)
-        await events.delete({ providerReference: createdProviderReference });
-      await attempts.delete({ paymentId: vnpayAggregate.payment.id });
+      for (const providerReference of createdProviderReferences) {
+        await events.delete({ providerReference });
+      }
+      for (const orderId of createdOrderIds) {
+        const payment = await payments.findOneBy({ orderId });
+        if (payment) await attempts.delete({ paymentId: payment.id });
+      }
       for (const orderId of createdOrderIds) {
         const shipment = await shipments.findOneBy({ orderId });
         if (shipment) await addresses.delete({ shipmentId: shipment.id });
         await shipments.delete({ orderId });
         await payments.delete({ orderId });
         await orderItems.delete({ orderId });
+        await reservations.delete({ orderId });
         await orders.delete(orderId);
       }
+      await inventories.delete(createdInventories.map((inventory) => inventory.id));
+      await products.delete(createdProducts.map((product) => product.id));
       await customers.delete(customer.id);
       await users.delete(user.id);
     }

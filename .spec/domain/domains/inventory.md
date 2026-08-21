@@ -27,7 +27,7 @@ Quản lý khả năng bán của sản phẩm và cảnh báo tình trạng t�
 
 - Không cho khả năng bán âm ở mức nghiệp vụ.
 - Sản phẩm gần hết cần cảnh báo.
-- Hủy/hoàn đơn phải có rule hoàn tồn kho ở prompt sau.
+- Hủy trước consume phải release; hủy/refund sau consume phải restock từ authoritative Order/refund transaction.
 - Điều chỉnh bất thường cần lý do.
 
 ## Domain Event / Sự kiện domain
@@ -47,3 +47,8 @@ Quản lý khả năng bán của sản phẩm và cảnh báo tình trạng t�
 
 Inventory không quản lý kế toán kho chi tiết hoặc supplier purchasing. Domain này chỉ bảo vệ khả năng bán.
 
+## Prompt 32.1 Decision / Quyết định Prompt 32.1
+
+Executable V1 là read/validation và Order stock mutation authority. Quantity bằng 0 ưu tiên hơn status lưu và phải out-of-stock; Product active/sellable vẫn do Product boundary kết hợp với Inventory availability.
+
+OrderPlaced reserve cho cả COD/VNPAY. COD consume ngay; verified VNPAY paid consume, failed/cancelled release. VNPAY pending không tự expire nếu Payment chưa có authoritative terminal timeout. Unique tenant/Order/Inventory identity và state transition bảo vệ retry; browser return không phải authority.

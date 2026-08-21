@@ -1,5 +1,15 @@
 # Order ChangeLog / Nhật ký thay đổi module đơn hàng
 
+## 2026-08-21 — Prompt 32.1
+
+- Added atomic stock reservation to Order creation and immediate COD consumption.
+- Added rollback/concurrent purchase coverage; Order cannot commit without its stock effect.
+
+## 2026-08-21 — Prompt 32
+
+- Audited Order/Checkout/COD/VNPAY lifecycle and kept stock mutation blocked because reserve/deduct/release/cancellation rules are not canonical yet.
+- Order create continues server stock revalidation without claiming post-commit oversell protection.
+
 ## 2026-08-13 — Prompt 28
 
 ### Added / Thêm mới

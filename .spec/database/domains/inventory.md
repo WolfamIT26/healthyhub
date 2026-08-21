@@ -20,20 +20,21 @@ Lưu khả năng bán của sản phẩm, điều chỉnh tồn, cảnh báo t�
 | `inventory_items` | `id` | `tenant_id`, `available_quantity`, `reserved_quantity`, `stock_threshold`, `stock_status`, `version` | `product_id` -> Product | available, low_stock, out_of_stock, disabled |
 | `stock_adjustments` | `id` | `tenant_id`, `adjustment_type`, `quantity_delta`, `adjustment_reason`, `adjusted_at` | `inventory_item_id`, `adjusted_by` -> User | recorded, reversed |
 | `stock_alerts` | `id` | `tenant_id`, `alert_type`, `alert_status`, `triggered_at`, `resolved_at` | `inventory_item_id` | open, acknowledged, resolved |
-| `stock_reservations` | `id` | `tenant_id`, `reserved_quantity`, `reservation_status`, `reserved_at`, `expires_at`, `released_at` | `inventory_item_id`, `order_id` -> Order nullable, `cart_id` -> Cart nullable | active, consumed, released, expired |
+| `stock_reservations` | `id` | `tenant_id`, `reserved_quantity`, `reservation_status`, `reserved_at`, `consumed_at`, `released_at`, `reacquired_at`, `restocked_at` | `inventory_item_id`, `order_id` -> Order | active, consumed, released, restocked |
 
 ## Relationship & Cardinality / Quan hệ và số lượng
 
 - 1-1: MVP ưu tiên một `inventory_item` cho một product.
 - 1-N: Một inventory item có nhiều adjustment, alert và reservation.
 - N-N: Không có N-N trực tiếp trong MVP; multi-location tương lai có thể thêm location association.
-- Cardinality: Reservation phải gắn product thông qua inventory item và chỉ một trong cart/order context khi phù hợp.
+- Cardinality: Executable reservation luôn gắn một Order và một inventory item; unique tenant/Order/item tạo một business identity.
 
 ## Business Constraints / Ràng buộc nghiệp vụ
 
 - Không được để available quantity logic âm.
-- Order confirmed phải có reservation hoặc rule giảm tồn rõ.
-- Hủy/hoàn đơn phải có adjustment hoặc release reservation theo rule.
+- OrderPlaced phải reserve stock trong cùng transaction tạo Order.
+- COD consume ngay tại OrderPlaced; verified VNPAY paid consume, failed/cancelled release.
+- Future Order cancellation trước consume dùng release; cancellation/refund sau consume dùng restock.
 
 ## Delete Strategy / Chiến lược xóa
 
@@ -57,7 +58,7 @@ Inventory domain sở hữu số lượng và khả năng bán. Product chỉ s�
 
 - `available_quantity` và `reserved_quantity` không âm.
 - `stock_threshold` không âm.
-- `expires_at` sau `reserved_at` nếu reservation có thời hạn.
+- VNPAY pending không có Inventory TTL độc lập khi Payment chưa có authoritative timeout transition.
 
 ## Data Dictionary / Từ điển dữ liệu
 
@@ -67,4 +68,8 @@ Inventory domain sở hữu số lượng và khả năng bán. Product chỉ s�
 | `reserved_quantity` | `inventory_items` | Số lượng đang giữ tạm. | Không âm, không vượt tổng logic. |
 | `stock_status` | `inventory_items` | Trạng thái tồn kho. | available, low_stock, out_of_stock, disabled. |
 | `quantity_delta` | `stock_adjustments` | Chênh lệch điều chỉnh. | Khác 0, có lý do. |
-| `reservation_status` | `stock_reservations` | Trạng thái giữ hàng. | active, consumed, released, expired. |
+| `reservation_status` | `stock_reservations` | Trạng thái giữ hàng. | active, consumed, released, restocked. |
+
+## Prompt 32.1 Executable Persistence / Persistence chạy Prompt 32.1
+
+`inventory_items` tiếp tục là quantity authority. `stock_reservations` là durable Order lifecycle/idempotency record, unique `(tenant_id, order_id, inventory_item_id)` và không tạo quantity authority song song. `stock_adjustments`/`stock_alerts` vẫn design-only vì Admin adjustment/alert chưa thuộc scope.

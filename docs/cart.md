@@ -21,7 +21,7 @@ Owner derive từ authenticated CUSTOMER actor qua CustomerProfile. Client khôn
 - Availability/quantity đọc qua Inventory authority; Cart không reserve hoặc mutate stock.
 - Line total/subtotal tính chính xác phía server; không persist derived current price/total.
 - Duplicate Product merge transactionally. Row lock + unique constraint ngăn double Add tạo hai dòng.
-- Out-of-stock/unavailable item vẫn hiển thị và chặn Checkout, không tự xóa.
+- Out-of-stock/unavailable Product còn đọc được vẫn hiển thị và chặn Checkout, không tự xóa. Nếu persisted Product không còn đọc được, Cart bị đánh dấu invalid thay vì vô tình coi là hợp lệ.
 
 ## Frontend behavior
 
@@ -37,4 +37,4 @@ Development-only seed idempotent cung cấp Product/Inventory IDs 1–24 tương
 
 ## Deferred
 
-Guest Cart/merge, Cart coupon/validate action, Checkout business, Shipping, Payment, Order và Inventory reservation.
+Guest Cart/merge và Cart coupon/validate action. Cart vẫn không reserve stock; reservation bắt đầu ở authoritative Order creation theo Prompt 32.1.

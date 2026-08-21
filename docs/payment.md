@@ -17,6 +17,7 @@ HealthyHub hiện có hai phương thức thanh toán được backend công b�
 - IPN/callback VNPAY đã verify signature là nguồn authoritative cập nhật Payment/Order; provider query chỉ là reconciliation server-side riêng.
 - Event provider được dedupe theo provider/event identity để tránh double effect.
 - Mismatch reference/amount/currency bị reject fail-closed.
+- Prompt 32.1 gắn stock transition vào cùng transaction của provider event: `paid` consume; `failed/cancelled` release. Provider-event identity và reservation state cùng bảo vệ duplicate effect.
 
 ## Sandbox Configuration Audit / Audit cấu hình Sandbox
 
@@ -38,7 +39,8 @@ Hai endpoint Sandbox public được ghi trong file example; giá trị credenti
 - Payment URL lấy `vnp_Amount` từ `orders.order_total` sau khi đối chiếu `payments.payment_amount`.
 - Invalid signature không tạo event; amount mismatch tạo event `failed` và không mutate Payment/Order.
 - Browser return có kết quả `00/00` vẫn giữ Payment/Order `pending/new` cho tới IPN.
-- Valid IPN cập nhật Payment `paid`, attempt `paid`, Order snapshot `paid` và Order `confirmed` trong một transaction; duplicate IPN không double effect.
+- Valid IPN cập nhật Payment `paid`, attempt `paid`, Order snapshot `paid`, Order `confirmed` và consume reservation trong một transaction; duplicate IPN không double stock effect.
+- Failed/cancelled IPN release reservation. Late `failed → paid` phải reacquire stock atomically; thiếu stock giữ Payment cũ và đưa event vào reconciliation thay vì oversell.
 - Reload Payment Result gọi backend và lấy authoritative persisted state.
 - Database verification đã kiểm tra Order, OrderItem, Payment, PaymentAttempt, Shipment, address snapshot và provider-event rows; COD vẫn `pending/new` và không có attempt.
 - Sandbox browser/real IPN chưa chạy vì credential/callback chưa cấu hình: **BLOCKED — SANDBOX CREDENTIALS REQUIRED**.

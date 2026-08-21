@@ -1,5 +1,14 @@
 # Payment ChangeLog
 
+## 2026-08-21 — Prompt 32.1
+
+- Added Inventory reservation transition to the provider-event business-effect transaction.
+- Duplicate IPN cannot double stock effect; failed/cancelled release and late-paid reacquire are fail-closed.
+
+## 2026-08-21 — Prompt 32
+
+- Confirmed browser return remains read-only and IPN dedupe is not reused for stock mutation before an approved Inventory lifecycle/idempotency contract exists.
+
 ## 2026-08-12 — Prompt 27.3
 
 - Fixed official query-string checksum encoding and VNPAY status mapping.

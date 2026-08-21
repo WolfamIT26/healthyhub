@@ -1,5 +1,15 @@
 # Database ChangeLog / Nhật ký thay đổi Logical Database Design
 
+## [0.4.0] - 2026-08-21
+
+- Made Order-scoped `stock_reservations` executable for Prompt 32.1.
+- Canonical identity is unique `(tenant_id, order_id, inventory_item_id)`; states are active/consumed/released/restocked.
+- Kept adjustments/alerts design-only and omitted an independent reservation expiry authority.
+
+## [0.3.0] - 2026-08-21
+
+- Confirmed `inventory_items` as the only executable Inventory persistence in Prompt 32; adjustment/reservation tables remain design-only pending lifecycle decisions.
+
 ## [0.2.0] - 2026-08-13
 
 - Added executable Product dietary/nutrition and featured-state clarification for Prompt 31 while preserving Product/Category/Brand ownership.

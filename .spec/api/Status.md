@@ -25,6 +25,8 @@ API Specification hoàn thành ở mức tài liệu thiết kế để làm đ�
 
 Prompt 31 Product/Category/Brand public read subset is executable and aligned with exact OpenAPI schemas; operation inventory remains 196.
 
+Prompt 32.1 keeps the same 196-operation inventory: internal Order/Payment stock mutation is executable, while Admin Inventory operations remain design-only and outside scope.
+
 ## Not Included / Không bao gồm
 
 - Chưa tạo OpenAPI hoặc Swagger.

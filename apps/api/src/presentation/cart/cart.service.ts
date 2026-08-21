@@ -179,9 +179,9 @@ export class CartService {
       )
     ).filter((item): item is NonNullable<typeof item> => item !== null);
     const subtotal = items.reduce((sum, item) => addMoney(sum, item.lineTotal), '0.00');
-    const isValid = items.every(
-      (item) => item.availability === 'AVAILABLE' || item.availability === 'LOW_STOCK',
-    );
+    const isValid =
+      items.length === persistedItems.length &&
+      items.every((item) => item.availability === 'AVAILABLE' || item.availability === 'LOW_STOCK');
     return {
       id: cart.id,
       status: 'active',

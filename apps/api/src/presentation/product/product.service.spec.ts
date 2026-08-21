@@ -19,6 +19,7 @@ const product = {
   category: { id: '1', slug: 'plant-milk', name: 'Sữa hạt' },
   brand: { id: '1', slug: 'healthyhub-select', name: 'HealthyHub Select' },
   stockStatus: 'available' as const,
+  availableQuantity: 10,
 };
 const relatedProduct = {
   ...product,
@@ -149,6 +150,32 @@ describe('ProductService', () => {
     await expect(service.detail('hidden-product')).rejects.toMatchObject({
       status: 404,
       response: { code: 'NOT_FOUND.PRODUCT.PRODUCT_NOT_FOUND' },
+    });
+  });
+
+  it('maps zero Inventory quantity to out of stock without exposing the quantity', async () => {
+    const { service, repository } = setup();
+    repository.findPublic.mockResolvedValue({
+      ...product,
+      stockStatus: 'available',
+      availableQuantity: 0,
+    });
+    await expect(service.detail(product.slug)).resolves.toMatchObject({
+      availability: 'out_of_stock',
+      sellable: false,
+    });
+    await expect(service.detail(product.slug)).resolves.not.toHaveProperty('availableQuantity');
+  });
+
+  it.each([
+    [{ stockStatus: 'disabled' as const, availableQuantity: 10 }, 'unavailable'],
+    [{ stockStatus: null, availableQuantity: null }, 'unavailable'],
+  ])('maps unavailable Inventory state without a public fallback', async (inventory, expected) => {
+    const { service, repository } = setup();
+    repository.findPublic.mockResolvedValue({ ...product, ...inventory });
+    await expect(service.detail(product.slug)).resolves.toMatchObject({
+      availability: expected,
+      sellable: false,
     });
   });
 

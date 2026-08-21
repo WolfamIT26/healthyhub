@@ -1,5 +1,10 @@
 # Product ChangeLog / Nhật ký Product
 
+## 2026-08-21 — Prompt 32
+
+- Reused the Inventory evaluator for public availability so zero quantity cannot render in-stock.
+- Kept public Product responses free of internal Inventory quantity.
+
 ## 2026-08-13 — Prompt 31
 
 - Added Product/Category/Brand/content/dietary/nutrition/media public-read persistence and migrations.

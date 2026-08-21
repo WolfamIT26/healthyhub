@@ -32,6 +32,8 @@ Mỗi file tổng hợp nên có:
 
 ## Summary Index / Danh sách file tổng hợp
 
+- [Prompt 32.1 - Inventory Lifecycle & Stock Mutation Contract](2026-08-21-02-prompt-32-1-inventory-lifecycle-stock-mutation.md).
+- [Prompt 32 - Inventory Authority V1](2026-08-21-01-prompt-32-inventory-authority-v1.md).
 - [Prompt 31 - Product Backend / Catalog Authority V1](2026-08-13-01-prompt-31-product-backend-catalog-authority-v1.md).
 - [Prompt 30 - Wishlist Persistence V1](2026-08-13-01-prompt-30-wishlist-persistence-v1.md).
 - [Prompt 29 - Customer Profile & Address V1](2026-08-13-01-prompt-29-customer-profile-address-v1.md).

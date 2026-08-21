@@ -34,13 +34,14 @@ Mọi bảng dùng `id BIGINT UNSIGNED NOT NULL`, `tenant_id BIGINT UNSIGNED NOT
 | `stock_alerts` | `triggered_at` | `DATETIME(3)` | No | Current time | Trigger. |
 | `stock_alerts` | `resolved_at` | `DATETIME(3)` | Yes | `NULL` | Resolve. |
 | `stock_reservations` | `inventory_item_id` | `BIGINT UNSIGNED` | No | None | FK Inventory. |
-| `stock_reservations` | `order_id` | `BIGINT UNSIGNED` | Yes | `NULL` | FK Order nullable. |
-| `stock_reservations` | `cart_id` | `BIGINT UNSIGNED` | Yes | `NULL` | FK Cart nullable. |
+| `stock_reservations` | `order_id` | `BIGINT UNSIGNED` | No | None | FK Order. |
 | `stock_reservations` | `reserved_quantity` | `INT UNSIGNED` | No | None | Lớn hơn 0. |
-| `stock_reservations` | `reservation_status` | `VARCHAR(32)` | No | `active` | active/consumed/released/expired. |
+| `stock_reservations` | `reservation_status` | `VARCHAR(32)` | No | `active` | active/consumed/released/restocked. |
 | `stock_reservations` | `reserved_at` | `DATETIME(3)` | No | Current time | Start. |
-| `stock_reservations` | `expires_at` | `DATETIME(3)` | Yes | `NULL` | Expiry. |
+| `stock_reservations` | `consumed_at` | `DATETIME(3)` | Yes | `NULL` | Commit reservation. |
 | `stock_reservations` | `released_at` | `DATETIME(3)` | Yes | `NULL` | Release. |
+| `stock_reservations` | `reacquired_at` | `DATETIME(3)` | Yes | `NULL` | Late-paid reacquire sau release. |
+| `stock_reservations` | `restocked_at` | `DATETIME(3)` | Yes | `NULL` | Restock sau consumed. |
 
 ## Keys & Constraints / Khóa và ràng buộc
 
@@ -49,7 +50,7 @@ Mọi bảng dùng `id BIGINT UNSIGNED NOT NULL`, `tenant_id BIGINT UNSIGNED NOT
 | `inventory_items` | `id` | `product_id` -> `products.id` | `(tenant_id, product_id)` | quantities >= 0 | `idx_inventory_status`, `idx_inventory_product_status` |
 | `stock_adjustments` | `id` | `inventory_item_id`, `adjusted_by` | None | `quantity_delta <> 0` | `idx_stock_adjustments_item_time`, `idx_stock_adjustments_type_time` |
 | `stock_alerts` | `id` | `inventory_item_id` | One open alert per item/type by migration rule | `resolved_at` null hoặc sau `triggered_at` | `idx_stock_alerts_status_time` |
-| `stock_reservations` | `id` | `inventory_item_id`, `order_id`, `cart_id` | None | `reserved_quantity > 0`, exactly one context if enforced | `idx_stock_reservations_item_status`, `idx_stock_reservations_order`, `idx_stock_reservations_cart`, `idx_stock_reservations_expires` |
+| `stock_reservations` | `id` | `inventory_item_id`, `order_id` | `(tenant_id, order_id, inventory_item_id)` | `reserved_quantity > 0`, status whitelist | `idx_stock_reservations_item_status`, `idx_stock_reservations_order_status` |
 
 ## Full Text & Generated Columns / Full text và generated column
 
@@ -66,3 +67,7 @@ Mọi bảng dùng `id BIGINT UNSIGNED NOT NULL`, `tenant_id BIGINT UNSIGNED NOT
 
 - Checkout cần index nhanh theo `product_id` và `stock_status`.
 - `stock_adjustments` và `stock_reservations` có thể archive theo thời gian khi lớn.
+
+## Prompt 32.1 Executable Schema / Schema chạy Prompt 32.1
+
+Migration `1760000013000` tạo InnoDB `stock_reservations` với Order/Inventory FK `RESTRICT`, positive unsigned quantity, state whitelist, lookup indexes và canonical unique business identity. Không có `expires_at`: Inventory không dùng clock độc lập để quyết định Payment terminal. Adjustment/alert vẫn chưa executable.

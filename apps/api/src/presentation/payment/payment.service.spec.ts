@@ -166,6 +166,11 @@ function createFixture(options: { verifiedAmount?: string } = {}) {
     markRejected: vi.fn(),
     findByProviderEvent: vi.fn(),
   };
+  const stockMutations = {
+    consumeForOrder: vi.fn(),
+    releaseForOrder: vi.fn(),
+    restockForOrder: vi.fn(),
+  };
   const service = new PaymentService(
     environment,
     dataSource as never,
@@ -178,9 +183,19 @@ function createFixture(options: { verifiedAmount?: string } = {}) {
     new PaymentLifecyclePolicy(),
     new OrderPaymentMappingPolicy(),
     providerEvents as never,
+    stockMutations as never,
   );
 
-  return { service, dataSource, gateway, providerEvents, order, payment, attempt };
+  return {
+    service,
+    dataSource,
+    gateway,
+    providerEvents,
+    stockMutations,
+    order,
+    payment,
+    attempt,
+  };
 }
 
 const environment = {

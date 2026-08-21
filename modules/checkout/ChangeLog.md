@@ -1,5 +1,14 @@
 # Checkout ChangeLog
 
+## 2026-08-21 — Prompt 32.1
+
+- Checkout remains a client of Order creation; authoritative Order transaction now reserves stock.
+- COD commits stock immediately and VNPAY holds a pending reservation without trusting browser return.
+
+## 2026-08-21 — Prompt 32
+
+- Kept Checkout stock validation server-authoritative and recorded that Checkout/Order do not reserve or deduct stock until the lifecycle is approved.
+
 ## 2026-08-12 — Prompt 27.3
 
 - Verified browser return remains non-authoritative and Result reloads backend Payment state.

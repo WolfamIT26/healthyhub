@@ -115,6 +115,32 @@ describe('CartService', () => {
     });
   });
 
+  it('rejects an update that exceeds Inventory or targets a no-longer-sellable Product', async () => {
+    const excessive = setup();
+    excessive.inventory.checkAvailability.mockResolvedValue({
+      status: 'INSUFFICIENT_STOCK',
+      availableQuantity: 1,
+    });
+    await expect(excessive.service.update(auth, 'item-1', 2)).rejects.toMatchObject({
+      response: { code: 'INSUFFICIENT_STOCK' },
+    });
+    expect(excessive.repository.updateQuantity).not.toHaveBeenCalled();
+
+    const unavailable = setup();
+    unavailable.products.findSellableProduct.mockResolvedValue(null);
+    await expect(unavailable.service.update(auth, 'item-1', 1)).rejects.toMatchObject({
+      response: { code: 'PRODUCT_NOT_AVAILABLE' },
+    });
+    expect(unavailable.repository.updateQuantity).not.toHaveBeenCalled();
+  });
+
+  it('marks a Cart invalid when a persisted Product can no longer be read', async () => {
+    const { service, repository, products } = setup();
+    repository.listActiveItems.mockResolvedValue([{ id: 'item-1', productId: '1', quantity: 1 }]);
+    products.getProductCommerceSnapshot.mockResolvedValue(null);
+    await expect(service.get(auth)).resolves.toMatchObject({ isValid: false, items: [] });
+  });
+
   it('rejects internal actors through CustomerOwnerResolver', async () => {
     const { service, owners } = setup();
     const error = Object.assign(new Error('CUSTOMER_ROLE_REQUIRED'), {

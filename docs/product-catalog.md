@@ -8,7 +8,7 @@ Route `/products` giữ UX Prompt 21 nhưng source of truth production là `GET 
 
 - Product identity, name, slug, price, visibility và sellable state lấy từ Product persistence.
 - Category/Brand/dietary options lấy từ `GET /api/v1/public/products/options`.
-- Availability lấy từ Inventory persistence; frontend không tự quyết định stock/sellable.
+- Availability lấy từ Inventory persistence qua evaluator dùng chung; zero quantity luôn out-of-stock dù persisted status bị trễ. Frontend không tự quyết định stock/sellable.
 - Server xử lý search, filter, sort và pagination. Public chỉ thấy Product active/public có primary Category active/public.
 - Response không chứa internal cost, supplier, audit hoặc inventory quantity.
 

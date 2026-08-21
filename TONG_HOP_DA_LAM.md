@@ -1,5 +1,27 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## Inventory Lifecycle & Stock Mutation Contract — Prompt 32.1
+
+Đã chốt và triển khai canonical lifecycle: OrderPlaced reserve cho COD/VNPAY trong cùng transaction tạo Order; COD consume ngay; VNPAY pending giữ reservation, verified paid IPN consume, failed/cancelled release. Browser return không có stock effect. Late paid sau failed chỉ confirm khi reacquire stock atomically thành công.
+
+Migration mới tạo `stock_reservations` với unique tenant/Order/Inventory identity. Pessimistic row locks theo thứ tự Product ngăn concurrent oversell; state transitions và Payment provider-event dedupe bảo vệ retry/duplicate. Order cancellation/refund runtime chưa có nên không tạo trigger giả; internal restock idempotent đã sẵn sàng.
+
+Không triển khai Admin Inventory UI/API, adjustment, warehouse/supplier/purchase order hoặc Prompt 33.
+
+Verification PASS: format, lint, typecheck, build, 318 unit tests, 10 MySQL files/13 integration tests, 14/14 migrations, OpenAPI 196 operations, secrets/docs/diff checks.
+
+File tổng hợp riêng: `docs/work-summaries/2026-08-21-02-prompt-32-1-inventory-lifecycle-stock-mutation.md`.
+
+## Inventory Authority V1 — Prompt 32
+
+Đã audit Inventory/Product/Cart/Checkout/Order/Payment và giữ `inventory_items` + `InventoryAvailabilityReader` làm authority duy nhất. Product public dùng evaluator chung nên zero quantity luôn out-of-stock nhưng không expose internal quantity; Cart add/update/read tiếp tục server-authoritative và không vô tình coi Cart hợp lệ khi Product persisted không đọc được. Schema hiện tại đã có Product FK, tenant/Product unique và non-negative constraints nên không thêm migration.
+
+Stock Mutation và Order Stock Integration được ghi **BLOCKED** trung thực: lifecycle chưa chốt reserve hay deduct, COD confirmation, VNPAY pending/failed/cancelled release hoặc Order cancellation/restock. Browser VNPAY return vẫn read-only; IPN dedupe không bị dùng để tự phát minh stock effect.
+
+Verification PASS: format, lint, typecheck, build, 315 unit tests, 10 MySQL files/13 integration tests, 13/13 migrations, OpenAPI 196 operations, secrets và docs checks.
+
+File tổng hợp riêng: `docs/work-summaries/2026-08-21-01-prompt-32-inventory-authority-v1.md`.
+
 ## Product Backend / Catalog Authority V1 — Prompt 31
 
 Đã chuyển Product Catalog, Product Detail và keyword Search discovery sang MySQL/API source of truth. Public Product API dùng Product/Category/Brand/Content/Dietary/Nutrition/Media persistence, server pagination/search/filter/sort và Inventory availability; hidden/inactive Product, internal metadata, raw media storage key và client-controlled price/stock đều bị loại khỏi boundary. Related Products do backend chọn cùng primary Category.

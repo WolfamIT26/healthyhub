@@ -13,6 +13,9 @@ describe('Cart dependency migration', () => {
     ]);
     expect(query.mock.calls[1][0]).toContain('fk_customer_profiles_user_account');
     expect(query.mock.calls[2][0]).toContain('fk_inventory_items_product');
+    expect(query.mock.calls[2][0]).toContain('uq_inventory_items_tenant_product');
+    expect(query.mock.calls[2][0]).toContain('INT UNSIGNED NOT NULL DEFAULT 0');
+    expect(query.mock.calls[2][0]).toContain('chk_inventory_quantities');
   });
 
   it('rolls back in reverse dependency order', async () => {

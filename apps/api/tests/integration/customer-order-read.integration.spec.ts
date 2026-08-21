@@ -8,12 +8,15 @@ import * as authenticationEntities from '../../src/data/authentication/entities'
 import * as cartEntities from '../../src/data/cart/entities';
 import { CustomerProfileEntity } from '../../src/data/customer/entities';
 import * as customerEntities from '../../src/data/customer/entities';
+import { InventoryItemEntity, StockReservationEntity } from '../../src/data/inventory/entities';
 import * as inventoryEntities from '../../src/data/inventory/entities';
+import { InventoryStockMutationRepository } from '../../src/data/inventory/repositories';
 import { OrderEntity, OrderItemEntity } from '../../src/data/order/entities';
 import * as orderEntities from '../../src/data/order/entities';
 import { TypeOrmOrderRepository } from '../../src/data/order/repositories';
 import { PaymentEntity } from '../../src/data/payment/entities';
 import * as paymentEntities from '../../src/data/payment/entities';
+import { ProductEntity } from '../../src/data/product/entities';
 import * as productEntities from '../../src/data/product/entities';
 import { ShipmentEntity, ShippingAddressEntity } from '../../src/data/shipping/entities';
 import * as shippingEntities from '../../src/data/shipping/entities';
@@ -59,6 +62,8 @@ describe.skipIf(!enabled)('Customer Order read MySQL integration', () => {
     const customers = dataSource.getRepository(CustomerProfileEntity);
     const orders = dataSource.getRepository(OrderEntity);
     const payments = dataSource.getRepository(PaymentEntity);
+    const products = dataSource.getRepository(ProductEntity);
+    const inventories = dataSource.getRepository(InventoryItemEntity);
     const repository = new TypeOrmOrderRepository(dataSource);
     const createdUsers = await users.save(
       ['a', 'b', 'empty'].map((label) =>
@@ -95,27 +100,69 @@ describe.skipIf(!enabled)('Customer Order read MySQL integration', () => {
     });
     const service = new CustomerOrderService(repository, ownerResolver);
     const createdOrderIds: string[] = [];
+    const product = await products.save(
+      products.create({
+        tenantId: '1',
+        brandId: null,
+        productCode: `READ-${suffix}`,
+        productName: 'Persisted snapshot item',
+        slug: `read-${suffix}`,
+        basePrice: '125000.00',
+        sellableStatus: 'sellable',
+        productVisibility: 'public',
+        productStatus: 'active',
+      }),
+    );
+    const inventory = await inventories.save(
+      inventories.create({
+        tenantId: '1',
+        productId: product.id,
+        availableQuantity: 10,
+        reservedQuantity: 0,
+        stockThreshold: 1,
+        stockStatus: 'available',
+      }),
+    );
 
     try {
-      const codOlder = await createOrder(repository, createdCustomers[0].id, createdUsers[0].id, {
-        suffix: `${suffix}1`,
-        method: 'cod',
-        total: '50000.00',
-      });
-      const vnpayPaid = await createOrder(repository, createdCustomers[0].id, createdUsers[0].id, {
-        suffix: `${suffix}2`,
-        method: 'vnpay',
-        total: '125000.00',
-      });
-      const codNewest = await createOrder(repository, createdCustomers[0].id, createdUsers[0].id, {
-        suffix: `${suffix}3`,
-        method: 'cod',
-        total: '75000.00',
-      });
+      const codOlder = await createOrder(
+        repository,
+        createdCustomers[0].id,
+        createdUsers[0].id,
+        product.id,
+        {
+          suffix: `${suffix}1`,
+          method: 'cod',
+          total: '50000.00',
+        },
+      );
+      const vnpayPaid = await createOrder(
+        repository,
+        createdCustomers[0].id,
+        createdUsers[0].id,
+        product.id,
+        {
+          suffix: `${suffix}2`,
+          method: 'vnpay',
+          total: '125000.00',
+        },
+      );
+      const codNewest = await createOrder(
+        repository,
+        createdCustomers[0].id,
+        createdUsers[0].id,
+        product.id,
+        {
+          suffix: `${suffix}3`,
+          method: 'cod',
+          total: '75000.00',
+        },
+      );
       const customerBOrder = await createOrder(
         repository,
         createdCustomers[1].id,
         createdUsers[1].id,
+        product.id,
         { suffix: `${suffix}4`, method: 'cod', total: '99000.00' },
       );
       createdOrderIds.push(
@@ -141,6 +188,13 @@ describe.skipIf(!enabled)('Customer Order read MySQL integration', () => {
         providerReference: `HHVNP${suffix}`.slice(0, 64),
         paidAt: new Date('2026-08-02T08:05:00.000Z'),
       });
+      await dataSource.transaction((manager) =>
+        new InventoryStockMutationRepository().consumeForOrder(
+          manager,
+          vnpayPaid.order.id,
+          createdUsers[0].id,
+        ),
+      );
 
       await expect(
         service.list(customerActor(createdUsers[2].id), { page: 1, pageSize: 20 }),
@@ -241,8 +295,13 @@ describe.skipIf(!enabled)('Customer Order read MySQL integration', () => {
             .getRepository(OrderItemEntity)
             .delete(persistedItems.map((item) => item.id));
         }
+        await dataSource
+          .getRepository(StockReservationEntity)
+          .delete({ orderId: In(createdOrderIds) });
         await dataSource.getRepository(OrderEntity).delete(createdOrderIds);
       }
+      await inventories.delete(inventory.id);
+      await products.delete(product.id);
       await customers.delete(createdCustomers.map((item) => item.id));
       await users.delete(createdUsers.map((item) => item.id));
     }
@@ -253,6 +312,7 @@ async function createOrder(
   repository: TypeOrmOrderRepository,
   customerProfileId: string,
   userAccountId: string,
+  productId: string,
   input: { suffix: string; method: 'cod' | 'vnpay'; total: string },
 ) {
   return repository.createSnapshot({
@@ -265,7 +325,7 @@ async function createOrder(
     actorUserAccountId: userAccountId,
     items: [
       {
-        productId: null,
+        productId,
         productName: 'Persisted snapshot item',
         sku: `READ${input.suffix}`.slice(0, 64),
         unitPrice: input.total,

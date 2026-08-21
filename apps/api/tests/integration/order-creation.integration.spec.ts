@@ -8,8 +8,9 @@ import * as cartEntities from '../../src/data/cart/entities';
 import { TypeOrmCartRepository } from '../../src/data/cart/repositories';
 import { CustomerProfileEntity } from '../../src/data/customer/entities';
 import * as customerEntities from '../../src/data/customer/entities';
-import { InventoryItemEntity } from '../../src/data/inventory/entities';
+import { InventoryItemEntity, StockReservationEntity } from '../../src/data/inventory/entities';
 import * as inventoryEntities from '../../src/data/inventory/entities';
+import { InventoryStockMutationRepository } from '../../src/data/inventory/repositories';
 import { OrderEntity, OrderItemEntity } from '../../src/data/order/entities';
 import * as orderEntities from '../../src/data/order/entities';
 import { TypeOrmOrderRepository } from '../../src/data/order/repositories';
@@ -181,14 +182,14 @@ describe.skipIf(!enabled)('Order creation MySQL integration', () => {
       paymentMethod: 'cod' as const,
     };
 
-    let createdOrderId: string | null = null;
+    const createdOrderIds: string[] = [];
     try {
       const first = await service.createOrderFromCheckout(
         actor(createdUsers[0].id),
         `order-attempt-${suffix}`,
         request,
       );
-      createdOrderId = first.orderId;
+      createdOrderIds.push(first.orderId);
       const retry = await service.createOrderFromCheckout(
         actor(createdUsers[0].id),
         `order-attempt-${suffix}`,
@@ -228,6 +229,20 @@ describe.skipIf(!enabled)('Order creation MySQL integration', () => {
         paidAt: null,
         providerReference: null,
       });
+      expect(await inventories.findOneByOrFail({ id: inventory.id })).toMatchObject({
+        availableQuantity: 3,
+        reservedQuantity: 0,
+        stockStatus: 'available',
+      });
+      expect(
+        await dataSource
+          .getRepository(StockReservationEntity)
+          .findOneByOrFail({ orderId: first.orderId }),
+      ).toMatchObject({
+        reservedQuantity: 2,
+        reservationStatus: 'consumed',
+        consumedAt: expect.any(Date),
+      });
       const persistedShipment = await dataSource
         .getRepository(ShipmentEntity)
         .findOneByOrFail({ orderId: first.orderId });
@@ -256,6 +271,9 @@ describe.skipIf(!enabled)('Order creation MySQL integration', () => {
       const orderCountBeforeRollbackAttempt = await dataSource
         .getRepository(OrderEntity)
         .countBy({ customerProfileId: createdCustomers[0].id });
+      const reservationCountBeforeRollbackAttempt = await dataSource
+        .getRepository(StockReservationEntity)
+        .count();
       await expect(
         orderRepository.createSnapshot({
           customerProfileId: createdCustomers[0].id,
@@ -271,11 +289,11 @@ describe.skipIf(!enabled)('Order creation MySQL integration', () => {
               productName: product.productName,
               sku: product.productCode,
               unitPrice: product.basePrice,
-              quantity: 0,
-              lineTotal: '0.00',
+              quantity: 1,
+              lineTotal: product.basePrice,
             },
           ],
-          payment: { method: 'cod', amount: '125000.00', status: 'pending' },
+          payment: { method: 'unsupported', amount: '125000.00', status: 'pending' },
           shipping: {
             method: 'manual',
             fee: '0.00',
@@ -286,15 +304,87 @@ describe.skipIf(!enabled)('Order creation MySQL integration', () => {
               note: null,
             },
           },
-        }),
+        } as never),
       ).rejects.toBeDefined();
       expect(
         await dataSource
           .getRepository(OrderEntity)
           .countBy({ customerProfileId: createdCustomers[0].id }),
       ).toBe(orderCountBeforeRollbackAttempt);
+      expect(await inventories.findOneByOrFail({ id: inventory.id })).toMatchObject({
+        availableQuantity: 3,
+        reservedQuantity: 0,
+      });
+      expect(await dataSource.getRepository(StockReservationEntity).count()).toBe(
+        reservationCountBeforeRollbackAttempt,
+      );
+
+      const concurrentInputs = ['A', 'B'].map((label) => ({
+        customerProfileId: createdCustomers[0].id,
+        cartId: cart!.id,
+        orderCode: `HH-CONCURRENT-${label}-${suffix}`,
+        orderTotal: '250000.00',
+        idempotencyKeyHash: `${label.toLowerCase()}`.repeat(64),
+        requestHash: `${label === 'A' ? 'e' : 'f'}`.repeat(64),
+        actorUserAccountId: createdUsers[0].id,
+        items: [
+          {
+            productId: product.id,
+            productName: product.productName,
+            sku: product.productCode,
+            unitPrice: product.basePrice,
+            quantity: 2,
+            lineTotal: '250000.00',
+          },
+        ],
+        payment: { method: 'cod' as const, amount: '250000.00', status: 'pending' as const },
+        shipping: {
+          method: 'manual' as const,
+          fee: '0.00' as const,
+          address: {
+            recipientName: address.recipientName,
+            phone: address.phone,
+            addressText: JSON.stringify(address),
+            note: null,
+          },
+        },
+      }));
+      const concurrentResults = await Promise.allSettled(
+        concurrentInputs.map((input) => orderRepository.createSnapshot(input)),
+      );
+      expect(concurrentResults.filter((result) => result.status === 'fulfilled')).toHaveLength(1);
+      expect(concurrentResults.filter((result) => result.status === 'rejected')).toHaveLength(1);
+      for (const result of concurrentResults) {
+        if (result.status === 'fulfilled') createdOrderIds.push(result.value.order.id);
+      }
+      expect(await inventories.findOneByOrFail({ id: inventory.id })).toMatchObject({
+        availableQuantity: 1,
+        reservedQuantity: 0,
+        stockStatus: 'low_stock',
+      });
+      expect(
+        (await inventories.findOneByOrFail({ id: inventory.id })).availableQuantity,
+      ).toBeGreaterThanOrEqual(0);
+
+      const stockMutations = new InventoryStockMutationRepository();
+      await dataSource.transaction((manager) =>
+        stockMutations.restockForOrder(manager, first.orderId, createdUsers[0].id),
+      );
+      await dataSource.transaction((manager) =>
+        stockMutations.restockForOrder(manager, first.orderId, createdUsers[0].id),
+      );
+      expect(await inventories.findOneByOrFail({ id: inventory.id })).toMatchObject({
+        availableQuantity: 3,
+        reservedQuantity: 0,
+        stockStatus: 'available',
+      });
+      expect(
+        await dataSource
+          .getRepository(StockReservationEntity)
+          .findOneByOrFail({ orderId: first.orderId }),
+      ).toMatchObject({ reservationStatus: 'restocked', restockedAt: expect.any(Date) });
     } finally {
-      if (createdOrderId) {
+      for (const createdOrderId of createdOrderIds) {
         const shipment = await dataSource
           .getRepository(ShipmentEntity)
           .findOneBy({ orderId: createdOrderId });
@@ -303,6 +393,7 @@ describe.skipIf(!enabled)('Order creation MySQL integration', () => {
         await dataSource.getRepository(ShipmentEntity).delete({ orderId: createdOrderId });
         await dataSource.getRepository(PaymentEntity).delete({ orderId: createdOrderId });
         await dataSource.getRepository(OrderItemEntity).delete({ orderId: createdOrderId });
+        await dataSource.getRepository(StockReservationEntity).delete({ orderId: createdOrderId });
         await dataSource.getRepository(OrderEntity).delete(createdOrderId);
       }
       if (cart) {

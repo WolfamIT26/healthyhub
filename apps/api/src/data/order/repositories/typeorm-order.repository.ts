@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, In, type EntityManager } from 'typeorm';
 
+import { InventoryStockMutationRepository } from '../../inventory/repositories';
 import { OrderEntity, OrderItemEntity } from '../entities';
 import { PaymentEntity } from '../../payment/entities';
 import { ShipmentEntity, ShippingAddressEntity } from '../../shipping/entities';
@@ -14,7 +15,10 @@ import type {
 
 @Injectable()
 export class TypeOrmOrderRepository implements OrderRepository {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly stockMutations: InventoryStockMutationRepository = new InventoryStockMutationRepository(),
+  ) {}
 
   async findByIdempotency(
     customerProfileId: string,
@@ -148,6 +152,20 @@ export class TypeOrmOrderRepository implements OrderRepository {
           updatedBy: input.actorUserAccountId,
         }),
       );
+      await this.stockMutations.reserveForOrder(manager, {
+        tenantId: order.tenantId,
+        orderId: order.id,
+        actorUserAccountId: input.actorUserAccountId,
+        items: input.items,
+      });
+      if (input.payment.method === 'cod') {
+        await this.stockMutations.consumeForOrder(
+          manager,
+          order.id,
+          input.actorUserAccountId,
+          order.tenantId,
+        );
+      }
       const itemRepository = manager.getRepository(OrderItemEntity);
       const items = await itemRepository.save(
         input.items.map((item) =>

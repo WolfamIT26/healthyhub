@@ -49,7 +49,9 @@ describe('Cart minimum executable dependencies', () => {
     [{ availableQuantity: 3, stockStatus: 'low_stock', deletedAt: null }, 2, 'LOW_STOCK'],
     [{ availableQuantity: 2, stockStatus: 'available', deletedAt: null }, 3, 'INSUFFICIENT_STOCK'],
     [{ availableQuantity: 0, stockStatus: 'out_of_stock', deletedAt: null }, 1, 'OUT_OF_STOCK'],
+    [{ availableQuantity: 0, stockStatus: 'available', deletedAt: null }, 1, 'OUT_OF_STOCK'],
     [{ availableQuantity: 5, stockStatus: 'disabled', deletedAt: null }, 1, 'UNAVAILABLE'],
+    [{ availableQuantity: 5, stockStatus: 'available', deletedAt: new Date() }, 1, 'UNAVAILABLE'],
   ])(
     'evaluates Inventory availability without mutation or fake fallback',
     async (item, quantity, status) => {

@@ -26,7 +26,7 @@ export class TypeOrmInventoryAvailabilityRepository implements InventoryAvailabi
     this.inventory = dataSource.getRepository(InventoryItemEntity);
   }
   findByProductId(productId: string) {
-    return this.inventory.findOne({ where: { productId } });
+    return this.inventory.findOne({ where: { tenantId: '1', productId } });
   }
 }
 
