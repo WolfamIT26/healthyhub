@@ -38,10 +38,10 @@ Order:
   properties:
     orderId: { type: string }
     orderNumber: { type: string }
-    status: { type: string, enum: [new, confirmed] }
+    status: { type: string, enum: [new, confirmed, completed, cancelled, returned] }
     paymentStatus: { type: string, enum: [unpaid, pending, paid, failed, cancelled] }
     paymentMethod: { type: string, enum: [cod, vnpay] }
-    shippingStatus: { type: string, const: pending }
+    shippingStatus: { type: string, enum: [pending, shipped, delivered, cancelled, returned] }
     shippingMethod: { type: string, const: manual }
     items: { type: array, minItems: 1, items: { $ref: "#/OrderItem" } }
     subtotal: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
@@ -57,10 +57,10 @@ CustomerOrderListItem:
   properties:
     orderId: { type: string, pattern: "^[1-9][0-9]*$" }
     orderNumber: { type: string, maxLength: 64 }
-    orderStatus: { type: string, enum: [new, confirmed] }
+    orderStatus: { type: string, enum: [new, confirmed, completed, cancelled, returned] }
     paymentStatus: { type: string, enum: [unpaid, pending, paid, failed, cancelled] }
     paymentMethod: { type: string, enum: [cod, vnpay] }
-    shippingStatus: { type: string, enum: [pending] }
+    shippingStatus: { type: string, enum: [pending, shipped, delivered, cancelled, returned] }
     itemCount: { type: integer, minimum: 0 }
     total: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
     currency: { type: string, const: VND }
@@ -126,7 +126,7 @@ CustomerOrderShipping:
   required: [method, status, fee, trackingReference, shippedAt, deliveredAt]
   properties:
     method: { type: string, enum: [manual] }
-    status: { type: string, enum: [pending] }
+    status: { type: string, enum: [pending, shipped, delivered, cancelled, returned] }
     fee: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }
     trackingReference: { type: [string, "null"] }
     shippedAt: { type: [string, "null"], format: date-time }
@@ -138,10 +138,10 @@ CustomerOrderDetail:
   properties:
     orderId: { type: string, pattern: "^[1-9][0-9]*$" }
     orderNumber: { type: string, maxLength: 64 }
-    orderStatus: { type: string, enum: [new, confirmed] }
+    orderStatus: { type: string, enum: [new, confirmed, completed, cancelled, returned] }
     paymentStatus: { type: string, enum: [unpaid, pending, paid, failed, cancelled] }
     paymentMethod: { type: string, enum: [cod, vnpay] }
-    shippingStatus: { type: string, enum: [pending] }
+    shippingStatus: { type: string, enum: [pending, shipped, delivered, cancelled, returned] }
     shippingMethod: { type: string, enum: [manual] }
     items: { type: array, minItems: 1, items: { $ref: "#/OrderItem" } }
     subtotal: { type: string, pattern: "^[0-9]+\\.[0-9]{2}$" }

@@ -1,5 +1,9 @@
 # Inventory API Specification / Đặc tả API tồn kho
 
+## Prompt 33.1 runtime note
+
+Cancellation/full-return stock restore is internal to the owning Order transaction; no Inventory endpoint is added.
+
 ## API Overview / Tổng quan API
 
 Inventory API quản lý tồn kho, khả năng bán, cảnh báo tồn kho, điều chỉnh tồn kho và lịch sử movement. Domain này chỉ dành cho staff/manager/admin, public chỉ nhận stock status gián tiếp qua Product API.

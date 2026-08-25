@@ -4,6 +4,10 @@
 
 Shipping API quản lý shipping quote, shipment, tracking và webhook đơn vị vận chuyển tương lai. Address và phone cần masking theo quyền.
 
+## Prompt 33.1 runtime note / Ghi chú runtime
+
+Fulfillment transitions are executable only through internal `OrderFulfillmentService`; the Admin/tracking/provider endpoints listed as design inventory below are not opened. This prevents a fake frontend or provider authority before actor/permission contracts exist.
+
 ## Endpoint List / Danh sách endpoint
 
 | Method / Method | URI / URI | Purpose / Mục tiêu | Auth / Xác thực | Permission / Quyền |
@@ -85,6 +89,7 @@ Shipping API quản lý shipping quote, shipment, tracking và webhook đơn v�
 ## Business Rule / Quy tắc nghiệp vụ
 
 - Shipping status phải đồng bộ với order lifecycle nhưng Shipping là domain sở hữu shipment.
+- Canonical flow is `pending → shipped → delivered → returned`, or `pending → cancelled`; COD/VNPAY readiness is enforced server-side.
 - Tracking event không được sửa lịch sử nếu không có audit.
 
 ## Pagination / Phân trang
@@ -130,4 +135,3 @@ Export shipment report nếu có dùng export contract.
 ## AI Endpoint / Endpoint AI
 
 Không áp dụng trực tiếp. AI customer support có thể dùng tracking summary qua AI API theo quyền.
-

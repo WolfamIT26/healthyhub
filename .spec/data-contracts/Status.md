@@ -29,6 +29,10 @@ File này theo dõi trạng thái bộ Data Contract Specification của Healthy
 
 Data Contract Specification hoàn thành ở mức tài liệu nền để làm đầu vào cho API Specification.
 
+Prompt 33.1 aligns Order/Shipment lifecycle enums and future Review publication vocabulary with executable contracts.
+
+Prompt 33.2 adds executable typed Review create/update/list/summary/eligibility data contracts without exposing Customer PII or client-controlled authority flags.
+
 ## Not Included / Không bao gồm
 
 - Chưa tạo API endpoint.
@@ -36,4 +40,3 @@ Data Contract Specification hoàn thành ở mức tài liệu nền để làm 
 - Chưa tạo entity, ORM model hoặc migration.
 - Chưa viết OpenAPI cho từng endpoint.
 - Chưa triển khai validation runtime.
-

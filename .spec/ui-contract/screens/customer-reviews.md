@@ -25,6 +25,8 @@ Customer/member/VIP, owner only.
 - `PATCH /api/v1/me/reviews/{reviewId}`.
 - `DELETE /api/v1/me/reviews/{reviewId}`.
 
+Prompt 33.2 runtime note: bốn Customer operations executable và owner controls đã tích hợp ở Product Detail. Dedicated `/account/reviews` route vẫn design-only/outside Prompt 33.2; không claim route runtime.
+
 ## Required Data / Dữ liệu bắt buộc
 
 Review list/detail, product summary, rating, content, reviewStatus, validation response.
@@ -75,7 +77,7 @@ Skeleton review list và disabled form khi submit.
 
 ## Empty State / Trạng thái rỗng
 
-Chưa có review, gợi ý xem đơn đã hoàn tất.
+Khi chưa eligible, Product Detail hiển thị safe reason từ backend; không suy diễn từ client Order/Payment labels.
 
 ## Error State / Trạng thái lỗi
 
@@ -108,4 +110,3 @@ Rating input có label bằng text, không chỉ dùng sao/màu.
 ## SEO Metadata / SEO metadata
 
 Noindex vì là dữ liệu cá nhân.
-

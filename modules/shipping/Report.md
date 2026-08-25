@@ -1,5 +1,9 @@
 # Shipping Authority Report — Prompt 26.1A
 
+## Prompt 33.1 result
+
+**Internal fulfillment lifecycle: READY.** Shipment transitions now persist exact status, monotonic timestamps and durable histories in the same transaction as Order completion/cancellation/return and Inventory effects. No provider, tracking or Admin/public mutation API was added.
+
 ## Status
 
 **READY — minimum internal Shipping V1 authority executable.**
@@ -15,7 +19,7 @@
 
 Method duy nhất là `manual`, fee server-authoritative `0.00 VND`, không ETA/provider. Chỉ địa chỉ `VN` hợp lệ được serviceable. Quote reference deterministic theo normalized address + authoritative Cart context.
 
-Không có Shipment persistence/fulfillment, provider API, Admin UI hoặc frontend Checkout trong prompt này.
+Prompt 26.1A did not add Shipment persistence/fulfillment. That historical boundary is superseded for fulfillment by Prompt 33.1; provider API and Admin UI remain absent.
 
 Chi tiết quyết định: [Decision.md](Decision.md).
 

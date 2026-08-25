@@ -14,5 +14,8 @@ Product public read model batch-join Inventory persistence và dùng cùng evalu
 - `consumeForOrder`: active thì `reserved -= quantity`; available không giảm lần hai. Released reservation từ late-paid IPN phải reacquire `available -= quantity` trước khi consume.
 - `releaseForOrder`: active thì `available += quantity`, `reserved -= quantity`.
 - `restockForOrder`: consumed thì `available += quantity`.
+- `restoreForOrder`: authoritative cancellation chọn active `→ released` hoặc consumed `→ restocked`; retry released/restocked là no-op.
 
 Order repository sở hữu transaction reserve + COD consume + aggregate persistence. Payment provider-event repository sở hữu transaction VNPAY transition + Payment/Order effect + event processed marker. Mọi transition retry cùng state là idempotent; state conflict hoặc invariant mismatch fail closed.
+
+Prompt 33.1 `OrderFulfillmentService` sở hữu cancel-before-shipment/full-return transaction và gọi `restoreForOrder`/`restockForOrder` trước khi commit terminal Order/Shipment histories. Refund Payment riêng không gọi Inventory trực tiếp.

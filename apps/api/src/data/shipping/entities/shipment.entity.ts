@@ -2,6 +2,8 @@ import { Column, Entity, Index } from 'typeorm';
 
 import { BaseAuditEntity } from '../../../database/base-audit.entity';
 
+export type ShipmentStatus = 'pending' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
+
 @Entity({ name: 'shipments' })
 @Index('uq_shipments_tenant_order', ['tenantId', 'orderId'], { unique: true })
 @Index('idx_shipments_status_time', ['tenantId', 'shippingStatus', 'createdAt'])
@@ -13,7 +15,7 @@ export class ShipmentEntity extends BaseAuditEntity {
   @Column({ name: 'shipping_fee', type: 'decimal', precision: 12, scale: 2, default: '0.00' })
   shippingFee!: '0.00';
   @Column({ name: 'shipping_status', type: 'varchar', length: 32, default: 'pending' })
-  shippingStatus!: 'pending';
+  shippingStatus!: ShipmentStatus;
   @Column({ name: 'tracking_reference', type: 'varchar', length: 191, nullable: true })
   trackingReference!: string | null;
   @Column({ name: 'shipped_at', type: 'datetime', precision: 3, nullable: true })

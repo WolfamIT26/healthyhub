@@ -14,6 +14,8 @@ import {
   type OrderRepository,
   type PersistedOrderAggregate,
 } from '../../data/order/repositories';
+import type { OrderStatus } from '../../data/order/entities';
+import type { ShipmentStatus } from '../../data/shipping/entities';
 import {
   CustomerOwnerResolutionError,
   CustomerOwnerResolver,
@@ -37,10 +39,10 @@ import { OrderException } from './order.exception';
 export interface OrderReadModel {
   orderId: string;
   orderNumber: string;
-  status: 'new' | 'confirmed';
+  status: OrderStatus;
   paymentStatus: 'unpaid' | 'pending' | 'paid' | 'failed' | 'cancelled';
   paymentMethod: 'cod' | 'vnpay';
-  shippingStatus: 'pending';
+  shippingStatus: ShipmentStatus;
   shippingMethod: 'manual';
   items: Array<{
     productId: string | null;

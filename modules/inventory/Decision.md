@@ -18,3 +18,5 @@
 ## Cancellation / Refund Boundary / Ranh giới hủy và hoàn tiền
 
 Order cancellation/refund API và status transition chưa executable. Vì vậy Prompt 32.1 không tạo trigger giả: future cancellation của active reservation phải `release`; cancellation/refund đã consumed chỉ được `restock` trong cùng authoritative Order/refund transaction. `restock` hiện là internal idempotent primitive.
+
+Prompt 33.1 supersedes runtime portion: internal Order fulfillment transaction now owns cancel before shipment and full return after delivery. It releases active reservations or restocks consumed reservations atomically. Payment refund alone remains non-authoritative for stock.

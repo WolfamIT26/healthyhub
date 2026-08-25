@@ -4,6 +4,10 @@
 
 Feature Specifications cho HealthyHub đã được tạo ở cấp nghiệp vụ trong `.spec/features`. Mỗi feature có folder riêng và `README.md` chứa đầy đủ các mục Prompt 06 yêu cầu.
 
+Prompt 33.1 makes Order/Shipping fulfillment and Review eligibility executable while keeping Review persistence/API/UI out of scope.
+
+Prompt 33.2 makes Reviews & Ratings V1 public/customer persistence, API, aggregate and Product Detail executable. Admin moderation remains future scope.
+
 ## Completed / Đã hoàn thành
 
 - Tạo Feature Index.
@@ -27,4 +31,3 @@ Feature Specifications cho HealthyHub đã được tạo ở cấp nghiệp v�
 ## Next Recommended Step / Bước tiếp theo đề xuất
 
 Prompt tiếp theo nên chọn từng feature hoặc từng nhóm feature để tạo Database Design, API Design hoặc UI Design theo đúng thứ tự phát triển.
-

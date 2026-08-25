@@ -1,5 +1,9 @@
 # Payment Domain / Domain thanh toán
 
+## Prompt 33.1 fulfillment separation
+
+Verified VNPAY paid may confirm Order but never means delivered/completed. Late paid for cancelled/returned Order requires reconciliation. Refund execution remains a separate future Payment workflow.
+
 ## Purpose / Mục đích
 
 Quản lý phương thức, trạng thái và điều chỉnh thanh toán ở mức nghiệp vụ.
@@ -46,4 +50,3 @@ Quản lý phương thức, trạng thái và điều chỉnh thanh toán ở m�
 ## Boundary / Ranh giới
 
 Payment không quản lý thông tin thẻ/credential nhạy cảm. Domain chỉ quản lý trạng thái và rule nghiệp vụ thanh toán.
-

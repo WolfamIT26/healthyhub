@@ -32,11 +32,15 @@ export class CreateOrderDto {
 export class CustomerOrderListQueryDto {
   @Type(() => Number) @IsInt() @Min(1) page = 1;
   @Type(() => Number) @IsInt() @Min(1) @Max(100) pageSize = 20;
-  @IsOptional() @IsIn(['new', 'confirmed']) orderStatus?: 'new' | 'confirmed';
+  @IsOptional()
+  @IsIn(['new', 'confirmed', 'completed', 'cancelled', 'returned'])
+  orderStatus?: 'new' | 'confirmed' | 'completed' | 'cancelled' | 'returned';
   @IsOptional()
   @IsIn(['unpaid', 'pending', 'paid', 'failed', 'cancelled'])
   paymentStatus?: 'unpaid' | 'pending' | 'paid' | 'failed' | 'cancelled';
-  @IsOptional() @IsIn(['pending']) shippingStatus?: 'pending';
+  @IsOptional()
+  @IsIn(['pending', 'shipped', 'delivered', 'cancelled', 'returned'])
+  shippingStatus?: 'pending' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
   @IsOptional() @IsISO8601({ strict: true }) dateFrom?: string;
   @IsOptional() @IsISO8601({ strict: true }) dateTo?: string;
 }

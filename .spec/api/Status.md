@@ -27,6 +27,10 @@ Prompt 31 Product/Category/Brand public read subset is executable and aligned wi
 
 Prompt 32.1 keeps the same 196-operation inventory: internal Order/Payment stock mutation is executable, while Admin Inventory operations remain design-only and outside scope.
 
+Prompt 33.1 keeps the same 196-operation inventory. All 8 Review operations remain runtime-blocked with `REVIEW_PERSISTENCE_API_NOT_IMPLEMENTED`; Order completion/delivery eligibility itself is READY. Customer Order schemas/filters now expose canonical fulfillment states; no transition endpoint was added.
+
+Prompt 33.2 keeps 196 operations: 6 public/customer Review operations now use executable typed contracts; 2 Admin moderation operations remain runtime-blocked with `ADMIN_REVIEW_MODERATION_NOT_IMPLEMENTED`.
+
 ## Not Included / Không bao gồm
 
 - Chưa tạo OpenAPI hoặc Swagger.

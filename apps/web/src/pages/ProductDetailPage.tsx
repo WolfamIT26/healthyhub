@@ -23,6 +23,7 @@ import {
 } from '../features/products/product.types';
 import { WishlistButton } from '../features/wishlist/WishlistButton';
 import { AddToCartButton } from '../features/cart/AddToCartButton';
+import { ProductReviewsSection } from '../features/reviews/ProductReviewsSection';
 
 type ProductDetailStatus = 'loading' | 'success' | 'error';
 const moneyFormatter = new Intl.NumberFormat('vi-VN', {
@@ -181,19 +182,6 @@ function ProductDetailContent({
               {product.name}
             </h1>
             <p className="mt-2 text-sm text-neutral-500">Mã sản phẩm: {product.sku}</p>
-            {product.rating !== undefined ? (
-              <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-neutral-600">
-                <span
-                  className="font-semibold text-accent-dark"
-                  aria-label={`${product.rating} trên 5 sao`}
-                >
-                  ★ {product.rating.toFixed(1)}
-                </span>
-                {product.reviewCount !== undefined ? (
-                  <span>{product.reviewCount} đánh giá</span>
-                ) : null}
-              </div>
-            ) : null}
             <p className="mt-5 text-base leading-7 text-neutral-700">{product.shortDescription}</p>
             <Divider />
             <div className="my-6 flex flex-wrap items-baseline gap-3">
@@ -333,15 +321,7 @@ function ProductDetailContent({
           className="mt-12 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]"
           aria-label="Đánh giá và trợ lý AI"
         >
-          <Card>
-            <h2 className="text-2xl font-bold text-neutral-950">Đánh giá sản phẩm</h2>
-            <div className="mt-4 flex flex-wrap items-end gap-3">
-              <span className="text-sm text-neutral-600">Chưa có dữ liệu Review public.</span>
-            </div>
-            <Alert tone="info" className="mt-5">
-              Review API chưa được triển khai nên không hiển thị điểm hoặc nội dung đánh giá giả.
-            </Alert>
-          </Card>
+          <ProductReviewsSection productId={product.id} productSlug={product.slug} />
           <Card className="bg-gradient-to-br from-primary-50 to-secondary-100">
             <p className="text-sm font-bold uppercase tracking-wide text-primary-700">
               Trợ lý HealthyHub

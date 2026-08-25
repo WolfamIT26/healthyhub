@@ -6,6 +6,10 @@ Physical Database Design cho HealthyHub đã được tạo ở mức tài liệ
 
 ## Current Status / Trạng thái hiện tại
 
+Prompt 33.1 adds migration `1760000014000` for exact Order/Shipment status constraints and durable histories; no Review table is added.
+
+Prompt 33.2 adds migration `1760000015000` for `product_reviews`, exact checks/FKs/indexes and unique `(tenant_id, order_id, product_id)`; migration state is 16/16.
+
 - Status: Completed for Prompt 09.
 - Scope: Physical Database Documentation only.
 - Project: HealthyHub.

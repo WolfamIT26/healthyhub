@@ -2,7 +2,7 @@
 
 ## Status
 
-**Prompt 28 Customer Orders V1 — implemented on persisted Order data.**
+**Prompt 33.1 Order Fulfillment Lifecycle — READY on persisted Order/Shipment data.**
 
 Public boundary: `POST /api/v1/orders`, protected by Customer JWT and verified-email policy. `X-Idempotency-Key` is required.
 
@@ -10,11 +10,28 @@ The server resolves the Customer and active Cart, revalidates Product price/sell
 
 COD starts as `pending`, does not call a provider and consumes its reservation immediately at OrderPlaced because no later COD confirmation transition exists. VNPAY starts as `pending`; its reservation stays active and only verified Payment/IPN/query authority may consume or release it.
 
-This boundary does not implement payment capture outside VNPAY redirect/IPN, shipment fulfillment, cancellation/refund or admin Order operations. Cart remains active until a later approved lifecycle decision.
+Cart remains active until a later approved lifecycle decision. Full Admin Order Management, Customer cancellation API and provider refund execution remain outside the current boundary.
 
 Prompt 32.1 mở Order Stock Integration: reserve và Order aggregate dùng cùng transaction; Inventory rows được lock theo thứ tự ổn định. Concurrent Orders không thể cùng tiêu thụ một quantity, và failure sau reserve rollback cả Order lẫn stock.
 
 MySQL verification kiểm tra toàn aggregate VNPAY: Order/OrderItem/Payment/PaymentAttempt/Shipment/address snapshot và stock reservation được giữ qua browser return; chỉ valid IPN chuyển Payment/Order và consume stock. Duplicate IPN không double effect. COD vẫn `pending/new`, không tạo provider attempt nhưng stock đã committed tại OrderPlaced.
+
+## Fulfillment Lifecycle / Vòng đời fulfillment
+
+Order và Shipment là hai state machine riêng:
+
+| Authority / Thẩm quyền | Transition / Chuyển trạng thái |
+| --- | --- |
+| Order creation | Order `new`, Shipment `pending`. |
+| Verified VNPAY Payment IPN | Order `new → confirmed`; browser return không có authority. |
+| Internal Fulfillment service | Shipment `pending → shipped`. COD được phép khi Payment còn `pending`; VNPAY yêu cầu Payment `paid` và Order `confirmed`. |
+| Internal Fulfillment service | Shipment `shipped → delivered` và Order `new|confirmed → completed` atomically; set `shippedAt`, `deliveredAt`, `completedAt`. |
+| Internal Fulfillment service | Trước shipment: Shipment `pending → cancelled`, Order `new|confirmed → cancelled`, release active stock hoặc restock consumed stock. |
+| Internal Fulfillment service | Sau delivery: Shipment `delivered → returned`, Order `completed → returned`, restock consumed stock. Đây là full-return V1. |
+
+Mỗi transition lock Order rồi Shipment, validate chronology, persist status history và commit stock effect trong cùng transaction. Duplicate desired-state transition là idempotent; invalid/skipped/regressive transition bị reject. Internal boundary chưa được expose qua public/admin controller vì role/permission contract cho Admin Order Management chưa executable.
+
+`completed` là bằng chứng business của Order; `delivered` cùng `Shipment.deliveredAt` là bằng chứng fulfillment. Review eligibility chỉ hợp lệ khi cả hai state/timestamp cùng tồn tại và Product nằm trong active Order Item thuộc Customer. Payment `paid`, Order `confirmed` hoặc stock `consumed` không đủ.
 
 ## Customer Read API / API đọc cho Customer
 

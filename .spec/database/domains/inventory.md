@@ -1,5 +1,9 @@
 # Inventory Database / Database domain tồn kho
 
+## Prompt 33.1 runtime note
+
+Existing reservation lifecycle now has an executable cancellation/full-return caller. No adjustment or duplicate Inventory authority is added.
+
 ## Storage Purpose / Mục đích lưu trữ
 
 Lưu khả năng bán của sản phẩm, điều chỉnh tồn, cảnh báo tồn kho và reservation để tránh oversell trong luồng đặt hàng.

@@ -62,3 +62,9 @@
 
 - Chưa chạy semantic OpenAPI validator chuyên dụng vì framework hiện chưa có dependency validator và Prompt yêu cầu không cài thêm công nghệ mới.
 - Schema nghiệp vụ chi tiết theo từng domain chưa được sinh ở phase này; hiện dùng contract chung để tránh tạo DTO code hoặc thiết kế nghiệp vụ mới ngoài spec.
+
+## Prompt 33.2 / Prompt 33.2
+
+- Added `schemas/review.yaml` for public list, summary/distribution, owner list/eligibility and mutation payloads.
+- Replaced generic contracts for 6 executable public/customer Review operations.
+- Kept Admin moderation blocked and operation inventory 196/196/196.

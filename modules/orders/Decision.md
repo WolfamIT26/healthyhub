@@ -18,3 +18,12 @@
 - List dùng page pagination, filter whitelist và stable sort `placedAt DESC, id DESC`. Detail đọc snapshot đã persist; canonical Payment status lấy từ Payment row, không lấy browser return hoặc React state.
 - Chỉ trả VNPAY provider reference an toàn theo Payment contract; không expose signature, secret, payload provider hoặc provider-event metadata.
 - Prompt 32: không gắn Inventory mutation vào Order create hoặc VNPAY confirmation cho tới khi chốt reserve-vs-deduct, COD confirmation, failed/cancelled release và Order cancellation/restock.
+
+## Prompt 33.1 / Fulfillment decisions
+
+- Order states: `new|confirmed|completed|cancelled|returned`; Shipment states: `pending|shipped|delivered|cancelled|returned`. Không thêm processing/preparing/failed.
+- Payment authority sở hữu verified VNPAY `new → confirmed`; internal Fulfillment service sở hữu shipped/delivered/completed/cancelled/returned. Browser/frontend không có authority.
+- COD được fulfillment khi Payment pending. VNPAY yêu cầu Payment paid + Order confirmed; paid không đồng nghĩa delivered.
+- Delivery atomically set Shipment delivered evidence và Order completed evidence. Timestamps phải monotonic.
+- Cancel chỉ trước shipment; return chỉ full Order sau delivered. Cả hai chạy Inventory restore trong cùng transaction và yêu cầu reason.
+- Refund Payment riêng không phải fulfillment transition và chưa executable. VNPAY paid Order bị cancel/return cần reconciliation; late paid không được revive terminal Order.

@@ -4,6 +4,10 @@
 
 Review API quản lý đánh giá sản phẩm, rating summary, review của customer và moderation bởi staff/manager/admin.
 
+## Prompt 33.2 runtime status / Trạng thái runtime Prompt 33.2
+
+**READY — public/customer subset.** Sáu endpoint public và `/me` có controller/service/DTO/repository executable cùng typed OpenAPI. Hai Admin moderation endpoint vẫn design-only và có blocker `ADMIN_REVIEW_MODERATION_NOT_IMPLEMENTED`.
+
 ## Endpoint List / Danh sách endpoint
 
 | Method / Method | URI / URI | Purpose / Mục tiêu | Auth / Xác thực | Permission / Quyền |
@@ -43,7 +47,7 @@ Review API quản lý đánh giá sản phẩm, rating summary, review của cus
 
 ## Permission / Quyền
 
-- Public xem approved review.
+- Public xem Review published, active.
 - Customer tạo/sửa review của mình.
 - Staff/Manager moderate theo quyền.
 
@@ -56,52 +60,55 @@ Review API quản lý đánh giá sản phẩm, rating summary, review của cus
 ## Authorization / Phân quyền
 
 - Owner check với `/me/reviews`.
-- Moderation reason admin only.
+- Admin moderation vẫn ngoài runtime Prompt 33.2.
 - Public không thấy pending/rejected/hidden.
 
 ## Request Contract / Contract request
 
-- Create/update review dùng command input.
+- Create dùng `{orderId, productId, rating, content}`; không có `customerId`/`verifiedPurchase`.
+- Update chỉ nhận rating/content và phải có ít nhất một field.
 - Moderation dùng action request có status và reason.
 - List dùng pagination/filter/search/sort.
 
 ## Response Contract / Contract response
 
-- Review list item public.
-- Review detail owner/admin.
-- Rating summary aggregate.
+- Public item không expose Customer email/phone/internal ID hoặc Order ID.
+- Owner list có Product summary, status, verified evidence và optional eligibility opportunity.
+- Rating summary có average, total và distribution 1–5.
 
 ## Error Contract / Contract lỗi
 
-- `BUSINESS.REVIEW.PURCHASE_REQUIRED`
+- `PERMISSION.REVIEW.ELIGIBLE_PURCHASE_REQUIRED`
 - `BUSINESS.REVIEW.ALREADY_REVIEWED`
 - `PERMISSION.REVIEW.OWNER_REQUIRED`
+- `NOT_FOUND.REVIEW.REVIEW_NOT_FOUND`
 - `NOT_FOUND.PRODUCT.PRODUCT_NOT_FOUND`
 
 ## Validation Rule / Quy tắc validation
 
-- Rating trong range hợp lệ.
-- Content đúng độ dài và policy.
+- Rating integer 1–5.
+- Trimmed content 3–2000 characters.
 - Product/order reference hợp lệ.
 - Moderation status hợp lệ.
 
 ## Business Rule / Quy tắc nghiệp vụ
 
-- Customer chỉ review sản phẩm đã mua nếu business rule yêu cầu.
-- Mỗi order item chỉ review một lần nếu policy áp dụng.
-- Review public sau khi approved.
+- Create khóa và dùng owner-scoped active Order Item cùng authoritative completed/delivered state/timestamps trong một transaction.
+- Exact duplicate identity là Order+Product với DB unique `(tenant_id, order_id, product_id)`.
+- V1 mặc định published; owner edit giữ published, owner delete soft-delete. Return revoke verified evidence nhưng giữ content; Payment refund riêng không phải fulfillment authority.
+- Public aggregate/list chỉ tính active/published Review.
 
 ## Pagination / Phân trang
 
-- Public/admin/customer review list default 20.
+- Public/customer list default 10, maximum 50.
 
 ## Filter / Lọc
 
-- Lọc theo rating, reviewStatus, productId, createdAt.
+- Customer list hỗ trợ exact `productId`; public V1 không nhận generic filter.
 
 ## Search / Tìm kiếm
 
-- Admin search theo nội dung review, product summary, customer masked.
+- Không triển khai search trong V1.
 
 ## Sort / Sắp xếp
 
@@ -123,7 +130,8 @@ Không áp dụng trong Prompt 10.
 
 ## Idempotency / Chống gửi lặp
 
-- Create review chống trùng bằng customer/product/order item.
+- Exact retry chống trùng bằng Order/Product identity và normalized payload; conflicting duplicate trả 409.
+- Delete owner idempotent; update/delete serialize bằng Review row lock.
 - Moderation idempotent theo desired status.
 
 ## Webhook / Webhook
@@ -133,4 +141,3 @@ Không áp dụng.
 ## AI Endpoint / Endpoint AI
 
 AI review summary thuộc AI API và chỉ dùng approved/public hoặc admin-scoped review theo quyền.
-

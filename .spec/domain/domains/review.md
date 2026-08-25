@@ -25,9 +25,13 @@ Quản lý đánh giá sản phẩm từ khách hàng và kiểm duyệt nội d
 
 ## Business Rule / Quy tắc nghiệp vụ
 
-- Review nên ưu tiên khách có mua hàng hợp lệ.
-- Review vi phạm policy phải bị ẩn hoặc kiểm duyệt.
+- Review mutation yêu cầu authenticated Customer, owner-scoped Order và Product nằm trong persisted Order Item.
+- “Mua hàng hợp lệ” requires owned Order `completed`, Shipment `delivered`, both timestamps and active Order Item Product; Review Eligibility is **READY**.
+- Không suy diễn eligibility từ Cart/Wishlist, OrderPlaced, Payment paid, Order confirmed hoặc Inventory consumed.
+- V1 publication mặc định published; hidden/rejected được schema giữ cho future approved moderation authority.
 - Không chỉnh sửa review làm sai ý kiến khách.
+
+Duplicate identity is `Order + Product`. Cancel/return revokes eligibility; existing content remains public but loses verified-purchase evidence. Payment refund alone does not define fulfillment. V1 defaults to published, owner edit in-place and owner soft delete. Create locks Order then Shipment and rechecks evidence atomically; DB uniqueness is final authority.
 
 ## Domain Event / Sự kiện domain
 
@@ -44,4 +48,3 @@ Quản lý đánh giá sản phẩm từ khách hàng và kiểm duyệt nội d
 ## Boundary / Ranh giới
 
 Review không quản lý product content hoặc customer profile. Domain này chỉ sở hữu phản hồi và trạng thái kiểm duyệt.
-

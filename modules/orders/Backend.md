@@ -13,3 +13,15 @@
 `CustomerOrderController` ở `/me/orders`, dùng `AccessTokenGuard`, `RolesGuard` và `CUSTOMER` role. Paginated response đưa metadata vào envelope chuẩn.
 
 Không có gateway call, mutation hoặc provider verification trong read flow.
+
+## Fulfillment application boundary / Ranh giới ứng dụng fulfillment
+
+`OrderFulfillmentService` chỉ nhận command nội bộ với transition type, Order ID, occurredAt, reason và optional actor. Repository lock Order rồi Shipment, kiểm tra separate state machines và Payment readiness, sau đó persist snapshots, timestamps, history và Inventory effect trong một transaction.
+
+- COD: `new/pending` vẫn được ship/deliver.
+- VNPAY: ship/deliver chỉ khi Payment `paid` và Order `confirmed` từ verified IPN.
+- Delivery: Shipment `shipped → delivered`, Order `new|confirmed → completed`.
+- Cancel: chỉ Shipment `pending`, Order `new|confirmed`; restore active/consumed reservation.
+- Return: chỉ Shipment `delivered`, Order `completed`; full-order restock.
+
+Desired state đã đạt trả `idempotent`; row lock serialize concurrent calls. Payment service tiếp tục sở hữu `new → confirmed` và ghi Order history trong provider-event transaction.

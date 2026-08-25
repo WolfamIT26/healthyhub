@@ -24,3 +24,9 @@ After provider approval add official signature fixtures, invalid signature, time
 - Persisted Order/Payment/attempt amount cross-check and fail-closed mismatch.
 - MySQL aggregate flow verifies invalid signature, failed mismatch event, valid IPN, duplicate IPN, reload, Payment→Order mapping, all snapshot rows and COD regression.
 - Real Sandbox redirect/IPN is not represented by fixtures and remains explicitly blocked.
+
+# Prompt 33.1 coverage
+
+- Verified paid writes one Order confirmation history; duplicate IPN writes no second history/stock effect.
+- Late paid cannot revive cancelled/returned Order or reacquire stock.
+- VNPAY fulfillment is rejected before paid/confirmed and eligible Review evidence appears only after shipped/delivered.

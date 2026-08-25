@@ -1,7 +1,7 @@
-export type OrderStatus = 'new' | 'confirmed';
+export type OrderStatus = 'new' | 'confirmed' | 'completed' | 'cancelled' | 'returned';
 export type PaymentStatus = 'unpaid' | 'pending' | 'paid' | 'failed' | 'cancelled';
 export type PaymentMethod = 'cod' | 'vnpay';
-export type ShippingStatus = 'pending';
+export type ShippingStatus = 'pending' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
 export type ShippingMethod = 'manual';
 
 export interface CustomerOrderListItem {

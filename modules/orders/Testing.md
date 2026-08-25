@@ -14,3 +14,11 @@ Prompt 27.3 chạy MySQL aggregate verification cho signed browser return, inval
 - MySQL integration: persisted list/detail, stable pagination, status/date filters, empty owner, Customer A/B isolation, COD pending và persisted VNPAY paid read state. Fixture paid chỉ kiểm tra read mapping, không đại diện hoặc fake VNPAY Sandbox E2E.
 - Frontend: loading/empty/error/populated, filter/page URL state, retry, COD/VNPAY detail, direct route/reload, not-owned error, responsive CSS structure và Guest/Internal RouteGuard.
 - Regression bắt buộc: Authentication, Checkout, Order creation, Payment/VNPAY và COD.
+
+## Prompt 33.1 / Fulfillment lifecycle
+
+- Unit: exact Order/Shipment transition graph, COD/VNPAY readiness, reason và chronology validation.
+- MySQL: valid/invalid COD delivery, persisted timestamps/history, duplicate idempotency, concurrent duplicate serialization, VNPAY paid vẫn chưa eligible trước delivery.
+- Cancellation/return: active reservation release, consumed reservation restock, retry no-op và Review eligibility revoke.
+- Security/policy: Customer A không dùng Order Customer B; Product không thuộc active Order Item bị từ chối.
+- Payment regression: duplicate IPN không double Order history/stock; late paid không revive cancelled/returned Order.

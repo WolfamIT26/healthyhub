@@ -1,5 +1,20 @@
 # Feature Specifications ChangeLog / Nhật ký thay đổi đặc tả tính năng
 
+## 2026-08-21 — Prompt 33.2
+
+- Marked Review public/customer V1 executable from persisted completed+delivered evidence.
+- Added owner create/edit/delete, aggregate and Product Detail behavior; kept Admin moderation outside scope.
+
+## 2026-08-21 — Prompt 33.1
+
+- Canonicalized executable Order/Shipping fulfillment and Review eligibility.
+
+## 2026-08-21 / Prompt 33
+
+- Audited Review purchase eligibility against executable Customer/Order/Payment/Inventory boundaries.
+- Marked Review V1 BLOCKED because no authoritative completed/delivered transition exists for COD and VNPAY.
+- Rejected Cart/Wishlist/OrderPlaced/paid/confirmed/stock-consumed signals as verified-purchase substitutes.
+
 ## 2026-08-21 / Prompt 32.1
 
 - Mở Inventory stock mutation và Order stock integration cho executable COD/VNPAY flows.

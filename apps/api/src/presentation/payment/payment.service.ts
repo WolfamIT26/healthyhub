@@ -10,7 +10,7 @@ import {
   type PaymentProviderEventClaim,
   type PaymentProviderEventRepository,
 } from '../../data/payment/repositories';
-import { OrderEntity } from '../../data/order/entities';
+import { OrderEntity, OrderStatusHistoryEntity } from '../../data/order/entities';
 import { PaymentAttemptEntity, PaymentEntity } from '../../data/payment/entities';
 import type { HealthyHubEnvironment } from '../../config/environment';
 import { CustomerOwnerResolver } from '../../domain/commerce-dependencies/customer-owner.resolver';
@@ -404,6 +404,19 @@ export class PaymentService {
       this.lifecycle.assertTransition(aggregate.payment.paymentStatus, nextStatus);
     }
 
+    if (
+      nextStatus === 'paid' &&
+      (aggregate.order.orderStatus === 'cancelled' || aggregate.order.orderStatus === 'returned')
+    ) {
+      throw new PaymentException(
+        HttpStatus.CONFLICT,
+        'PAYMENT_RECONCILIATION_REQUIRED',
+        'INTEGRATION',
+        'Không thể áp paid event vào Order đã cancelled/returned.',
+        true,
+      );
+    }
+
     if (nextStatus === 'paid') {
       await this.stockMutations.consumeForOrder(
         manager,
@@ -422,6 +435,7 @@ export class PaymentService {
 
     aggregate.payment.providerReference = outcome.providerReference;
     aggregate.payment.updatedBy = actorUserAccountId ?? aggregate.payment.updatedBy;
+    let orderConfirmedFrom: 'new' | null = null;
 
     if (nextStatus !== 'pending') {
       aggregate.attempt.providerTransactionNo =
@@ -440,6 +454,7 @@ export class PaymentService {
         this.mapping.effectFor(nextStatus) === 'confirm_if_placed' &&
         aggregate.order.orderStatus === 'new'
       ) {
+        orderConfirmedFrom = 'new';
         aggregate.order.orderStatus = 'confirmed';
         aggregate.order.updatedBy = actorUserAccountId ?? aggregate.order.updatedBy;
       }
@@ -453,6 +468,23 @@ export class PaymentService {
 
     await paymentRepository.save(aggregate.payment);
     await orderRepository.save(aggregate.order);
+    if (orderConfirmedFrom) {
+      const histories = manager.getRepository(OrderStatusHistoryEntity);
+      const changedAt = outcome.occurredAt ?? new Date();
+      await histories.save(
+        histories.create({
+          tenantId: aggregate.order.tenantId,
+          orderId: aggregate.order.id,
+          fromStatus: orderConfirmedFrom,
+          toStatus: 'confirmed',
+          reason: 'Verified VNPAY paid',
+          changedAt,
+          changedBy: actorUserAccountId ?? null,
+          createdBy: actorUserAccountId ?? null,
+          updatedBy: actorUserAccountId ?? null,
+        }),
+      );
+    }
   }
 
   private async findOrderForOwner(orderId: string, customerProfileId: string) {

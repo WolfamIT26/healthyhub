@@ -6,6 +6,10 @@ Logical Database Design cho HealthyHub đã được tạo ở mức tài liệu
 
 ## Current Status / Trạng thái hiện tại
 
+Prompt 33.1 aligns logical Order/Shipping histories and canonical Review identity. Review persistence remains unimplemented.
+
+Prompt 33.2 implements the logical `product_reviews` authority with required Customer/Product/Order references, Order+Product identity, rating/content/status and soft delete.
+
 - Status: Completed for Prompt 08.
 - Scope: Logical Database Documentation only.
 - Project: HealthyHub.

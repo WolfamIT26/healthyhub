@@ -1,5 +1,11 @@
 # Payment ChangeLog
 
+## 2026-08-21 — Prompt 33.1
+
+- Added durable Order confirmation history to the verified provider-event transaction.
+- Rejected late paid effects for cancelled/returned Orders before stock reacquire.
+- Documented paid-versus-delivered authority separation; no refund provider workflow added.
+
 ## 2026-08-21 — Prompt 32.1
 
 - Added Inventory reservation transition to the provider-event business-effect transaction.

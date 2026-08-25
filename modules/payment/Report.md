@@ -45,3 +45,7 @@ Không có production credential, refund, admin settlement, inventory mutation h
 MySQL signed-fixture flow chứng minh amount đi từ persisted Order, browser return không mutate, amount mismatch rollback, valid IPN commit Payment/attempt/Order và duplicate không double effect. Provider events chỉ lưu payload hash/canonical identity, không lưu raw callback/signature. Hai migration Prompt 27.2 còn pending trên development database đã được apply trước khi chạy verification.
 
 Runtime hiện thiếu/chưa chọn `PAYMENT_PROVIDER=vnpay`, `VNPAY_TMN_CODE`, `VNPAY_HASH_SECRET`, `VNPAY_PAYMENT_URL`, `VNPAY_API_URL`, `VNPAY_RETURN_URL`, `VNPAY_IPN_URL`. Không có credential nào được thêm vào repository.
+
+## Prompt 33.1 / Fulfillment separation
+
+Verified VNPAY paid remains the sole payment authority for Order confirmation and records that transition once. Shipment delivery/completion belongs to Fulfillment; browser return and paid status cannot create Review eligibility. Terminal cancelled/returned Order rejects late paid business effect for reconciliation.

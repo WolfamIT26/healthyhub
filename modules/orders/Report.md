@@ -42,3 +42,9 @@ Frontend `/orders` và `/orders/:orderId` có loading/empty/error/list/detail, f
 MySQL integration đã kiểm tra empty owner, populated/paginated/filter list, COD/VNPAY detail và Customer A không đọc được Customer B. Không có migration hoặc lifecycle mutation mới.
 
 `VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
+## Prompt 33.1 / Fulfillment & Review eligibility
+
+Order/Shipment lifecycle hiện executable qua internal service với pessimistic locks, exact transition policy, timestamps và durable histories. COD có thể giao khi Payment pending; VNPAY chỉ giao sau verified paid/confirmed. Delivery set Shipment `delivered` và Order `completed` atomically. Cancel trước shipment restore stock; full return sau delivered restock. Không có browser/admin/public status authority.
+
+Persisted completed+delivered evidence mở khóa owner-scoped Review eligibility. Identity canonical là `(order_id, product_id)`; Review persistence/API/UI chưa được triển khai trong prompt này.

@@ -6,6 +6,10 @@ Tài liệu Domain Model cho HealthyHub đã được tạo ở mức đặc t�
 
 ## Current Status / Trạng thái hiện tại
 
+Prompt 33.1 aligns executable Order/Shipment state machines, transition ownership and the Review Order+Product eligibility policy.
+
+Prompt 33.2 makes the Review aggregate executable while retaining Fulfillment as eligibility authority.
+
 - Status: Completed for Prompt 07.
 - Scope: Domain modeling only.
 - Business project: HealthyHub.

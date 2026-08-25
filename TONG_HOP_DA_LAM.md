@@ -1,5 +1,41 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## Reviews & Ratings Implementation V1 — Prompt 33.2
+
+Đã triển khai `product_reviews` với canonical identity Order+Product, rating 1–5, content 3–2000, published default, audit/version và soft delete. Create derive Customer từ JWT, khóa Order → Shipment và recheck completed+delivered/Product membership trong cùng transaction; exact retry an toàn, conflicting duplicate trả conflict và DB unique là final authority.
+
+Sáu public/customer Review API trả typed list/summary/eligibility và owner mutations. Aggregate chỉ tính Review active/published. Product Detail hiển thị average, total, distribution, list, verified badge, pagination và đầy đủ loading/error/empty; Guest có login CTA, Customer chỉ submit khi server trả eligible Order. Return giữ content nhưng badge được resolve động thành false.
+
+Verification PASS: API 222 + Web 142 = 364 unit tests, 12 MySQL files/25 integration tests, 16/16 migrations, format/lint/typecheck/build, OpenAPI 196/196/196 và secrets/docs/diff checks.
+
+File tổng hợp riêng: `docs/work-summaries/2026-08-21-05-prompt-33-2-reviews-ratings-implementation-v1.md`.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
+## Order Fulfillment & Review Eligibility Contract — Prompt 33.1
+
+Đã chốt hai state machine riêng: Order `new|confirmed|completed|cancelled|returned` và Shipment `pending|shipped|delivered|cancelled|returned`. Internal Fulfillment service thực thi shipped/delivered/completed, cancel trước shipment và full return sau delivery với row locks, timestamps, durable history và Inventory release/restock trong cùng transaction. COD được giao khi Payment pending; VNPAY chỉ sau verified paid/confirmed. Payment paid và browser return không phải delivered authority.
+
+Review eligibility nay READY: JWT-derived Customer phải sở hữu Order, Product phải nằm trong active Order Item, Order completed và Shipment delivered với timestamps persisted. Identity là Order+Product; return revoke verified-purchase evidence. Review persistence/API/aggregate/UI vẫn chưa triển khai theo scope Prompt 33.1.
+
+Verification PASS: 335 unit tests, 11 MySQL files/18 integration tests, 15/15 migrations, format/lint/typecheck/build, OpenAPI 196/196/196 và secrets/docs/diff checks.
+
+File tổng hợp riêng: `docs/work-summaries/2026-08-21-04-prompt-33-1-order-fulfillment-review-eligibility.md`.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
+## Reviews & Ratings V1 Eligibility Audit — Prompt 33
+
+Đã audit Product, Customer, Order, Authentication và Inventory cho Review V1. JWT → CustomerProfile ownership và persisted Order Item/Product relation đã sẵn sàng, nhưng runtime chỉ có Order `new|confirmed`, Shipment `pending`; `completedAt`/`deliveredAt` chưa có authoritative transition. `confirmed/paid` chỉ phản ánh VNPAY, còn COD vẫn `new/pending`, nên không có rule “đã mua/đã hoàn tất” nhất quán.
+
+Theo stop condition của Prompt 33, Review Eligibility/Persistence/API/Rating Aggregate được ghi **BLOCKED**. Không tạo migration/API/UI nửa vời, không dùng Cart/Wishlist/OrderPlaced/stock consumed/browser return làm verified purchase. Product Detail giữ no-fake placeholder. Tám OpenAPI Review operations vẫn là design inventory và được đánh dấu runtime-blocked; tổng operation giữ 196.
+
+Verification PASS: format, lint, typecheck, build, 318 unit tests, 10 MySQL files/13 integration tests, 14/14 migrations, OpenAPI 196/196/196, secrets/docs/diff checks.
+
+File tổng hợp riêng: `docs/work-summaries/2026-08-21-03-prompt-33-reviews-ratings-v1.md`.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
 ## Inventory Lifecycle & Stock Mutation Contract — Prompt 32.1
 
 Đã chốt và triển khai canonical lifecycle: OrderPlaced reserve cho COD/VNPAY trong cùng transaction tạo Order; COD consume ngay; VNPAY pending giữ reservation, verified paid IPN consume, failed/cancelled release. Browser return không có stock effect. Late paid sau failed chỉ confirm khi reacquire stock atomically thành công.

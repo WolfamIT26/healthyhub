@@ -20,7 +20,7 @@ Mọi bảng dùng `id BIGINT UNSIGNED NOT NULL`, `tenant_id BIGINT UNSIGNED NOT
 | `shipments` | `order_id` | `BIGINT UNSIGNED` | No | None | FK Order. |
 | `shipments` | `shipping_method` | `VARCHAR(64)` | No | `manual` | manual/provider future. |
 | `shipments` | `shipping_fee` | `DECIMAL(12,2)` | No | `0.00` | Money. |
-| `shipments` | `shipping_status` | `VARCHAR(32)` | No | `pending` | pending/preparing/shipped/delivered/failed/returned. |
+| `shipments` | `shipping_status` | `VARCHAR(32)` | No | `pending` | pending/shipped/delivered/cancelled/returned. |
 | `shipments` | `tracking_reference` | `VARCHAR(191)` | Yes | `NULL` | Provider reference. |
 | `shipments` | `shipped_at` | `DATETIME(3)` | Yes | `NULL` | Shipped marker. |
 | `shipments` | `delivered_at` | `DATETIME(3)` | Yes | `NULL` | Delivered marker. |
@@ -63,6 +63,10 @@ Mọi bảng dùng `id BIGINT UNSIGNED NOT NULL`, `tenant_id BIGINT UNSIGNED NOT
 - Shipment -> address/attempt/history: Restrict.
 - Customer address reference: Set Null nếu address gốc bị xóa mềm/hard delete; snapshot vẫn giữ.
 - Actor FKs: Set Null.
+
+## Prompt 33.1 executable delta
+
+Migration `1760000014000-enable-order-fulfillment-review-eligibility` replaces the old check with the exact canonical set and creates `shipping_status_histories` with Shipment `RESTRICT` FK, actor `SET NULL` FK and tenant/shipment/time indexes. Existing `shipped_at`/`delivered_at` are reused.
 
 ## Performance & Retention / Hiệu năng và lưu giữ
 

@@ -24,6 +24,10 @@ File này theo dõi trạng thái bộ UI Contract Specification của HealthyHu
 
 UI Contract Specification hoàn thành ở mức tài liệu đầu vào cho Design System và Frontend Development.
 
+Prompt 33.1 note: Review eligibility is READY, but Review screen contracts remain design-only/runtime-blocked because persistence/API/UI are not implemented. Product Detail keeps the existing no-fake Review placeholder.
+
+Prompt 33.2 note: Product Detail Review section is executable with backend summary/list/eligibility and owner form. Dedicated Customer Reviews and Admin moderation screens remain outside scope.
+
 ## Not Included / Không bao gồm
 
 - Chưa thiết kế giao diện đẹp.
@@ -31,4 +35,3 @@ UI Contract Specification hoàn thành ở mức tài liệu đầu vào cho Des
 - Chưa viết React, HTML, CSS, JavaScript hoặc TypeScript.
 - Chưa tạo component implementation.
 - Chưa thay đổi API hoặc backend.
-

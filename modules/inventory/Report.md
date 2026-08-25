@@ -16,6 +16,8 @@ Migration Prompt 32.1 thêm `stock_reservations` với Inventory/Order FK `RESTR
 
 Payment policy cho phép late `failed → paid`, nên flow reacquire stock bằng row lock trước khi confirm; thiếu stock làm toàn transaction fail và giữ Payment cũ để reconciliation. VNPAY pending giữ reservation cho tới terminal Payment authority, không dùng clock/URL expiry làm failure giả.
 
+Prompt 33.1 formalize cancellation trước shipment và full return sau delivery. Fulfillment transaction lock Order/Shipment rồi Inventory, restore active VNPAY reservation hoặc restock consumed COD/VNPAY reservation và ghi terminal histories atomically. Duplicate transition không cộng stock lần hai.
+
 ## Verification / Kiểm tra
 
 Format/lint/typecheck/build PASS; API 187 và Web 131 unit tests PASS; 10 MySQL integration files/13 tests PASS; 14/14 migrations applied; OpenAPI 196 operations, secrets/docs/diff checks PASS.

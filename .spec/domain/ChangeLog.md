@@ -1,5 +1,19 @@
 # Domain ChangeLog / Nhật ký thay đổi Domain Model
 
+## 2026-08-21 — Prompt 33.2
+
+- Implemented ProductReview aggregate ownership, identity, publication and soft-delete behavior.
+- Formalized dynamic verified evidence after return and active/published aggregate reads.
+
+## 2026-08-21 — Prompt 33.1
+
+- Aligned Order/Shipment authority, cancellation/full-return effects and Order+Product Review identity.
+
+## [0.4.0] - 2026-08-21
+
+- Recorded Prompt 33 Review eligibility as BLOCKED pending executable Order completion/delivery authority.
+- Required owner-scoped Order Item evidence and prohibited payment/order-placement inference.
+
 ## [0.3.0] - 2026-08-21
 
 - Approved Prompt 32.1 OrderPlaced reservation, immediate COD consumption and verified VNPAY consume/release lifecycle.

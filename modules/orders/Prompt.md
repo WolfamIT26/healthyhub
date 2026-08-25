@@ -2,4 +2,4 @@
 
 AI Agent phải đọc rules, Order specification và các boundary Authentication, Customer, Payment, Shipping, Checkout trước khi sửa module.
 
-Mọi Customer read API phải derive owner từ authenticated context, dùng persisted snapshot, không expose provider secret và không mở action cancellation/refund/fulfillment nếu prompt hiện tại không cho phép.
+Mọi Customer read API phải derive owner từ authenticated context và dùng persisted snapshot. Fulfillment mutation chỉ đi qua internal `OrderFulfillmentService`, không nhận status trực tiếp từ frontend. Giữ Payment/VNPAY authority riêng, browser return read-only, và không mở public/admin endpoint nếu actor/permission contract chưa executable.

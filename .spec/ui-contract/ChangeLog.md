@@ -1,5 +1,19 @@
 # UI Contract ChangeLog / Nhật ký thay đổi UI Contract
 
+## 2026-08-21 — Prompt 33.2
+
+- Opened Product Detail Review summary/list/pagination and Customer create/edit/delete states.
+- Added Guest CTA, safe ineligible reason and returned verified-badge revocation behavior.
+
+## 2026-08-21 — Prompt 33.1
+
+- Added canonical fulfillment labels and kept Review UI blocked by missing runtime API/persistence.
+
+## [0.3.0] - 2026-08-21
+
+- Marked Product Detail Review data and Customer Reviews screen runtime-blocked for Prompt 33.
+- Required the current Product Detail no-fake placeholder until backend eligibility becomes executable.
+
 ## [0.2.0] - 2026-08-06
 
 ### Changed / Đã thay đổi

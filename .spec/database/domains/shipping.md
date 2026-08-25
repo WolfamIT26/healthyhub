@@ -17,7 +17,7 @@ Lưu shipment, địa chỉ giao hàng snapshot, lần giao và lịch sử tr�
 
 | Entity | PK | Main Attributes / Thuộc tính chính | FK / Tham chiếu | Data Status |
 | --- | --- | --- | --- | --- |
-| `shipments` | `id` | `tenant_id`, `shipping_method`, `shipping_fee`, `shipping_status`, `tracking_reference`, `shipped_at`, `delivered_at` | `order_id` -> Order | pending, preparing, shipped, delivered, failed, returned |
+| `shipments` | `id` | `tenant_id`, `shipping_method`, `shipping_fee`, `shipping_status`, `tracking_reference`, `shipped_at`, `delivered_at` | `order_id` -> Order | pending, shipped, delivered, cancelled, returned |
 | `shipping_addresses` | `id` | `tenant_id`, `recipient_name`, `recipient_phone`, `address_text`, `delivery_note`, `address_snapshot_status` | `shipment_id`, `customer_address_id` -> Customer nullable | active, corrected |
 | `delivery_attempts` | `id` | `tenant_id`, `attempt_no`, `attempt_status`, `failure_reason`, `attempted_at` | `shipment_id` | scheduled, success, failed |
 | `shipping_status_histories` | `id` | `tenant_id`, `from_status`, `to_status`, `reason`, `changed_at` | `shipment_id`, `changed_by` -> User nullable | recorded |
@@ -46,7 +46,7 @@ Lưu shipment, địa chỉ giao hàng snapshot, lần giao và lịch sử tr�
 
 ## Data Lifecycle / Vòng đời dữ liệu
 
-Shipment tạo sau order, pending/preparing, shipped, delivered hoặc failed/returned. Address snapshot được giữ ổn định theo đơn.
+Shipment tạo cùng Order ở pending, chuyển shipped, delivered rồi có thể full-returned; hoặc pending được cancelled. Address snapshot được giữ ổn định theo đơn. Transition ghi history và timestamps phải monotonic.
 
 ## Data Ownership / Sở hữu dữ liệu
 

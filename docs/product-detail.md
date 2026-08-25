@@ -12,7 +12,15 @@ Related Products do backend chọn cùng primary Category, loại Product hiện
 
 ## Commerce và boundary
 
-Add to Cart tiếp tục gửi Product ID thật; Cart server tái kiểm tra Product/Inventory. Wishlist dùng Product authority hiện hữu. Frontend không suy luận giá, sellable hoặc availability. Review và AI runtime chưa executable nên không có rating/review/recommendation giả.
+Add to Cart tiếp tục gửi Product ID thật; Cart server tái kiểm tra Product/Inventory. Wishlist dùng Product authority hiện hữu. Frontend không suy luận giá, sellable hoặc availability. AI runtime chưa executable nên không có recommendation giả.
+
+## Prompt 33 Review audit / Audit Review Prompt 33
+
+## Prompt 33.2 Reviews & Ratings V1
+
+Product Detail Review integration **READY**. Trang gọi `GET /public/products/:productId/reviews` và `/summary` để hiển thị average, total, distribution, public list, verified badge và pagination. Guest có login CTA; Customer chỉ thấy form khi `/me/reviews?productId=...` trả authoritative eligible Order.
+
+Create/edit/delete dùng owner API và inline feedback. Returned Order giữ content nhưng badge được backend resolve thành false. Product API không thêm rating/count fixture; frontend không tự aggregate từ page đang tải.
 
 ## Accessibility
 

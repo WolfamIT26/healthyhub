@@ -73,8 +73,10 @@ Tài liệu này gom các index vật lý quan trọng để prompt sinh migrati
 | `promotion_targets` | Composite | `idx_promotion_targets_type_reference` | `tenant_id`, `target_type`, `target_reference_id`, `target_status` | Matching target. |
 | `loyalty_accounts` | Unique | `uq_loyalty_accounts_customer` | `tenant_id`, `customer_profile_id` | Một loyalty account active. |
 | `loyalty_transactions` | Composite | `idx_loyalty_transactions_account_time` | `tenant_id`, `loyalty_account_id`, `occurred_at` | Lịch sử điểm. |
-| `product_reviews` | Composite | `idx_reviews_product_status` | `tenant_id`, `product_id`, `review_status`, `published_at` | Review public theo product. |
-| `product_reviews` | Full Text | `ft_reviews_content` | `review_content` | Search/moderation review. |
+| `product_reviews` | Unique | `uq_product_reviews_tenant_order_product` | `tenant_id`, `order_id`, `product_id` | Một Review identity mỗi Product trong Order. |
+| `product_reviews` | Composite | `idx_product_reviews_public` | `tenant_id`, `product_id`, `review_status`, `published_at` | Review public theo Product. |
+| `product_reviews` | Composite | `idx_product_reviews_customer` | `tenant_id`, `customer_profile_id`, `submitted_at` | Owner list. |
+| `product_reviews` | Composite | `idx_product_reviews_order` | `tenant_id`, `order_id` | Eligibility/audit relation. |
 
 ## Intelligence & Operations Index / Index AI và vận hành
 
@@ -96,4 +98,4 @@ Tài liệu này gom các index vật lý quan trọng để prompt sinh migrati
 
 - Index catalog này phải được kiểm tra lại khi API Specification xác định query thật.
 - Index ít dùng sẽ bị loại ở migration review để tránh làm chậm ghi dữ liệu.
-- Full text index chỉ dùng khi MySQL search đủ cho MVP; nếu dùng search engine riêng sau này, tạo ADR trước.
+- Prompt 33.2 không tạo full-text index vì Admin moderation/search ngoài scope.

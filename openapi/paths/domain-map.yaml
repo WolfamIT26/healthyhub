@@ -705,6 +705,7 @@ domains:
         permission: "loyalty:read"
   - name: Review
     endpointCount: 8
+    runtimeStatus: public_customer_ready_admin_blocked
     paths:
       - method: GET
         uri: /api/v1/public/products/{productId}/reviews
@@ -741,11 +742,15 @@ domains:
         operationId: getAdminReviews
         auth: "Staff JWT"
         permission: "reviews:read"
+        runtimeStatus: blocked
+        runtimeBlocker: ADMIN_REVIEW_MODERATION_NOT_IMPLEMENTED
       - method: PATCH
         uri: /api/v1/admin/reviews/{reviewId}/moderation
         operationId: patchAdminReviewsReviewIdModeration
         auth: "Staff/Manager JWT"
         permission: "reviews:moderate"
+        runtimeStatus: blocked
+        runtimeBlocker: ADMIN_REVIEW_MODERATION_NOT_IMPLEMENTED
   - name: Blog
     endpointCount: 8
     paths:

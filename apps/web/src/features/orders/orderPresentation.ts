@@ -6,11 +6,17 @@ type BadgeTone = Parameters<typeof Badge>[0]['tone'];
 export function orderStatusLabel(status: OrderStatus | string): string {
   if (status === 'new') return 'Đơn mới';
   if (status === 'confirmed') return 'Đã xác nhận';
+  if (status === 'completed') return 'Đã hoàn tất';
+  if (status === 'cancelled') return 'Đã hủy';
+  if (status === 'returned') return 'Đã trả hàng';
   return 'Chưa xác định';
 }
 
 export function orderStatusTone(status: OrderStatus | string): BadgeTone {
-  if (status === 'confirmed') return 'success';
+  if (status === 'completed') return 'success';
+  if (status === 'cancelled') return 'error';
+  if (status === 'returned') return 'warning';
+  if (status === 'confirmed') return 'info';
   if (status === 'new') return 'info';
   return 'neutral';
 }
@@ -40,5 +46,9 @@ export function paymentMethodLabel(method: PaymentMethod | string): string {
 
 export function shippingStatusLabel(status: ShippingStatus | string): string {
   if (status === 'pending') return 'Đang chờ xử lý';
+  if (status === 'shipped') return 'Đang giao hàng';
+  if (status === 'delivered') return 'Đã giao hàng';
+  if (status === 'cancelled') return 'Đã hủy giao';
+  if (status === 'returned') return 'Đã trả hàng';
   return 'Chưa xác định';
 }

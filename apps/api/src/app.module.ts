@@ -21,6 +21,7 @@ import { PaymentModule } from './presentation/payment/payment.module';
 import { CustomerModule } from './presentation/customer/customer.module';
 import { WishlistModule } from './presentation/wishlist/wishlist.module';
 import { ProductModule } from './presentation/product/product.module';
+import { ReviewModule } from './presentation/review/review.module';
 
 const runtimeEnvironment = process.env.APP_ENV ?? process.env.NODE_ENV ?? 'development';
 
@@ -49,6 +50,7 @@ const runtimeEnvironment = process.env.APP_ENV ?? process.env.NODE_ENV ?? 'devel
     CustomerModule,
     WishlistModule,
     ProductModule,
+    ReviewModule,
   ],
   providers: [AppLoggerService],
 })

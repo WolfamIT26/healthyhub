@@ -46,6 +46,8 @@ Canonical application/API statuses follow shared data contract:
 
 Payment service returns a policy effect; it does not directly mutate arbitrary Order state.
 
+Prompt 33.1 formalizes that verified paid may only confirm a non-terminal `new` Order. A paid event against `cancelled|returned` is rejected for reconciliation; Payment never sets shipped/delivered/completed. Refund execution remains a separate future Payment workflow and does not independently define Review eligibility.
+
 ## Authority and idempotency
 
 - Browser return is navigation/status-query UX only.

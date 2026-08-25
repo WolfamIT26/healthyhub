@@ -26,6 +26,8 @@ Customer/member/VIP, owner only.
 
 Order summary list, orderStatus, paymentStatus, shippingStatus, createdAt, total, pagination metadata.
 
+Executable labels/filters include Order `new|confirmed|completed|cancelled|returned` and Shipment `pending|shipped|delivered|cancelled|returned`. Screen remains read-only for fulfillment.
+
 ## UI Sections / Khu vực UI
 
 Order filters, order list, pagination, quick status summary.

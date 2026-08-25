@@ -12,3 +12,10 @@ Shipping physical design đã approved `shipping_method = manual` và `shipping_
 - không tạo Shipment cho tới Order/fulfillment phase.
 
 Rule không đại diện GHN/GHTK/Viettel Post và không nhận fee/total từ frontend. Mở rộng khu vực, phí hoặc provider phải là decision mới.
+
+## Prompt 33.1 fulfillment decisions
+
+- Shipment states are exactly `pending|shipped|delivered|cancelled|returned`; no preparing/failed/provider state is invented.
+- Internal Fulfillment service owns transitions. Frontend/browser and Payment do not own Shipment status.
+- COD can ship while Payment pending; VNPAY requires verified paid and Order confirmed.
+- Delivered atomically completes Order and creates Review evidence. Cancel is only pre-shipment; return is full-order only after delivered.

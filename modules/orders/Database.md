@@ -2,7 +2,7 @@
 
 ## Tables / Bảng
 
-Customer Orders V1 chỉ đọc các bảng hiện hữu: `orders`, `order_items`, `payments`, `shipments`, `shipping_addresses`.
+Runtime dùng `orders`, `order_items`, `payments`, `shipments`, `shipping_addresses`, `order_status_histories` và `shipping_status_histories`.
 
 ## Authority / Nguồn dữ liệu
 
@@ -14,4 +14,6 @@ Customer Orders V1 chỉ đọc các bảng hiện hữu: `orders`, `order_items
 
 List dùng `idx_orders_customer_time` cho tenant/customer/time và stable ID tie-breaker. Filter status được giới hạn; không nhận tên cột/operator tùy ý.
 
-Prompt 28 không thay schema và không tạo migration.
+Migration `1760000014000-enable-order-fulfillment-review-eligibility` mở exact Order/Shipment status checks và tạo hai history table có tenant/status/time indexes, Order/Shipment `RESTRICT` FK và nullable actor `SET NULL` FK. Migration forward/reversible; `synchronize=false` giữ nguyên.
+
+`orders.completed_at` và `shipments.shipped_at|delivered_at` được reuse, không tạo timestamp trùng. Delivery set `delivered_at` và `completed_at` cùng transaction. Cancel/return reason và thời điểm authoritative nằm trong history rows.

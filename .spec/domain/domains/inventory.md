@@ -1,5 +1,9 @@
 # Inventory Domain / Domain tồn kho
 
+## Prompt 33.1 cancellation/return effect
+
+Internal Order Fulfillment owns cancellation-before-shipment and full-return transactions. Active reservations release; consumed reservations restock idempotently. Payment refund alone is not stock authority.
+
 ## Purpose / Mục đích
 
 Quản lý khả năng bán của sản phẩm và cảnh báo tình trạng tồn kho ở mức nghiệp vụ.
