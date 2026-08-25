@@ -117,6 +117,49 @@ describe('Authentication route guards', () => {
     expect(screen.getByText('Forbidden route')).toBeInTheDocument();
   });
 
+  it('allows an authenticated Internal actor to access the Admin route', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      ...baseAuth,
+      status: 'authenticated',
+      hasRole: vi.fn((role) => role === 'ADMINISTRATOR'),
+    });
+    render(
+      <MemoryRouter initialEntries={['/admin']}>
+        <Routes>
+          <Route
+            path="/admin"
+            element={
+              <RouteGuard area="admin">
+                <p>Admin dashboard</p>
+              </RouteGuard>
+            }
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+    expect(screen.getByText('Admin dashboard')).toBeInTheDocument();
+  });
+
+  it('keeps the Admin route in loading state while a session is restored on reload', () => {
+    vi.mocked(useAuth).mockReturnValue({ ...baseAuth, status: 'restoring' });
+    render(
+      <MemoryRouter initialEntries={['/admin']}>
+        <Routes>
+          <Route
+            path="/admin"
+            element={
+              <RouteGuard area="admin">
+                <p>Admin dashboard</p>
+              </RouteGuard>
+            }
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+    expect(screen.getByText('Đang khôi phục phiên đăng nhập…')).toBeInTheDocument();
+    expect(screen.queryByText('Admin dashboard')).not.toBeInTheDocument();
+  });
+
   it('redirects a guest away from a direct Customer Orders URL', () => {
     vi.mocked(useAuth).mockReturnValue({ ...baseAuth, status: 'guest' });
     render(

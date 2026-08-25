@@ -1,5 +1,11 @@
 # ChangeLog / Nhật ký thay đổi Authentication
 
+## 2026-08-25 — Prompt 34
+
+- Rechecked current account/session/roles on every protected request.
+- Added canonical `analytics:read` permission for Staff, Manager and Administrator.
+- Exported the existing permission guard for reusable Admin module boundaries.
+
 ## [Unreleased] / Chưa phát hành
 
 ### Added / Thêm mới

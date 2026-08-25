@@ -892,12 +892,14 @@ domains:
         permission: "Provider scope"
   - name: Analytics
     endpointCount: 9
+    runtimeStatus: dashboard_ready_other_operations_contract_only
     paths:
       - method: GET
         uri: /api/v1/admin/analytics/dashboard
         operationId: getAdminAnalyticsDashboard
         auth: "Staff/Manager/Admin JWT"
         permission: "analytics:read"
+        runtimeStatus: ready
       - method: GET
         uri: /api/v1/admin/analytics/sales
         operationId: getAdminAnalyticsSales

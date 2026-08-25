@@ -6,6 +6,7 @@ Thư mục này quản lý module nghiệp vụ độc lập với source code. 
 
 ## Modules / Danh sách module
 
+- [`admin`](admin/README.md): Internal access control, application shell và authoritative Dashboard V1.
 - [`authentication`](authentication/README.md): Context Pack xác thực V1 (đã mapping, còn blocker trước triển khai).
 - `users`: người dùng.
 - `products`: sản phẩm.
@@ -15,7 +16,7 @@ Thư mục này quản lý module nghiệp vụ độc lập với source code. 
 - [`payment`](payment/Report.md): COD/VNPAY authority và provider-event transaction.
 - [`inventory`](inventory/README.md): quantity/reservation authority và Order stock lifecycle.
 - [`shipping`](shipping/README.md): manual quote, persisted Shipment và internal fulfillment lifecycle.
-- [`reviews`](reviews/README.md): eligibility READY; Review persistence/API/UI chưa triển khai.
+- [`reviews`](reviews/README.md): public/customer Review persistence/API/Product Detail READY; Admin moderation blocked.
 - `nutrition`: dinh dưỡng.
 - `ai`: AI platform.
 - `marketing`: marketing.

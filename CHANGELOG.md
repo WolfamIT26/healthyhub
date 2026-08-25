@@ -1,5 +1,30 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.23.0] - 2026-08-25
+
+### Added / Đã thêm
+
+- Added canonical Internal Admin authorization, `analytics:read`, typed Dashboard API and tenant-scoped Product/Inventory/Order/Review aggregates.
+- Added responsive `/admin` shell with protected parent route, disabled future navigation and real loading/error/retry/forbidden/empty states.
+
+### Security / Bảo mật
+
+- Access guard now rechecks current session owner/status/expiry, account policy, persisted roles and permission version.
+- JWT role claims, frontend state and request input cannot grant Admin authority; Dashboard returns no Customer PII or secrets.
+
+### Scope / Phạm vi
+
+- Reused the existing Analytics Dashboard operation; OpenAPI remains 196 operations and no migration was added.
+- Admin Review moderation and all full CRUD/financial analytics remain blocked/outside Prompt 34.
+
+### Verification / Kiểm tra
+
+- Format/lint/typecheck/build PASS; API 232 + Web 152 = 384 unit tests PASS.
+- MySQL integration 13 files/26 tests PASS; migration state 16/16 applied.
+- OpenAPI 196/196/196, secrets/docs/diff checks PASS.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
 ## [0.22.0] - 2026-08-21
 
 ### Added / Đã thêm

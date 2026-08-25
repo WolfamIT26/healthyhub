@@ -30,3 +30,5 @@ AI Agent không được hard-code secret, token, password hoặc thông tin đ�
 ## Implementation Baseline / Nền bảo mật triển khai
 
 Các kiểm soát bảo mật đã có trong foundation code được ghi tại [docs/implementation-foundation/security-baseline.md](docs/implementation-foundation/security-baseline.md). Module Authentication sẽ bổ sung JWT, role permission runtime và session/token lifecycle ở phase sau.
+
+Prompt 34 Admin Foundation reuses Authentication/User RBAC. Protected requests recheck current account/session/roles; Admin Dashboard requires Internal role + `analytics:read`, is tenant-scoped and returns no Customer PII or secrets.

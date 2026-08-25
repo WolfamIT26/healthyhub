@@ -43,11 +43,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const result = await authApi.login({ email, password });
-    authSessionStore.setAccessToken(result.accessToken);
-    const current = await authApi.session();
-    authSessionStore.setCurrent(current);
-    return current.actor;
+    authSessionStore.clear();
+    try {
+      const result = await authApi.login({ email, password });
+      authSessionStore.setAccessToken(result.accessToken);
+      const current = await authApi.session();
+      authSessionStore.setCurrent(current);
+      return current.actor;
+    } catch (error) {
+      authSessionStore.clear();
+      throw error;
+    }
   }, []);
 
   const logout = useCallback(async () => {

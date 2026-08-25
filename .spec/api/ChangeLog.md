@@ -1,5 +1,11 @@
 # API Specification ChangeLog / Nhật ký thay đổi API Specification
 
+## 2026-08-25 — Prompt 34
+
+- Opened the existing Admin Analytics Dashboard operation with exact aggregate-only response and server-derived tenant/role boundary.
+- Kept 8 other Analytics operations design-only and 2 Admin Review moderation operations blocked.
+- Operation inventory remains 196.
+
 ## 2026-08-21 — Prompt 33.2
 
 - Opened 6 public/customer Review operations with exact pagination/request/response contracts.

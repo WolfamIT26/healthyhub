@@ -56,6 +56,7 @@ const environmentProvider = {
     AuthenticationTokenService,
     AccessTokenGuard,
     RolesGuard,
+    PermissionsGuard,
     AUTHENTICATION_REPOSITORY,
     EmailVerificationPolicyService,
   ],

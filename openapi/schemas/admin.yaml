@@ -1,0 +1,55 @@
+AdminProductMetrics:
+  type: object
+  additionalProperties: false
+  required: [total, activePublic, unavailable]
+  properties:
+    total: { type: integer, minimum: 0 }
+    activePublic: { type: integer, minimum: 0 }
+    unavailable: { type: integer, minimum: 0 }
+AdminOrderStatusMetrics:
+  type: object
+  additionalProperties: false
+  required: [new, confirmed, completed, cancelled, returned]
+  properties:
+    new: { type: integer, minimum: 0 }
+    confirmed: { type: integer, minimum: 0 }
+    completed: { type: integer, minimum: 0 }
+    cancelled: { type: integer, minimum: 0 }
+    returned: { type: integer, minimum: 0 }
+AdminOrderMetrics:
+  type: object
+  additionalProperties: false
+  required: [total, byStatus]
+  properties:
+    total: { type: integer, minimum: 0 }
+    byStatus: { $ref: "#/AdminOrderStatusMetrics" }
+AdminReviewStatusMetrics:
+  type: object
+  additionalProperties: false
+  required: [published, hidden, rejected]
+  properties:
+    published: { type: integer, minimum: 0 }
+    hidden: { type: integer, minimum: 0 }
+    rejected: { type: integer, minimum: 0 }
+AdminReviewMetrics:
+  type: object
+  additionalProperties: false
+  required: [total, byStatus]
+  properties:
+    total: { type: integer, minimum: 0 }
+    byStatus: { $ref: "#/AdminReviewStatusMetrics" }
+AdminDashboardResult:
+  type: object
+  additionalProperties: false
+  required: [products, orders, reviews, generatedAt]
+  properties:
+    products: { $ref: "#/AdminProductMetrics" }
+    orders: { $ref: "#/AdminOrderMetrics" }
+    reviews: { $ref: "#/AdminReviewMetrics" }
+    generatedAt: { type: string, format: date-time }
+AdminDashboardResponseEnvelope:
+  allOf:
+    - $ref: "./common.yaml#/SuccessEnvelope"
+    - type: object
+      properties:
+        data: { $ref: "#/AdminDashboardResult" }

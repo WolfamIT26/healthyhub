@@ -45,3 +45,7 @@ NestJS runtime nằm tại `apps/api/src/presentation/authentication` và triể
 - Resend vẫn trả accepted. Forgot trả accepted cho account verified/unknown nhưng trả `AUTH.EMAIL_NOT_VERIFIED` theo policy sản phẩm khi nhận diện account chưa verify.
 
 Notification hiện là local no-op adapter qua gateway interface. Provider email thật, distributed rate limiter và signing-key rotation là công việc vận hành tiếp theo, không làm thay đổi contract V1.
+
+## Prompt 34 Admin hardening / Tăng cường Admin Prompt 34
+
+`AccessTokenGuard` hiện recheck session owner/status/expiry, account active/deleted state, persisted roles và current permission version. Role trong JWT không còn được dùng trực tiếp làm authority khi role đã bị revoke. `PermissionsGuard` được export để các Admin module reuse.

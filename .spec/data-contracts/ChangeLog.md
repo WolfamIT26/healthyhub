@@ -1,5 +1,10 @@
 # Data Contract ChangeLog / Nhật ký thay đổi Data Contract
 
+## [0.5.0] - 2026-08-25
+
+- Added Admin Dashboard aggregate contract and current persisted role/permission authorization clarification.
+- Kept tenant/role client input, Customer PII, financial analytics and moderation-pending fields outside the response.
+
 ## [0.4.0] - 2026-08-21
 
 - Added exact Review public/owner request and response shapes, rating distribution and eligibility opportunity.

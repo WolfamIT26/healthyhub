@@ -24,23 +24,57 @@ export class AccessTokenGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<RequestWithContext>();
     const authorization = request.headers.authorization;
     if (!authorization?.startsWith('Bearer ')) this.unauthorized();
+    let claims: Awaited<ReturnType<AuthenticationTokenService['verifyAccessToken']>>;
     try {
-      const claims = await this.tokens.verifyAccessToken(authorization.slice(7));
-      const session = await this.repository.findSessionByPublicId(claims.sid);
-      const now = new Date();
-      if (!session || session.sessionStatus !== 'active' || session.expiresAt <= now)
-        this.unauthorized();
-      request.auth = {
-        userAccountId: claims.sub,
-        sessionId: session.id,
-        sessionPublicId: session.sessionPublicId,
-        roles: claims.roles,
-        permissionsVersion: claims.permissionsVersion,
-      };
-      return true;
+      claims = await this.tokens.verifyAccessToken(authorization.slice(7));
     } catch {
       return this.unauthorized();
     }
+
+    const [session, account, roles] = await Promise.all([
+      this.repository.findSessionByPublicId(claims.sid),
+      this.repository.findAccountById(claims.sub),
+      this.repository.getRoleNames(claims.sub),
+    ]);
+    const now = new Date();
+    if (
+      !session ||
+      !account ||
+      account.deletedAt ||
+      session.userAccountId !== claims.sub ||
+      session.sessionStatus !== 'active' ||
+      session.expiresAt <= now
+    ) {
+      return this.unauthorized();
+    }
+    if (account.userStatus === 'disabled') {
+      throw new AuthenticationException(
+        HttpStatus.FORBIDDEN,
+        'BUSINESS.AUTHENTICATION.ACCOUNT_DISABLED',
+        'BUSINESS',
+        'Tài khoản đã bị vô hiệu hóa.',
+      );
+    }
+    if (account.userStatus === 'locked') {
+      throw new AuthenticationException(
+        HttpStatus.LOCKED,
+        'BUSINESS.AUTHENTICATION.ACCOUNT_LOCKED',
+        'BUSINESS',
+        'Tài khoản đang bị khóa.',
+      );
+    }
+    const pendingCustomer =
+      account.userStatus === 'pending' && roles.length === 1 && roles[0] === 'CUSTOMER';
+    if (account.userStatus !== 'active' && !pendingCustomer) return this.unauthorized();
+
+    request.auth = {
+      userAccountId: account.id,
+      sessionId: session.id,
+      sessionPublicId: session.sessionPublicId,
+      roles,
+      permissionsVersion: account.permissionsVersion,
+    };
+    return true;
   }
 
   private unauthorized(): never {

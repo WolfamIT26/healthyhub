@@ -39,6 +39,8 @@ Forgot always returns `{ accepted: true }` for valid email input. Eligible accou
 
 Session returns actor, persisted roles, effective permissions, `permissionsVersion` and safe token/session timestamps. Tokens do not embed the full permission list. Backend rechecks session/account state; sensitive authorization resolves current permissions. 401 triggers one coordinated client refresh; 403 keeps the session and shows forbidden state.
 
+Prompt 34 runtime rechecks session owner/status/expiry, account active/deleted state, current persisted roles and permission version on protected requests. JWT role claims cannot preserve Admin access after current role revocation. Admin Dashboard additionally requires an Internal role and current `analytics:read` permission.
+
 ## Cleanup / Dọn dữ liệu
 
 Scheduled idempotent batches purge revoked/expired sessions after 90 days, login attempts after 90 days, expired/terminal reset and verification records after 30 days, and security audit after 365 days unless legal hold. Deletion/anonymization removes identifier/IP/device linkage while preserving non-identifying aggregate security metrics.

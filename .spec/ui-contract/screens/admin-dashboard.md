@@ -21,21 +21,21 @@ Staff limited, manager, admin, super admin theo scope.
 ## Required API / API bắt buộc
 
 - `GET /api/v1/admin/analytics/dashboard`.
-- `GET /api/v1/admin/orders`.
-- `GET /api/v1/admin/inventory/alerts`.
 - `GET /api/v1/auth/session`.
+
+Admin Order/Inventory operations chưa executable nên không được gọi hoặc hiển thị dữ liệu giả trong Prompt 34.
 
 ## Required Data / Dữ liệu bắt buộc
 
-Metric summary, alert list, pending orders, staff permission scope, dashboard dataset.
+Product/Inventory/Order/Review aggregate, current actor roles/effective permissions và generated timestamp.
 
 ## UI Sections / Khu vực UI
 
-Metric overview, pending order list, inventory alerts, quick actions, AI insight entry.
+Metric overview, Order status breakdown và Review status breakdown. Alert/task/quick action/AI insight là future scope.
 
 ## Components / Thành phần
 
-Admin Shell, Metric Card, Alert List, Task List, Quick Action, Permission-aware Navigation.
+Admin Shell, Metric Card, status breakdown, permission-aware navigation và state feedback.
 
 ## Form / Form
 
@@ -108,4 +108,3 @@ Metric card có label text, alert không chỉ dựa vào màu.
 ## SEO Metadata / SEO metadata
 
 Noindex vì là admin/private.
-
