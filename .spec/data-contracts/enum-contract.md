@@ -46,13 +46,13 @@ Tài liệu này chuẩn hóa cách định nghĩa enum trong Data Contract đ�
 | Inventory | `inventoryMovementType` | import, export, adjustment, reservation, release |
 | Cart | `cartStatus` | active, converted, abandoned, expired |
 | Wishlist | `wishlistStatus` | active, archived |
-| Order | `orderStatus` | draft, placed, confirmed, processing, shipped, completed, cancelled, refunded |
+| Order | `orderStatus` | new, confirmed, completed, cancelled, returned |
 | Payment | `paymentStatus` | unpaid, pending, paid, failed, refunded, partially_refunded, cancelled |
-| Shipping | `shippingStatus` | pending, preparing, shipped, delivered, failed, returned, cancelled |
+| Shipping | `shippingStatus` | pending, shipped, delivered, cancelled, returned |
 | Coupon | `couponStatus` | draft, active, paused, expired, archived |
 | Promotion | `promotionStatus` | draft, scheduled, active, paused, ended, archived |
 | Loyalty | `loyaltyPointStatus` | pending, available, used, expired, reversed |
-| Review | `reviewStatus` | pending, approved, rejected, hidden |
+| Review | `reviewStatus` | published, hidden, rejected |
 | Blog | `postStatus` | draft, scheduled, published, archived |
 | Media | `mediaStatus` | uploaded, processing, active, failed, archived, deleted |
 | Notification | `notificationStatus` | pending, sent, delivered, failed, read, cancelled |
@@ -73,4 +73,3 @@ Tài liệu này chuẩn hóa cách định nghĩa enum trong Data Contract đ�
 - Contract không phụ thuộc vào label hiển thị.
 - Analytics nên lưu enum value ổn định, không lưu label.
 - Export file có thể hiển thị cả enum value và label nếu cần cho người vận hành.
-

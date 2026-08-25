@@ -169,12 +169,27 @@ export class InventoryStockMutationRepository {
     );
   }
 
+  restoreForOrder(
+    manager: EntityManager,
+    orderId: string,
+    actorUserAccountId: string | null = null,
+    tenantId = '1',
+  ): Promise<void> {
+    return this.transitionOrderReservations(
+      manager,
+      tenantId,
+      orderId,
+      actorUserAccountId,
+      'restore',
+    );
+  }
+
   private async transitionOrderReservations(
     manager: EntityManager,
     tenantId: string,
     orderId: string,
     actorUserAccountId: string | null,
-    transition: 'consume' | 'release' | 'restock',
+    transition: 'consume' | 'release' | 'restock' | 'restore',
   ): Promise<void> {
     const reservations = manager.getRepository(StockReservationEntity);
     const rows = await reservations.find({
@@ -215,7 +230,7 @@ export class InventoryStockMutationRepository {
   private applyTransition(
     inventory: InventoryItemEntity,
     reservation: StockReservationEntity,
-    transition: 'consume' | 'release' | 'restock',
+    transition: 'consume' | 'release' | 'restock' | 'restore',
   ): boolean {
     const now = new Date();
     if (transition === 'consume') {
@@ -246,20 +261,28 @@ export class InventoryStockMutationRepository {
       return true;
     }
 
-    if (transition === 'release') {
+    if (transition === 'release' || transition === 'restore') {
       if (
         reservation.reservationStatus === 'released' ||
         reservation.reservationStatus === 'restocked'
       ) {
         return false;
       }
-      if (reservation.reservationStatus !== 'active') return this.conflict(reservation, transition);
-      this.assertReservedQuantity(inventory, reservation);
-      inventory.availableQuantity += reservation.reservedQuantity;
-      inventory.reservedQuantity -= reservation.reservedQuantity;
-      reservation.reservationStatus = 'released';
-      reservation.releasedAt = now;
-      return true;
+      if (reservation.reservationStatus === 'active') {
+        this.assertReservedQuantity(inventory, reservation);
+        inventory.availableQuantity += reservation.reservedQuantity;
+        inventory.reservedQuantity -= reservation.reservedQuantity;
+        reservation.reservationStatus = 'released';
+        reservation.releasedAt = now;
+        return true;
+      }
+      if (transition === 'restore' && reservation.reservationStatus === 'consumed') {
+        inventory.availableQuantity += reservation.reservedQuantity;
+        reservation.reservationStatus = 'restocked';
+        reservation.restockedAt = now;
+        return true;
+      }
+      return this.conflict(reservation, transition);
     }
 
     if (reservation.reservationStatus === 'restocked') return false;
@@ -284,7 +307,7 @@ export class InventoryStockMutationRepository {
 
   private conflict(
     reservation: StockReservationEntity,
-    transition: 'consume' | 'release' | 'restock',
+    transition: 'consume' | 'release' | 'restock' | 'restore',
   ): never {
     throw new InventoryStockMutationError(
       'RESERVATION_STATE_CONFLICT',

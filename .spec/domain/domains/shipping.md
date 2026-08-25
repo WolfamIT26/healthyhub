@@ -29,6 +29,9 @@ Quản lý thông tin nhận hàng, trạng thái giao và rule giao hàng ở m
 - Phí giao hàng cần xác nhận trước khi đặt hàng.
 - Thay đổi địa chỉ sau khi xử lý cần quyền và lý do.
 - Trạng thái giao không được chuyển sai flow.
+- Executable Shipment flow is `pending → shipped → delivered → returned`, or `pending → cancelled`.
+- COD may fulfill while Payment pending; VNPAY requires paid/confirmed. Paid is not delivery evidence.
+- Only internal Fulfillment authority writes timestamps/history; browser/frontend cannot set status.
 
 ## Domain Event / Sự kiện domain
 
@@ -46,4 +49,3 @@ Quản lý thông tin nhận hàng, trạng thái giao và rule giao hàng ở m
 ## Boundary / Ranh giới
 
 Shipping không xử lý payment hoặc provider tracking chi tiết. Provider integration sẽ thuộc Gateway ở prompt sau.
-

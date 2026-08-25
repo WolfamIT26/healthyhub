@@ -31,7 +31,7 @@ Tài liệu này mapping domain của HealthyHub sang nhóm Data Contract cần 
 | Coupon | Coupon apply/manage | Coupon summary, coupon validation result | Code, condition, discount | Không trả rule nội bộ quá chi tiết public. |
 | Promotion | Promotion manage/query | Promotion summary, promotion detail | Campaign, schedule, condition | Draft/internal chỉ admin. |
 | Loyalty | Earn/use point action | Point balance, transaction summary | Customer point, transaction | Owner/admin only, audit điểm. |
-| Review | Create/moderate review | Review list item, review detail, rating summary | Review, rating, moderation | Moderation reason admin only. |
+| Review | Owner create/update/delete | Public/owner Review list, eligibility, rating summary | Review, rating, Order+Product identity | Customer owner server-derived; public has no PII; moderation future only. |
 | Blog | Blog create/update/query | Blog card, blog detail, SEO metadata | Post, category, media | Draft chỉ staff/admin. |
 | Media | Upload/attach/update media | Media asset summary, file URL metadata | File, image, certificate | Storage key private, signed URL nếu cần. |
 | Notification | Send/read notification | Notification summary, delivery status | Recipient, channel, template | Không lộ nội dung cá nhân ngoài người nhận. |
@@ -69,4 +69,3 @@ Các contract liên domain phải hạn chế phụ thuộc vào table nội b�
 - Payment service chỉ trả payment summary, không lộ provider internals.
 - AI service dùng source reference và source policy thay vì đọc trực tiếp mọi database table.
 - Analytics service ưu tiên event/aggregate contract thay vì query xuyên database vận hành.
-

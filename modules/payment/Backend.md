@@ -16,3 +16,9 @@ Pipeline: receive raw bytes/headers → adapter signature/timestamp verification
 - Return handling is UX-oriented; IPN/callback/query path is authoritative for Payment transition.
 - Provider event dedupe is reused; duplicate or concurrent IPN delivery cannot double apply business effects.
 - Provider-specific data is normalized before leaving Payment boundary; Order only sees approved canonical effect.
+
+# Prompt 33.1 fulfillment separation
+
+- Verified VNPAY paid continues to own Order `new → confirmed` and now writes durable Order status history in the same provider-event transaction.
+- Paid signals for `cancelled|returned` Orders fail with reconciliation-required and cannot reacquire stock or revive fulfillment.
+- Payment paid is only shipment readiness for VNPAY; it never writes delivered/completed evidence.

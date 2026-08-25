@@ -1,5 +1,82 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.22.0] - 2026-08-21
+
+### Added / Đã thêm
+
+- Added `product_reviews` persistence with Order+Product uniqueness, rating/content/status constraints, audit fields and soft delete.
+- Added transactional Review eligibility recheck, public/customer typed API and authoritative rating aggregate.
+- Added Product Detail summary, distribution, Review list/badge/pagination and Customer create/edit/delete UX.
+
+### Security & Concurrency / Bảo mật và đồng thời
+
+- Customer owner derives only from JWT → CustomerProfile; DTO rejects `customerId`, `verifiedPurchase` and mass assignment.
+- Order/Shipment and Review row locks plus DB unique identity protect concurrent create and update/delete races.
+- Public output uses a safe author label and no Customer PII/internal IDs; return dynamically revokes verified badge while keeping content.
+
+### Scope / Phạm vi
+
+- Six public/customer Review operations are executable; two Admin moderation operations remain explicitly blocked.
+- No Admin Review UI, AI moderation, media, voting, comments, seller reply, rewards, recommendation engine or Prompt 34.
+
+### Verification / Kiểm tra
+
+- Format/lint/typecheck/build PASS; API 222 + Web 142 = 364 unit tests PASS.
+- MySQL integration 12 files/25 tests PASS; migration state 16/16 applied.
+- OpenAPI 196/196/196, secrets/docs/diff checks PASS.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
+## [0.21.0] - 2026-08-21
+
+### Added / Đã thêm
+
+- Added canonical separate Order/Shipment state machines, internal Fulfillment service and durable status histories.
+- Added authoritative delivered/completed timestamps, COD/VNPAY readiness and owner-scoped Review eligibility policy.
+- Added idempotent cancellation/full-return Inventory restore and transaction/concurrency protection.
+
+### Decisions / Quyết định
+
+- Review duplicate identity is Order + Product. Future V1 defaults to published, owner edit in-place and owner soft delete; return revokes verified evidence while keeping content.
+- Payment paid remains separate from delivery; browser return has no authority. Refund provider execution remains outside scope.
+
+### Scope / Phạm vi
+
+- No Review persistence/API/aggregate/UI, no Admin Order/Shipping UI/API, no provider refund, partial return or shipping provider.
+- Review OpenAPI operations remain runtime-blocked due missing Review persistence/API; operation inventory remains 196.
+
+### Verification / Kiểm tra
+
+- Format/lint/typecheck/build PASS; 335 unit tests and 11 MySQL files/18 integration tests PASS.
+- Migration state 15/15 applied; OpenAPI 196/196/196 and secrets/docs/diff checks PASS.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
+## [0.20.0] - 2026-08-21
+
+### Audit / Kiểm tra
+
+- Audit Prompt 33 xác nhận Customer ownership và persisted Order Item/Product evidence đã có, nhưng Order chỉ executable `new|confirmed` và Shipment chỉ `pending`.
+- Ghi Review Eligibility/Persistence/API/Rating Aggregate **BLOCKED** vì chưa có authoritative completed/delivered transition áp dụng cho cả COD và VNPAY.
+
+### Documentation / Tài liệu
+
+- Tạo full Review module context pack và đồng bộ feature/domain/database/API/UI specs.
+- Đánh dấu 8 Review OpenAPI operations là contract-stage runtime-blocked; operation inventory giữ 196.
+- Product Detail tiếp tục no-fake Review placeholder; không thêm migration, entity, controller, DTO, aggregate hoặc Review UI.
+
+### Scope / Phạm vi
+
+- Không coi Cart/Wishlist, OrderPlaced, Payment paid, Order confirmed hoặc Inventory consumed là verified-purchase authority.
+- Không triển khai Review Admin UI, moderation system, media/rewards/voting/comment/reply/AI hoặc Prompt 34.
+
+### Verification / Kiểm tra
+
+- Format/lint/typecheck/build PASS; 318 unit tests và 10 MySQL files/13 integration tests PASS.
+- Migration state 14/14 applied; OpenAPI 196/196/196, secrets/docs/diff checks PASS.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
 ## [0.19.0] - 2026-08-21
 
 ### Added / Đã thêm

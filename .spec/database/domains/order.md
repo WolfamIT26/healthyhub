@@ -17,7 +17,7 @@ Lưu đơn hàng, dòng sản phẩm, trạng thái xử lý và lý do hủy đ
 
 | Entity | PK | Main Attributes / Thuộc tính chính | FK / Tham chiếu | Data Status |
 | --- | --- | --- | --- | --- |
-| `orders` | `id` | `tenant_id`, `order_code`, `order_source`, `order_status`, `payment_status_snapshot`, `shipping_status_snapshot`, `order_total`, `placed_at`, `completed_at` | `customer_profile_id` -> Customer, `cart_id` -> Cart nullable | new, confirmed, processing, shipped, completed, cancelled |
+| `orders` | `id` | `tenant_id`, `order_code`, `order_source`, `order_status`, `payment_status_snapshot`, `shipping_status_snapshot`, `order_total`, `placed_at`, `completed_at` | `customer_profile_id` -> Customer, `cart_id` -> Cart nullable | new, confirmed, completed, cancelled, returned |
 | `order_items` | `id` | `tenant_id`, `product_name_snapshot`, `sku_snapshot`, `unit_price_snapshot`, `quantity`, `line_total` | `order_id`, `product_id` -> Product nullable | active, cancelled, refunded |
 | `order_status_histories` | `id` | `tenant_id`, `from_status`, `to_status`, `reason`, `changed_at` | `order_id`, `changed_by` -> User nullable | recorded |
 | `order_cancellations` | `id` | `tenant_id`, `cancellation_type`, `cancellation_reason`, `cancelled_at` | `order_id`, `cancelled_by` -> User nullable | requested, approved, rejected, completed |
@@ -48,7 +48,7 @@ Lưu đơn hàng, dòng sản phẩm, trạng thái xử lý và lý do hủy đ
 
 ## Data Lifecycle / Vòng đời dữ liệu
 
-Order được tạo từ cart/checkout, confirmed, processing, shipped, completed hoặc cancelled. Payment và Shipping cập nhật snapshot trạng thái theo event/contract.
+Order được tạo `new`; verified VNPAY Payment có thể xác nhận; Fulfillment atomically hoàn tất khi Shipment delivered, hủy trước shipment hoặc đánh dấu full return sau delivery. Mỗi transition ghi `order_status_histories`.
 
 ## Data Ownership / Sở hữu dữ liệu
 

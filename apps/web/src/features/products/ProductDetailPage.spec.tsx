@@ -25,6 +25,27 @@ vi.mock('../wishlist/wishlistApi', () => ({
     remove: vi.fn(),
   },
 }));
+vi.mock('../reviews/reviewApi', () => ({
+  reviewApi: {
+    listPublic: vi.fn().mockResolvedValue({
+      items: [],
+      page: 1,
+      pageSize: 5,
+      totalItems: 0,
+      totalPages: 0,
+    }),
+    summary: vi.fn().mockResolvedValue({
+      productId: '1',
+      averageRating: null,
+      totalReviews: 0,
+      distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+    }),
+    mine: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+  },
+}));
 
 const guestAuth = {
   status: 'guest' as const,

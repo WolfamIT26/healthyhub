@@ -1,5 +1,20 @@
 # Product ChangeLog / Nhật ký Product
 
+## 2026-08-21 — Prompt 33.2
+
+- Replaced Product Detail no-data Review placeholder with persisted rating summary/list and owner form.
+- Kept Product public API shape unchanged; Review endpoints own aggregate and verified evidence.
+
+## 2026-08-21 — Prompt 33.1
+
+- Updated Product Detail Review blocker: eligibility is READY; persistence/API/aggregate remain missing.
+
+## 2026-08-21 — Prompt 33
+
+- Audited Review/rating authority for Product Detail.
+- Kept the no-fake Review placeholder because verified-purchase eligibility is runtime-blocked.
+- Added no Product rating field or frontend aggregate without persisted Review authority.
+
 ## 2026-08-21 — Prompt 32
 
 - Reused the Inventory evaluator for public availability so zero quantity cannot render in-stock.

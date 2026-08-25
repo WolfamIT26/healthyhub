@@ -15,3 +15,4 @@
 - [x] Tích hợp stock effect vào transaction owner của Order và verified VNPAY IPN.
 - [x] Kiểm tra no-negative, concurrent purchase, duplicate mutation/IPN và rollback.
 - [x] Giữ Admin Inventory UI/API ngoài scope.
+- [x] Nối cancellation trước shipment và full return sau delivered vào idempotent restore trong cùng transaction owner.

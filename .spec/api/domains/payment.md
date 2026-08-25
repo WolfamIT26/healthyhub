@@ -1,5 +1,9 @@
 # Payment API Specification / Đặc tả API thanh toán
 
+## Prompt 33.1 runtime note
+
+Browser return remains read-only. Verified paid records Order confirmation once, but Shipment delivery/completion belongs to internal Fulfillment and no refund endpoint is added.
+
 ## API Overview / Tổng quan API
 
 Payment API quản lý payment intent, trạng thái thanh toán, refund và webhook provider tương lai. Domain này không lưu hoặc trả card data, provider secret hoặc thông tin nhạy cảm ngoài contract.

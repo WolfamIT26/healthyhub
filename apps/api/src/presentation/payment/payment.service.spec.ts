@@ -76,6 +76,31 @@ describe('PaymentService VNPAY authority', () => {
 
     expect(fixture.gateway.createPayment).not.toHaveBeenCalled();
   });
+
+  it('does not let a late paid event revive a cancelled Order or reacquire stock', async () => {
+    const fixture = createFixture();
+    fixture.order.orderStatus = 'cancelled';
+    const service = fixture.service as unknown as {
+      applyProviderOutcome(
+        manager: unknown,
+        paymentId: string,
+        providerReference: string,
+        outcome: typeof fixture.verifiedOutcome,
+        actorUserAccountId: undefined,
+      ): Promise<void>;
+    };
+
+    await expect(
+      service.applyProviderOutcome(
+        { getRepository: fixture.dataSource.getRepository },
+        fixture.payment.id,
+        fixture.attempt.providerReference,
+        fixture.verifiedOutcome,
+        undefined,
+      ),
+    ).rejects.toMatchObject({ response: { code: 'PAYMENT_RECONCILIATION_REQUIRED' } });
+    expect(fixture.stockMutations.consumeForOrder).not.toHaveBeenCalled();
+  });
 });
 
 function createFixture(options: { verifiedAmount?: string } = {}) {
@@ -120,19 +145,48 @@ function createFixture(options: { verifiedAmount?: string } = {}) {
   } as PaymentAttemptEntity;
 
   const repositories = new Map<unknown, unknown>([
-    [OrderEntity, { findOneBy: vi.fn().mockResolvedValue(order) }],
-    [PaymentEntity, { findOneBy: vi.fn().mockResolvedValue(payment) }],
+    [
+      OrderEntity,
+      {
+        findOneBy: vi.fn().mockResolvedValue(order),
+        findOne: vi.fn().mockResolvedValue(order),
+        save: vi.fn(),
+      },
+    ],
+    [
+      PaymentEntity,
+      {
+        findOneBy: vi.fn().mockResolvedValue(payment),
+        findOne: vi.fn().mockResolvedValue(payment),
+        save: vi.fn(),
+      },
+    ],
     [
       PaymentAttemptEntity,
       {
         findOneBy: vi.fn().mockResolvedValue(attempt),
         findOne: vi.fn().mockResolvedValue(attempt),
+        save: vi.fn(),
       },
     ],
   ]);
   const dataSource = {
     getRepository: vi.fn((entity) => repositories.get(entity)),
     transaction: vi.fn(),
+  };
+  const verifiedOutcome = {
+    provider: 'vnpay' as const,
+    eventId: `${attempt.providerReference}:123:00:00`,
+    eventType: 'payment.notification',
+    providerReference: attempt.providerReference,
+    providerTransactionNo: '123',
+    responseCode: '00',
+    transactionStatus: '00',
+    status: 'paid' as const,
+    amount: options.verifiedAmount ?? order.orderTotal,
+    currency: 'VND' as const,
+    occurredAt: new Date('2026-08-12T01:05:00Z'),
+    verifiedAt: new Date('2026-08-12T01:05:01Z'),
   };
   const gateway = {
     providerCode: 'vnpay',
@@ -144,20 +198,7 @@ function createFixture(options: { verifiedAmount?: string } = {}) {
       redirectUrl: 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?signed=test',
     }),
     queryPayment: vi.fn(),
-    verifyWebhook: vi.fn().mockResolvedValue({
-      provider: 'vnpay',
-      eventId: `${attempt.providerReference}:123:00:00`,
-      eventType: 'payment.notification',
-      providerReference: attempt.providerReference,
-      providerTransactionNo: '123',
-      responseCode: '00',
-      transactionStatus: '00',
-      status: 'paid',
-      amount: options.verifiedAmount ?? order.orderTotal,
-      currency: 'VND',
-      occurredAt: new Date('2026-08-12T01:05:00Z'),
-      verifiedAt: new Date('2026-08-12T01:05:01Z'),
-    }),
+    verifyWebhook: vi.fn().mockResolvedValue(verifiedOutcome),
   };
   const providerEvents = {
     claim: vi.fn(),
@@ -195,6 +236,7 @@ function createFixture(options: { verifiedAmount?: string } = {}) {
     order,
     payment,
     attempt,
+    verifiedOutcome,
   };
 }
 

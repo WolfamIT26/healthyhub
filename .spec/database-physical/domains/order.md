@@ -68,6 +68,10 @@ Mọi bảng dùng `id BIGINT UNSIGNED NOT NULL`, `tenant_id BIGINT UNSIGNED NOT
 - Product FK trong order item: Set Null nếu product bị hard delete theo privacy/admin policy, snapshot vẫn giữ.
 - Actor FKs: Set Null.
 
+## Prompt 33.1 executable delta
+
+Migration `1760000014000-enable-order-fulfillment-review-eligibility` constrains `orders.order_status` and Order shipping snapshot to the exact canonical sets, creates `order_status_histories` with `RESTRICT` Order FK and `SET NULL` actor FK, and is reversible. Existing `completed_at` is reused.
+
 ## Performance & Retention / Hiệu năng và lưu giữ
 
 - Order list query theo customer/status/time cần composite index.

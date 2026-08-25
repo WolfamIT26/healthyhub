@@ -92,6 +92,66 @@ WishlistMutationOk:
     application/json:
       schema:
         $ref: "../schemas/wishlist.yaml#/WishlistMutationResponseEnvelope"
+PublicReviewListOk:
+  description: "Review public đã published và chưa soft-delete, có verified evidence động."
+  content:
+    application/json:
+      schema:
+        allOf:
+          - $ref: "../schemas/common.yaml#/SuccessEnvelope"
+          - type: object
+            properties:
+              data: { $ref: "../schemas/review.yaml#/PublicReviewList" }
+ReviewSummaryOk:
+  description: "Rating aggregate authoritative từ Review active/published."
+  content:
+    application/json:
+      schema:
+        allOf:
+          - $ref: "../schemas/common.yaml#/SuccessEnvelope"
+          - type: object
+            properties:
+              data: { $ref: "../schemas/review.yaml#/ReviewSummary" }
+MyReviewsOk:
+  description: "Review owner-scoped và cơ hội đánh giá từ fulfillment authority."
+  content:
+    application/json:
+      schema:
+        allOf:
+          - $ref: "../schemas/common.yaml#/SuccessEnvelope"
+          - type: object
+            properties:
+              data: { $ref: "../schemas/review.yaml#/MyReviewList" }
+ReviewCreated:
+  description: "Review được tạo hoặc trả lại an toàn cho exact retry."
+  content:
+    application/json:
+      schema:
+        allOf:
+          - $ref: "../schemas/common.yaml#/SuccessEnvelope"
+          - type: object
+            properties:
+              data: { $ref: "../schemas/review.yaml#/ReviewCreateResult" }
+ReviewMutationOk:
+  description: "Review thuộc Customer hiện tại đã được cập nhật."
+  content:
+    application/json:
+      schema:
+        allOf:
+          - $ref: "../schemas/common.yaml#/SuccessEnvelope"
+          - type: object
+            properties:
+              data: { $ref: "../schemas/review.yaml#/ReviewMutationResult" }
+ReviewDeleteOk:
+  description: "Review thuộc Customer hiện tại đã được soft-delete idempotently."
+  content:
+    application/json:
+      schema:
+        allOf:
+          - $ref: "../schemas/common.yaml#/SuccessEnvelope"
+          - type: object
+            properties:
+              data: { $ref: "../schemas/review.yaml#/ReviewDeleteResult" }
 OrderCreated:
   description: "Order snapshot đã được tạo atomically từ Cart và authority hiện hành. COD/Shipping bắt đầu ở pending."
   content:

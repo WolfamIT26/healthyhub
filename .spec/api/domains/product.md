@@ -114,7 +114,7 @@ Product API quản lý sản phẩm healthy, thông tin bán hàng, trạng thá
 - Public default: featured trước, sau đó updated hoặc best-selling khi có dữ liệu.
 - Admin default: `updatedAt` desc.
 - Prompt 31 whitelist: `featured`, `newest`, `name-asc`, `name-desc`, `price-asc`, `price-desc`; luôn có Product ID tie-breaker.
-- Không bật `rating`/`best-selling` cho tới khi Review/sales read model executable.
+- Review aggregate đã executable qua endpoint Review riêng; Product list vẫn không bật `rating`/`best-selling` sort vì repository Product chưa implement các sort đó.
 
 ## Prompt 31 Executable Contract
 

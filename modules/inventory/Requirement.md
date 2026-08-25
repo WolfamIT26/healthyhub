@@ -11,6 +11,8 @@
 - [x] Order create revalidate stock hiện tại.
 - [x] Order create reserve atomically; COD/VNPAY lifecycle có exact consume/release rules.
 - [x] Duplicate event/mutation idempotent; concurrent Orders không oversell hoặc làm stock âm.
+- [x] Cancel trước shipment restore active/consumed reservation trong Order transaction.
+- [x] Full return sau delivery restock consumed reservation đúng một lần.
 
 ## Edge Cases / Trường hợp biên
 

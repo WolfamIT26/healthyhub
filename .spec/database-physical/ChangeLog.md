@@ -1,5 +1,19 @@
 # Physical Database ChangeLog / Nhật ký thay đổi Physical Database Design
 
+## 2026-08-21 — Prompt 33.2
+
+- Added forward/reversible `product_reviews` migration with rating/content/status checks.
+- Added Customer/Product/Order/actor FKs, public/customer/order indexes and permanent Order+Product identity.
+
+## 2026-08-21 — Prompt 33.1
+
+- Documented migration `1760000014000`, exact status constraints and Order/Shipping history tables.
+
+## [1.5.0] - 2026-08-21
+
+- Audited Review physical design and kept all Review tables non-executable.
+- Rejected an ambiguous unique constraint/order relation before eligibility and lifecycle decisions are approved.
+
 ## [1.4.0] - 2026-08-21
 
 - Added executable `stock_reservations` migration contract with Order/Inventory `RESTRICT` FKs, positive quantity, status check, unique business identity and transition indexes.

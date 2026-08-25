@@ -1,0 +1,137 @@
+ReviewDistribution:
+  type: object
+  additionalProperties: false
+  required: ["1", "2", "3", "4", "5"]
+  properties:
+    "1": { type: integer, minimum: 0 }
+    "2": { type: integer, minimum: 0 }
+    "3": { type: integer, minimum: 0 }
+    "4": { type: integer, minimum: 0 }
+    "5": { type: integer, minimum: 0 }
+ReviewSummary:
+  type: object
+  additionalProperties: false
+  required: [productId, averageRating, totalReviews, distribution]
+  properties:
+    productId: { type: string, pattern: "^[1-9][0-9]*$" }
+    averageRating: { type: [number, "null"], minimum: 1, maximum: 5 }
+    totalReviews: { type: integer, minimum: 0 }
+    distribution: { $ref: "#/ReviewDistribution" }
+PublicReview:
+  type: object
+  additionalProperties: false
+  required: [reviewId, rating, content, authorDisplayName, verifiedPurchase, createdAt, updatedAt]
+  properties:
+    reviewId: { type: string, pattern: "^[1-9][0-9]*$" }
+    rating: { type: integer, minimum: 1, maximum: 5 }
+    content: { type: string, minLength: 3, maxLength: 2000 }
+    authorDisplayName: { type: string, description: "Public-safe label; never email, phone or internal Customer ID." }
+    verifiedPurchase: { type: boolean, description: "Derived from current completed+delivered evidence." }
+    createdAt: { type: string, format: date-time }
+    updatedAt: { type: string, format: date-time }
+PublicReviewList:
+  type: object
+  additionalProperties: false
+  required: [items, page, pageSize, totalItems, totalPages]
+  properties:
+    items:
+      type: array
+      items: { $ref: "#/PublicReview" }
+    page: { type: integer, minimum: 1 }
+    pageSize: { type: integer, minimum: 1, maximum: 50 }
+    totalItems: { type: integer, minimum: 0 }
+    totalPages: { type: integer, minimum: 0 }
+MyReviewProduct:
+  type: object
+  additionalProperties: false
+  required: [productId, name, slug]
+  properties:
+    productId: { type: string, pattern: "^[1-9][0-9]*$" }
+    name: { type: string }
+    slug: { type: string }
+MyReview:
+  type: object
+  additionalProperties: false
+  required: [reviewId, product, rating, content, status, verifiedPurchase, createdAt, updatedAt]
+  properties:
+    reviewId: { type: string, pattern: "^[1-9][0-9]*$" }
+    product: { $ref: "#/MyReviewProduct" }
+    rating: { type: integer, minimum: 1, maximum: 5 }
+    content: { type: string, minLength: 3, maxLength: 2000 }
+    status: { type: string, enum: [published, hidden, rejected] }
+    verifiedPurchase: { type: boolean }
+    createdAt: { type: string, format: date-time }
+    updatedAt: { type: string, format: date-time }
+ReviewEligibility:
+  type: object
+  additionalProperties: false
+  required: [eligible, reason, orderId, completedAt]
+  properties:
+    eligible: { type: boolean }
+    reason: { type: string, enum: [ELIGIBLE, ALREADY_REVIEWED, NO_FULFILLED_PURCHASE] }
+    orderId: { type: [string, "null"], pattern: "^[1-9][0-9]*$" }
+    completedAt: { type: [string, "null"], format: date-time }
+MyReviewList:
+  type: object
+  additionalProperties: false
+  required: [items, eligibility, page, pageSize, totalItems, totalPages]
+  properties:
+    items:
+      type: array
+      items: { $ref: "#/MyReview" }
+    eligibility:
+      oneOf:
+        - { $ref: "#/ReviewEligibility" }
+        - { type: "null" }
+    page: { type: integer, minimum: 1 }
+    pageSize: { type: integer, minimum: 1, maximum: 50 }
+    totalItems: { type: integer, minimum: 0 }
+    totalPages: { type: integer, minimum: 0 }
+CreateReviewRequest:
+  type: object
+  additionalProperties: false
+  required: [orderId, productId, rating, content]
+  properties:
+    orderId: { type: string, pattern: "^[1-9][0-9]*$" }
+    productId: { type: string, pattern: "^[1-9][0-9]*$" }
+    rating: { type: integer, minimum: 1, maximum: 5 }
+    content: { type: string, minLength: 3, maxLength: 2000 }
+UpdateReviewRequest:
+  type: object
+  additionalProperties: false
+  minProperties: 1
+  properties:
+    rating: { type: integer, minimum: 1, maximum: 5 }
+    content: { type: string, minLength: 3, maxLength: 2000 }
+ReviewMutationResult:
+  type: object
+  additionalProperties: false
+  required: [reviewId, productId, rating, content, status, createdAt, updatedAt]
+  properties:
+    reviewId: { type: string, pattern: "^[1-9][0-9]*$" }
+    productId: { type: string, pattern: "^[1-9][0-9]*$" }
+    rating: { type: integer, minimum: 1, maximum: 5 }
+    content: { type: string, minLength: 3, maxLength: 2000 }
+    status: { type: string, enum: [published, hidden, rejected] }
+    createdAt: { type: string, format: date-time }
+    updatedAt: { type: string, format: date-time }
+ReviewCreateResult:
+  type: object
+  additionalProperties: false
+  required: [reviewId, productId, rating, content, status, createdAt, updatedAt, created]
+  properties:
+    reviewId: { type: string, pattern: "^[1-9][0-9]*$" }
+    productId: { type: string, pattern: "^[1-9][0-9]*$" }
+    rating: { type: integer, minimum: 1, maximum: 5 }
+    content: { type: string, minLength: 3, maxLength: 2000 }
+    status: { type: string, enum: [published, hidden, rejected] }
+    createdAt: { type: string, format: date-time }
+    updatedAt: { type: string, format: date-time }
+    created: { type: boolean, description: "False for an exact idempotent retry." }
+ReviewDeleteResult:
+  type: object
+  additionalProperties: false
+  required: [reviewId, deleted]
+  properties:
+    reviewId: { type: string, pattern: "^[1-9][0-9]*$" }
+    deleted: { type: boolean, const: true }

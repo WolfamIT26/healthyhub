@@ -22,13 +22,15 @@ Prompt 32.1 thêm `stock_reservations` cho Order lifecycle. Unique `(tenant_id, 
 | Verified VNPAY paid IPN | Consume active reservation trong provider-event transaction. |
 | Verified VNPAY failed/cancelled IPN | Release active reservation, trả quantity về available. |
 | Late paid sau failed | Reacquire available stock bằng row lock rồi consume; nếu không đủ, rollback Payment/Order/event effect để reconciliation. |
-| Authoritative cancel trước consume | Future Order cancellation transaction gọi release. Runtime cancellation hiện chưa có. |
-| Authoritative cancel/refund sau consume | Future Order/refund transaction gọi idempotent restock. Runtime cancellation/refund hiện chưa có. |
+| Authoritative cancel trước shipment | Internal Order fulfillment transaction release active reservation; consumed COD/VNPAY stock được restock. |
+| Authoritative full return sau delivery | Internal Order fulfillment transaction restock consumed reservation. |
 
 VNPAY pending không dùng browser return, Payment attempt URL expiry hoặc Inventory clock độc lập để release. Hiện chưa có authoritative Payment timeout transition/scheduler, nên reservation chỉ release từ terminal provider event. Đây là quyết định fail-closed, không phải TTL ngầm.
 
 ## Transaction & Concurrency / Transaction và đồng thời
 
 Order transaction sở hữu reserve + COD consume + aggregate persistence. Verified IPN transaction sở hữu reservation transition + Payment/Order transition + provider event processed marker. Pessimistic Inventory row lock theo thứ tự Product ổn định ngăn concurrent Orders oversell; unsigned/check constraints và runtime invariant giữ stock không âm.
+
+Prompt 33.1 mở runtime caller cho cancellation trước shipment và full return sau delivery. `restoreForOrder` chọn `active → released` hoặc `consumed → restocked` theo persisted reservation state, khóa Inventory rows theo thứ tự ổn định và idempotent khi retry. Refund Payment riêng không tự restock; stock chỉ đổi trong authoritative Order cancellation/return transaction để tránh effect hai lần.
 
 Admin Inventory UI/API, manual adjustment, warehouse, supplier, purchase order, stock transfer, batch/lot, expiry, analytics và low-stock notification không thuộc Prompt 32.1.

@@ -12,3 +12,5 @@ Mỗi lần mount/reload đều gọi server. Page/filter nằm trong URL query;
 ## Responsive / Đáp ứng
 
 List dùng card stack trên mobile; detail một cột trên mobile và content/summary hai cột ở desktop. Control có touch target và accessible label.
+
+Prompt 33.1 chỉ mở rộng typed filter/label/tone cho canonical Order/Shipment states. Không thêm transition control; UI read-only đối với fulfillment.

@@ -29,6 +29,9 @@ Quản lý vòng đời đơn hàng từ lúc khách xác nhận mua đến khi 
 - Order chỉ chuyển trạng thái theo flow hợp lệ.
 - Hủy order phải ghi lý do.
 - Staff chỉ xử lý order trong phạm vi quyền.
+- Executable Order states are exactly `new|confirmed|completed|cancelled|returned`.
+- Payment owns verified VNPAY `new → confirmed`; internal Fulfillment owns `completed|cancelled|returned` effects.
+- Delivery completion, status history and Inventory cancel/return effects share one transaction.
 
 ## Domain Event / Sự kiện domain
 
@@ -46,4 +49,3 @@ Quản lý vòng đời đơn hàng từ lúc khách xác nhận mua đến khi 
 ## Boundary / Ranh giới
 
 Order không tự xác thực thanh toán provider hoặc giao hàng provider. Payment và Shipping domain xử lý trạng thái chuyên biệt.
-

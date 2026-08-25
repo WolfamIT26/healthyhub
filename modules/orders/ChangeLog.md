@@ -1,5 +1,12 @@
 # Order ChangeLog / Nhật ký thay đổi module đơn hàng
 
+## 2026-08-21 — Prompt 33.1
+
+- Added canonical separate Order/Shipment state machines and internal fulfillment service.
+- Added durable status histories, delivered/completed evidence and chronological validation.
+- Added COD/VNPAY readiness rules, idempotent/concurrent transitions and Inventory-backed cancel/full-return effects.
+- Expanded Customer read/OpenAPI/frontend status enums without adding a transition endpoint.
+
 ## 2026-08-21 — Prompt 32.1
 
 - Added atomic stock reservation to Order creation and immediate COD consumption.

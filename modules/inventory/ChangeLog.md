@@ -1,5 +1,11 @@
 # Inventory ChangeLog / Nhật ký Inventory
 
+## 2026-08-21 — Prompt 33.1
+
+- Added idempotent `restoreForOrder` selection for active/consumed reservations.
+- Connected cancellation-before-shipment and full-return transitions to release/restock in the owning Order transaction.
+- Kept Payment refund and Admin Inventory adjustment outside the stock authority.
+
 ## 2026-08-21 — Prompt 32.1
 
 - Chốt reserve ở OrderPlaced cho COD/VNPAY; COD consume ngay, VNPAY consume/release từ verified IPN.

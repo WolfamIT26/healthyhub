@@ -2,6 +2,9 @@ import { Column, Entity, Index } from 'typeorm';
 
 import { BaseAuditEntity } from '../../../database/base-audit.entity';
 
+export type OrderStatus = 'new' | 'confirmed' | 'completed' | 'cancelled' | 'returned';
+export type OrderShippingStatus = 'pending' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
+
 @Entity({ name: 'orders' })
 @Index('uq_orders_tenant_code', ['tenantId', 'orderCode'], { unique: true })
 @Index(
@@ -20,12 +23,12 @@ export class OrderEntity extends BaseAuditEntity {
   @Column({ name: 'order_code', type: 'varchar', length: 64 }) orderCode!: string;
   @Column({ name: 'order_source', type: 'varchar', length: 32, default: 'web' })
   orderSource!: 'web';
-  @Column({ name: 'order_status', type: 'varchar', length: 32, default: 'new' }) orderStatus!:
-    'new' | 'confirmed';
+  @Column({ name: 'order_status', type: 'varchar', length: 32, default: 'new' })
+  orderStatus!: OrderStatus;
   @Column({ name: 'payment_status_snapshot', type: 'varchar', length: 32, default: 'pending' })
   paymentStatusSnapshot!: 'pending' | 'paid' | 'failed' | 'cancelled';
   @Column({ name: 'shipping_status_snapshot', type: 'varchar', length: 32, default: 'pending' })
-  shippingStatusSnapshot!: 'pending';
+  shippingStatusSnapshot!: OrderShippingStatus;
   @Column({ name: 'order_total', type: 'decimal', precision: 12, scale: 2 }) orderTotal!: string;
   @Column({ name: 'idempotency_key_hash', type: 'char', length: 64 }) idempotencyKeyHash!: string;
   @Column({ name: 'request_hash', type: 'char', length: 64 }) requestHash!: string;

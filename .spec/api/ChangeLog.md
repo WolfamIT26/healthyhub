@@ -1,5 +1,20 @@
 # API Specification ChangeLog / Nhật ký thay đổi API Specification
 
+## 2026-08-21 — Prompt 33.2
+
+- Opened 6 public/customer Review operations with exact pagination/request/response contracts.
+- Kept 2 Admin moderation operations blocked; operation inventory remains 196.
+
+## 2026-08-21 — Prompt 33.1
+
+- Expanded canonical Customer Order status schemas without adding operations.
+- Changed Review runtime blocker to missing persistence/API; eligibility is READY.
+
+## [1.5.0] - 2026-08-21
+
+- Marked all 8 Review operations contract-stage/runtime-blocked for Prompt 33.
+- Kept operation inventory at 196 and did not add exact DTO schemas while eligibility is unresolved.
+
 ## [1.4.0] - 2026-08-21
 
 - Recorded internal Prompt 32.1 Order/Payment stock lifecycle without adding a public/Admin Inventory operation.

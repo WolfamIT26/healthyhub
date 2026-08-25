@@ -4,6 +4,10 @@
 
 Order API quản lý checkout, tạo đơn, lịch sử đơn hàng của khách, xử lý trạng thái đơn hàng và timeline vận hành. Order giữ snapshot sản phẩm, khách hàng, địa chỉ và giá trị cần bảo toàn lịch sử.
 
+## Prompt 33.1 runtime note / Ghi chú runtime
+
+Executable HTTP subset remains create plus Customer owner-scoped list/detail. Prompt 33.1 adds an internal Fulfillment application service, not a public/admin endpoint, because transition actor permissions are not executable. Customer response/filter enums now include canonical terminal states.
+
 ## Endpoint List / Danh sách endpoint
 
 | Method / Method | URI / URI | Purpose / Mục tiêu | Auth / Xác thực | Permission / Quyền |
@@ -91,6 +95,7 @@ Order API quản lý checkout, tạo đơn, lịch sử đơn hàng của khách
 - Tạo đơn phải revalidate cart, price, stock, coupon và customer scope.
 - Không cho hủy đơn đã giao/hoàn tất nếu rule không cho phép.
 - Order giữ snapshot để bảo toàn lịch sử.
+- Order states are `new|confirmed|completed|cancelled|returned`; Shipment states are separate. Browser/frontend cannot set either state.
 
 ## Pagination / Phân trang
 
@@ -133,4 +138,3 @@ Order không nhận provider webhook trực tiếp; Payment/Shipping webhook c�
 ## AI Endpoint / Endpoint AI
 
 AI customer support hoặc analytics dùng order summary qua AI API theo permission scope.
-

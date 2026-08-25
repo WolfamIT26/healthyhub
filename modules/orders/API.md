@@ -15,3 +15,7 @@
 ## Security / Bảo mật
 
 API không nhận `customerId`; owner derive từ JWT. Guest trả 401, internal trả 403, invalid/not-owned detail trả 404 đồng nhất. Detail không trả credential, checksum, signature, raw event hoặc internal audit actor.
+
+## Prompt 33.1 boundary / Ranh giới Prompt 33.1
+
+Customer Order read schemas/filter enums nay phản ánh `completed|cancelled|returned` và `shipped|delivered|cancelled|returned`. Không thêm operation: transition boundary là internal application service vì Admin actor/permission API chưa executable; frontend không thể gửi status trực tiếp.

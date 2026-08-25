@@ -1,5 +1,9 @@
 # Inventory Physical Database / Database vật lý domain tồn kho
 
+## Prompt 33.1 runtime note
+
+No new Inventory schema is required: `stock_reservations` already records released/restocked transitions idempotently for authoritative cancellation/full return.
+
 ## Table List / Danh sách bảng
 
 | Table | Description / Mô tả |

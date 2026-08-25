@@ -1,5 +1,11 @@
 # OpenAPI ChangeLog / Lịch sử thay đổi OpenAPI
 
+## 2026-08-21 - Reviews & Ratings Implementation V1
+
+- Added exact Review list/summary/eligibility/create/update/delete schemas and endpoint responses.
+- Opened 6 executable public/customer operations and kept 2 Admin moderation operations blocked.
+- Kept operation inventory at 196 across 23 domains.
+
 ## 2026-08-13 - Product Backend / Catalog Authority V1
 
 - Added exact Product/Category/Brand public schemas and endpoint-specific responses.

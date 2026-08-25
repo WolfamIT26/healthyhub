@@ -30,10 +30,10 @@ export interface PaymentMethod {
 export interface CreatedOrder {
   orderId: string;
   orderNumber: string;
-  status: 'new' | 'confirmed';
+  status: 'new' | 'confirmed' | 'completed' | 'cancelled' | 'returned';
   paymentStatus: 'pending' | 'paid' | 'failed' | 'cancelled';
   paymentMethod: 'cod' | 'vnpay';
-  shippingStatus: 'pending';
+  shippingStatus: 'pending' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
   shippingMethod: 'manual';
   items: Array<{
     productId: string | null;

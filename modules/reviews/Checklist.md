@@ -1,0 +1,21 @@
+# Review Checklist / Checklist Review
+
+- [x] Đọc rules/context/spec và implementation Product/Customer/Order/Auth/Inventory.
+- [x] Audit Customer ownership và Order Item evidence.
+- [x] Xác nhận Order completion/delivery lifecycle chưa executable.
+- [x] Không dùng Cart/Wishlist/stock consumption/browser return làm purchase evidence.
+- [x] Không tạo migration/API/UI/aggregate hoặc verified-purchase giả.
+- [x] Giữ Product Detail no-fake placeholder.
+- [x] Đánh dấu Review OpenAPI contract-stage operations runtime-blocked.
+- [x] Chốt và triển khai authoritative fulfilled/completed transition cho COD và VNPAY.
+- [x] Chốt duplicate identity, cancellation/refund và publication/edit/delete policy.
+- [x] Thêm internal owner-scoped Review eligibility resolver/policy.
+- [x] Test Customer A/B, Product membership, completed evidence và return revoke.
+- [x] Tạo forward/reversible Review migration/entity và exact Order+Product unique.
+- [x] Recheck fulfillment authority trong locked create transaction.
+- [x] Triển khai typed public list/summary và Customer create/update/delete API.
+- [x] Derive owner server-side; DTO whitelist không nhận Customer/verified authority.
+- [x] Aggregate chỉ tính active/published; soft-deleted/hidden không public.
+- [x] Product Detail dùng backend list/summary/eligibility với đủ loading/error/empty.
+- [x] Guest/ineligible/eligible/edit/delete và returned badge UX.
+- [x] Test duplicate/concurrent create, update/delete race, rollback và aggregate consistency.

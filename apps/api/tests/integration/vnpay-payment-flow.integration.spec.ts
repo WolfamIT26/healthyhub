@@ -11,7 +11,11 @@ import * as customerEntities from '../../src/data/customer/entities';
 import { InventoryItemEntity, StockReservationEntity } from '../../src/data/inventory/entities';
 import * as inventoryEntities from '../../src/data/inventory/entities';
 import { InventoryStockMutationRepository } from '../../src/data/inventory/repositories';
-import { OrderEntity, OrderItemEntity } from '../../src/data/order/entities';
+import {
+  OrderEntity,
+  OrderItemEntity,
+  OrderStatusHistoryEntity,
+} from '../../src/data/order/entities';
 import * as orderEntities from '../../src/data/order/entities';
 import { TypeOrmOrderRepository } from '../../src/data/order/repositories';
 import {
@@ -73,6 +77,7 @@ describe.skipIf(!enabled)('VNPAY Payment MySQL integration', () => {
     const users = dataSource.getRepository(UserAccountEntity);
     const customers = dataSource.getRepository(CustomerProfileEntity);
     const orders = dataSource.getRepository(OrderEntity);
+    const orderStatusHistories = dataSource.getRepository(OrderStatusHistoryEntity);
     const orderItems = dataSource.getRepository(OrderItemEntity);
     const payments = dataSource.getRepository(PaymentEntity);
     const attempts = dataSource.getRepository(PaymentAttemptEntity);
@@ -374,6 +379,7 @@ describe.skipIf(!enabled)('VNPAY Payment MySQL integration', () => {
         paymentStatusSnapshot: 'paid',
         orderTotal: '125000.00',
       });
+      expect(await orderStatusHistories.countBy({ orderId: vnpayAggregate.order.id })).toBe(1);
       expect(await orderItems.findOneByOrFail({ orderId: vnpayAggregate.order.id })).toMatchObject({
         productNameSnapshot: 'VNPAY Snapshot Product',
         unitPriceSnapshot: '125000.00',
@@ -522,6 +528,7 @@ describe.skipIf(!enabled)('VNPAY Payment MySQL integration', () => {
         orderStatus: 'confirmed',
         paymentStatusSnapshot: 'paid',
       });
+      expect(await orderStatusHistories.countBy({ orderId: failedAggregate.order.id })).toBe(1);
       expect(await inventories.findOneByOrFail({ id: failedInventory.id })).toMatchObject({
         availableQuantity: 0,
         reservedQuantity: 0,
@@ -550,6 +557,7 @@ describe.skipIf(!enabled)('VNPAY Payment MySQL integration', () => {
         await payments.delete({ orderId });
         await orderItems.delete({ orderId });
         await reservations.delete({ orderId });
+        await orderStatusHistories.delete({ orderId });
         await orders.delete(orderId);
       }
       await inventories.delete(createdInventories.map((inventory) => inventory.id));

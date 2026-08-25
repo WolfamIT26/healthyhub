@@ -6,6 +6,8 @@ Lifecycle, mapping, provider-neutral gateway, checksum canonicalization, read-on
 
 Prompt 28 chỉ đọc canonical Payment row trong Customer Order list/detail; không sửa lifecycle hoặc browser/IPN authority.
 
+Prompt 33.1 giữ Payment authority tách khỏi fulfillment: paid chỉ mở shipment readiness cho VNPAY, không đồng nghĩa delivered/completed. Late paid trên cancelled/returned Order yêu cầu reconciliation.
+
 `VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
 
 # Prompt 27.1A

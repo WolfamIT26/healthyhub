@@ -2,7 +2,7 @@
 
 ## Status
 
-**Prompt 28 dùng lại canonical persisted Payment state; không thay đổi Payment authority.**
+**Payment authority remains canonical; Prompt 33.1 adds fulfillment separation and reconciliation guards.**
 
 HealthyHub hiện có hai phương thức thanh toán được backend công bố:
 
@@ -18,6 +18,8 @@ HealthyHub hiện có hai phương thức thanh toán được backend công b�
 - Event provider được dedupe theo provider/event identity để tránh double effect.
 - Mismatch reference/amount/currency bị reject fail-closed.
 - Prompt 32.1 gắn stock transition vào cùng transaction của provider event: `paid` consume; `failed/cancelled` release. Provider-event identity và reservation state cùng bảo vệ duplicate effect.
+- Prompt 33.1 ghi `new → confirmed` vào Order status history trong cùng verified-IPN transaction. Paid event đến sau Order `cancelled|returned` bị reject để reconciliation và không được reacquire/mutate stock.
+- Payment `paid` không bao giờ đồng nghĩa Shipment `delivered` hoặc Order `completed`; browser return tiếp tục read-only.
 
 ## Sandbox Configuration Audit / Audit cấu hình Sandbox
 
@@ -48,6 +50,8 @@ Hai endpoint Sandbox public được ghi trong file example; giá trị credenti
 ## Boundary / Giới hạn
 
 Không dùng production credential, không đưa secret vào frontend, không fake success và không triển khai refund/admin settlement. Customer Order detail chỉ trả Payment method/status/amount, paid timestamp và provider reference an toàn; không trả signature, secret hoặc raw provider metadata.
+
+Authoritative cancellation/return có thể khôi phục Inventory nhưng không tự đổi Payment sang refunded. Refund execution và provider settlement vẫn thuộc Payment workflow tương lai; Review eligibility bị revoke bởi persisted Order/Shipment cancellation/return, không suy diễn chỉ từ Payment status.
 
 `VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
 

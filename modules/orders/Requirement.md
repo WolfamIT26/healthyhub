@@ -12,7 +12,12 @@ Customer xem lịch sử và chi tiết Order persisted của chính mình; serv
 - [x] COD/VNPAY dùng canonical Payment status.
 - [x] Guest/Internal/not-owned bị chặn không lộ dữ liệu.
 - [x] Direct URL/reload tải lại từ server.
+- [x] COD fulfillment được phép khi Payment pending; VNPAY yêu cầu verified paid/confirmed.
+- [x] Delivery atomically persist Shipment delivered evidence và Order completed evidence.
+- [x] Duplicate/concurrent transition idempotent; invalid/chronology-regressive transition bị reject.
+- [x] Cancel trước shipment và full return sau delivered nối đúng Inventory release/restock.
+- [x] Review eligibility resolver owner-scope theo Order + Product.
 
 ## Exclusions / Ngoài phạm vi
 
-Admin management, cancellation, refund, reorder, fulfillment, inventory mutation, invoice và review.
+Full Admin management UI/API, Customer self-cancellation API, provider refund execution, reorder, invoice và Review persistence/API/UI.

@@ -26,6 +26,8 @@ Public chỉ xem sản phẩm active/visible.
 - `POST /api/v1/cart/items`.
 - `POST /api/v1/ai/compare/products` hoặc `POST /api/v1/ai/recommendations/products` nếu user dùng AI.
 
+Prompt 33.2 runtime: hai public Review operations và Customer owner operations executable. Product Detail gọi persisted list/summary; chỉ gọi `/me/reviews` cho authenticated Customer để lấy Review/opportunity server-side.
+
 ## Required Data / Dữ liệu bắt buộc
 
 Product detail, media gallery, price, stock status, category/brand summary, ingredient/nutrition summary, review summary, related product summary.
@@ -40,7 +42,7 @@ Media Gallery, Price Summary, Stock Badge, Quantity Stepper, Add To Cart Button,
 
 ## Form / Form
 
-Add-to-cart form gồm quantity và option nếu có.
+Add-to-cart form gồm quantity. Review form gồm rating 1–5 và content 3–2000; chỉ render khi server trả eligible Order identity.
 
 ## Validation / Validation
 
@@ -60,7 +62,7 @@ Review default `createdAt` desc.
 
 ## Pagination / Phân trang
 
-Review list phân trang default 20 nếu hiển thị nhiều review.
+Review list Product Detail dùng page size 5; API default 10 và maximum 50.
 
 ## Upload / Upload
 
@@ -80,15 +82,15 @@ Nếu chưa có review, hiển thị trạng thái chưa có đánh giá.
 
 ## Error State / Trạng thái lỗi
 
-Product not found hiển thị màn hình không tìm thấy; add-to-cart lỗi hiển thị theo Cart/Product error.
+Product not found hiển thị màn hình không tìm thấy; Review có retry riêng; mutation lỗi hiển thị inline safe message.
 
 ## Success State / Trạng thái thành công
 
-Thêm vào giỏ thành công cập nhật cart badge và hiển thị toast.
+Thêm vào giỏ cập nhật cart; Review create/edit/delete refetch list, aggregate và owner evidence.
 
 ## Confirmation Dialog / Hộp xác nhận
 
-Không áp dụng cho add-to-cart thường.
+Review delete yêu cầu inline confirmation; add-to-cart thường không cần confirmation.
 
 ## Toast Message / Toast
 
@@ -109,4 +111,3 @@ Mobile ưu tiên ảnh, tên, giá, stock và action; desktop có thể đặt g
 ## SEO Metadata / SEO metadata
 
 Product title, description, product structured data, canonical URL và image metadata.
-

@@ -26,6 +26,7 @@
 - Prompt 27.3: VNPAY Return/IPN signed query parameters and authority notes documented; validation remains 196/196 operations.
 - Prompt 29: sáu Customer self operations dùng typed Profile/Address request/response, exact non-paginated reads và safe field boundary; validation vẫn 196/196 operations.
 - Prompt 31: Product/Category/Brand public reads dùng typed response và exact query/path contract; validation vẫn 196/196 operations.
+- Prompt 33.2: 6 public/customer Review operations dùng typed schema/response; 2 Admin moderation operations vẫn blocked; validation giữ 196/196/196.
 
 ## Limitations / Giới hạn
 

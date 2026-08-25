@@ -4,19 +4,23 @@
 
 Lưu đánh giá sản phẩm, kiểm duyệt và báo cáo vi phạm để tăng uy tín sản phẩm và bảo vệ nội dung public.
 
+## Prompt 33 executable status / Trạng thái executable Prompt 33
+
+**Review persistence READY.** Migration `1760000015000-enable-reviews-ratings-v1` creates required `order_id`, unique `(tenant_id, order_id, product_id)`, published default and soft-delete audit fields.
+
 ## Entity List / Danh sách Entity
 
 | Logical Entity | Purpose / Vai trò |
 | --- | --- |
 | `product_reviews` | Đánh giá sản phẩm từ khách. |
-| `review_moderations` | Kết quả kiểm duyệt review. |
-| `review_reports` | Báo cáo vi phạm review. |
+| `review_moderations` | Future design only; not created in Prompt 33.2. |
+| `review_reports` | Future design only; not created in Prompt 33.2. |
 
 ## Logical Entity Design / Thiết kế entity logic
 
 | Entity | PK | Main Attributes / Thuộc tính chính | FK / Tham chiếu | Data Status |
 | --- | --- | --- | --- | --- |
-| `product_reviews` | `id` | `tenant_id`, `rating`, `review_content`, `review_status`, `review_source`, `submitted_at`, `published_at` | `customer_profile_id` -> Customer, `product_id` -> Product, `order_id` -> Order nullable | pending, published, hidden, rejected |
+| `product_reviews` | `id` | `tenant_id`, `rating`, `review_content`, `review_status`, `submitted_at`, `published_at`, audit/version | `customer_profile_id` -> Customer, `product_id` -> Product, `order_id` -> Order required | published, hidden, rejected, soft-deleted |
 | `review_moderations` | `id` | `tenant_id`, `moderation_status`, `moderation_reason`, `moderated_at` | `product_review_id`, `moderated_by` -> User nullable | pending, approved, rejected |
 | `review_reports` | `id` | `tenant_id`, `report_reason`, `report_status`, `reported_at` | `product_review_id`, `reported_by` -> User nullable | open, reviewed, dismissed |
 
@@ -25,11 +29,12 @@ Lưu đánh giá sản phẩm, kiểm duyệt và báo cáo vi phạm để tăn
 - 1-1: Một review có thể có một moderation result hiện tại.
 - 1-N: Một product/customer có nhiều review; một review có nhiều report.
 - N-N: Không có N-N trực tiếp.
-- Cardinality: Một customer nên hạn chế số review active cho cùng product/order theo policy.
+- Cardinality: một Review cho mỗi `(tenant_id, order_id, product_id)`; lần mua fulfilled khác có identity khác.
 
 ## Business Constraints / Ràng buộc nghiệp vụ
 
-- Review nên ưu tiên khách có trải nghiệm mua hợp lệ.
+- Review executable phải có owner-scoped active Order Item evidence và authoritative completed/delivered state/timestamps.
+- Cancel/return revoke eligibility; existing review content remains public without verified-purchase evidence. Payment refund alone is not fulfillment authority.
 - Review vi phạm policy phải hidden/rejected.
 - Không chỉnh sửa review làm sai ý kiến khách hàng.
 
@@ -44,7 +49,7 @@ Lưu đánh giá sản phẩm, kiểm duyệt và báo cáo vi phạm để tăn
 
 ## Data Lifecycle / Vòng đời dữ liệu
 
-Review được submit, pending moderation, published hoặc hidden/rejected. Report có thể mở và được xử lý sau.
+Review V1 được submit trực tiếp ở published state; owner có thể edit hoặc soft-delete. Hidden/rejected/report lifecycle cần future Admin authority.
 
 ## Data Ownership / Sở hữu dữ liệu
 
@@ -62,6 +67,5 @@ Review domain sở hữu nội dung review và moderation. Customer/Product/Orde
 | --- | --- | --- | --- |
 | `rating` | `product_reviews` | Điểm đánh giá. | Trong range cho phép. |
 | `review_content` | `product_reviews` | Nội dung khách viết. | Kiểm soát XSS/nội dung vi phạm. |
-| `review_source` | `product_reviews` | Nguồn review. | verified_order, manual, imported future. |
 | `moderation_status` | `review_moderations` | Kết quả kiểm duyệt. | pending, approved, rejected. |
 | `report_reason` | `review_reports` | Lý do báo cáo. | Bắt buộc khi report. |

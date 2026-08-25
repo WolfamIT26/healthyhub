@@ -1,5 +1,15 @@
 # Data Contract ChangeLog / Nhật ký thay đổi Data Contract
 
+## [0.4.0] - 2026-08-21
+
+- Added exact Review public/owner request and response shapes, rating distribution and eligibility opportunity.
+- Excluded `customerId`, `verifiedPurchase`, Customer PII and internal Order identity from public Review output.
+
+## [0.3.0] - 2026-08-21
+
+- Aligned executable Order/Shipment status enums with Prompt 33.1.
+- Set future Review V1 publication vocabulary to `published|hidden|rejected`; publication defaults to published.
+
 ## [0.2.0] - 2026-08-06
 
 ### Added / Đã thêm

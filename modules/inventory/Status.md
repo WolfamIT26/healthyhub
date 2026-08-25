@@ -11,4 +11,4 @@
 
 ## Explicit Boundary / Ranh giới rõ ràng
 
-Không còn blocker cho lifecycle đang executable. Order cancellation/refund chưa có API/status transition nên chưa có runtime restock caller; internal idempotent restock primitive đã sẵn sàng cho future authoritative transaction. VNPAY pending không tự expire cho tới khi Payment domain có terminal timeout authority.
+Không còn blocker cho lifecycle đang executable. Prompt 33.1 có internal cancellation/full-return caller và idempotent release/restock. Public/admin cancellation API và Payment provider refund vẫn ngoài scope. VNPAY pending không tự expire cho tới khi Payment domain có terminal timeout authority.

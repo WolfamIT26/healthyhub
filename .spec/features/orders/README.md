@@ -8,11 +8,15 @@
 | Dependency | Cart, Customers, Inventory, Payment, Shipping, Notification |
 | Version | MVP |
 | Owner | Product Owner, Operations Manager |
-| Status | Draft for business specification |
+| Status | Prompt 33.1 fulfillment lifecycle executable internally |
 
 ## Overview / Tổng quan
 
 Orders quản lý vòng đời đơn hàng từ lúc khách xác nhận mua đến khi xử lý, giao, hoàn tất hoặc hủy.
+
+## Prompt 33.1 canonical lifecycle
+
+Order states are `new|confirmed|completed|cancelled|returned`; Shipment is a separate state machine. Payment owns verified VNPAY confirmation. Internal Fulfillment owns delivery/completion, pre-shipment cancellation and full return; frontend does not set status.
 
 ## Business Goal / Mục tiêu kinh doanh
 
@@ -92,4 +96,3 @@ Customer tạo và xem đơn của chính mình. Staff xử lý đơn. Manager/A
 - Split shipment.
 - Staff-assisted order.
 - Order SLA dashboard.
-

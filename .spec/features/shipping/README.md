@@ -8,11 +8,15 @@
 | Dependency | Orders, Customers, Notification |
 | Version | Version 1 |
 | Owner | Operations Manager |
-| Status | Draft for business specification |
+| Status | Prompt 33.1 internal fulfillment executable |
 
 ## Overview / Tổng quan
 
 Shipping quản lý thông tin nhận hàng, trạng thái giao và chính sách phí giao hàng ở mức nghiệp vụ.
+
+## Prompt 33.1 canonical lifecycle
+
+Shipment states are `pending → shipped → delivered → returned`, or `pending → cancelled`. COD may fulfill while Payment remains pending; VNPAY requires verified paid/confirmed. Delivered evidence atomically completes Order. Provider tracking and Admin UI/API remain outside scope.
 
 ## Business Goal / Mục tiêu kinh doanh
 
@@ -89,4 +93,3 @@ Customer nhập và xem thông tin giao của đơn mình. Staff cập nhật tr
 - Delivery tracking.
 - Same-day delivery policy.
 - Multi-shipment order.
-

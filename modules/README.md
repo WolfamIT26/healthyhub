@@ -11,10 +11,11 @@ Thư mục này quản lý module nghiệp vụ độc lập với source code. 
 - `products`: sản phẩm.
 - `categories`: danh mục.
 - `cart`: giỏ hàng.
-- `orders`: đơn hàng.
-- `payment`: thanh toán.
-- `inventory`: tồn kho.
-- `reviews`: đánh giá.
+- [`orders`](orders/README.md): Order create/read và canonical internal fulfillment lifecycle.
+- [`payment`](payment/Report.md): COD/VNPAY authority và provider-event transaction.
+- [`inventory`](inventory/README.md): quantity/reservation authority và Order stock lifecycle.
+- [`shipping`](shipping/README.md): manual quote, persisted Shipment và internal fulfillment lifecycle.
+- [`reviews`](reviews/README.md): eligibility READY; Review persistence/API/UI chưa triển khai.
 - `nutrition`: dinh dưỡng.
 - `ai`: AI platform.
 - `marketing`: marketing.

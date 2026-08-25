@@ -9,6 +9,7 @@
 - Order: COD reserve/consume, transaction rollback sau reserve, concurrent Orders chỉ một đơn thắng khi stock thiếu, no-negative và restock retry.
 - VNPAY: pending reservation, browser return no effect, paid consume, duplicate IPN no double effect, failed release và late-paid atomic reacquire.
 - Persistence: migration FK/check/index/unique identity và absence của clock-based `expires_at`.
+- Fulfillment: VNPAY active cancel release, COD consumed cancel restock, delivered full return restock, duplicate transition no double quantity effect.
 
 ## Integration / Tích hợp
 

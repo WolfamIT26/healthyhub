@@ -516,29 +516,12 @@ paths:
         - $ref: "#/components/parameters/AcceptLanguageHeader"
         - $ref: "#/components/parameters/PageParam"
         - $ref: "#/components/parameters/PageSizeParam"
-        - name: orderStatus
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [new, confirmed]
-        - name: paymentStatus
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [unpaid, pending, paid, failed, cancelled]
-        - name: shippingStatus
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [pending]
-        - $ref: "#/components/parameters/DateFromParam"
-        - $ref: "#/components/parameters/DateToParam"
+        - $ref: "#/components/parameters/QParam"
+        - $ref: "#/components/parameters/SortParam"
+        - $ref: "#/components/parameters/FilterParam"
       responses:
         "200":
-          $ref: "./responses/common.yaml#/CustomerOrdersOk"
+          $ref: "#/components/responses/PaginatedOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -632,7 +615,7 @@ paths:
         - $ref: "#/components/parameters/UserIdPath"
       responses:
         "200":
-          $ref: "./responses/common.yaml#/CustomerOrderDetailOk"
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -4075,12 +4058,29 @@ paths:
         - $ref: "#/components/parameters/AcceptLanguageHeader"
         - $ref: "#/components/parameters/PageParam"
         - $ref: "#/components/parameters/PageSizeParam"
-        - $ref: "#/components/parameters/QParam"
-        - $ref: "#/components/parameters/SortParam"
-        - $ref: "#/components/parameters/FilterParam"
+        - name: orderStatus
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [new, confirmed, completed, cancelled, returned]
+        - name: paymentStatus
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [unpaid, pending, paid, failed, cancelled]
+        - name: shippingStatus
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [pending, shipped, delivered, cancelled, returned]
+        - $ref: "#/components/parameters/DateFromParam"
+        - $ref: "#/components/parameters/DateToParam"
       responses:
         "200":
-          $ref: "#/components/responses/PaginatedOk"
+          $ref: "./responses/common.yaml#/CustomerOrdersOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -4120,7 +4120,7 @@ paths:
         - $ref: "#/components/parameters/OrderIdPath"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/CustomerOrderDetailOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -6377,12 +6377,9 @@ paths:
         - $ref: "#/components/parameters/ProductIdPath"
         - $ref: "#/components/parameters/PageParam"
         - $ref: "#/components/parameters/PageSizeParam"
-        - $ref: "#/components/parameters/QParam"
-        - $ref: "#/components/parameters/SortParam"
-        - $ref: "#/components/parameters/FilterParam"
       responses:
         "200":
-          $ref: "#/components/responses/PaginatedOk"
+          $ref: "./responses/common.yaml#/PublicReviewListOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "422":
@@ -6419,7 +6416,7 @@ paths:
         - $ref: "#/components/parameters/ProductIdPath"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/ReviewSummaryOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "422":
@@ -6456,12 +6453,13 @@ paths:
         - $ref: "#/components/parameters/AcceptLanguageHeader"
         - $ref: "#/components/parameters/PageParam"
         - $ref: "#/components/parameters/PageSizeParam"
-        - $ref: "#/components/parameters/QParam"
-        - $ref: "#/components/parameters/SortParam"
-        - $ref: "#/components/parameters/FilterParam"
+        - name: productId
+          in: query
+          required: false
+          schema: { type: string, pattern: "^[1-9][0-9]*$" }
       responses:
         "200":
-          $ref: "#/components/responses/PaginatedOk"
+          $ref: "./responses/common.yaml#/MyReviewsOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -6483,7 +6481,7 @@ paths:
         Ghi chú quyền: Owner.
         Xác thực: Customer JWT.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
-        Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
+        Idempotency: unique Order+Product và locked transaction là canonical authority.
       tags:
         - "Review"
       security:
@@ -6491,25 +6489,21 @@ paths:
       x-permission: "Owner"
       x-auth-level: "Customer JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
-      x-idempotency-required: true
+      x-idempotency-required: false
       x-source: ".spec/api/domains/review.md"
       parameters:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GenericCommandRequest"
-            examples:
-              default:
-                $ref: "#/components/examples/GenericCommandRequest"
+              $ref: "./schemas/review.yaml#/CreateReviewRequest"
       responses:
         "201":
-          $ref: "#/components/responses/Created"
+          $ref: "./responses/common.yaml#/ReviewCreated"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -6534,7 +6528,7 @@ paths:
         Ghi chú quyền: Owner.
         Xác thực: Customer JWT.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
-        Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
+        Idempotency: desired content update được serialize bằng Review row lock.
       tags:
         - "Review"
       security:
@@ -6542,26 +6536,22 @@ paths:
       x-permission: "Owner"
       x-auth-level: "Customer JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
-      x-idempotency-required: true
+      x-idempotency-required: false
       x-source: ".spec/api/domains/review.md"
       parameters:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
         - $ref: "#/components/parameters/ReviewIdPath"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GenericCommandRequest"
-            examples:
-              default:
-                $ref: "#/components/examples/GenericCommandRequest"
+              $ref: "./schemas/review.yaml#/UpdateReviewRequest"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/ReviewMutationOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -6587,7 +6577,7 @@ paths:
         Ghi chú quyền: Owner.
         Xác thực: Customer JWT.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
-        Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
+        Idempotency: repeated owner delete returns the same deleted result.
       tags:
         - "Review"
       security:
@@ -6595,17 +6585,16 @@ paths:
       x-permission: "Owner"
       x-auth-level: "Customer JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
-      x-idempotency-required: true
+      x-idempotency-required: false
       x-source: ".spec/api/domains/review.md"
       parameters:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
         - $ref: "#/components/parameters/ReviewIdPath"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/ReviewDeleteOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -6625,6 +6614,8 @@ paths:
   /api/v1/admin/reviews:
     get:
       operationId: "getAdminReviews"
+      x-runtime-status: "blocked"
+      x-runtime-blocker: "ADMIN_REVIEW_MODERATION_NOT_IMPLEMENTED"
       summary: "Danh sách review moderation"
       description: |
         Danh sách review moderation
@@ -6671,6 +6662,8 @@ paths:
   /api/v1/admin/reviews/{reviewId}/moderation:
     patch:
       operationId: "patchAdminReviewsReviewIdModeration"
+      x-runtime-status: "blocked"
+      x-runtime-blocker: "ADMIN_REVIEW_MODERATION_NOT_IMPLEMENTED"
       summary: "Duyệt/từ chối/ẩn review"
       description: |
         Duyệt/từ chối/ẩn review

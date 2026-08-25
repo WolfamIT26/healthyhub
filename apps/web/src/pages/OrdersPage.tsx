@@ -36,7 +36,13 @@ const datetime = new Intl.DateTimeFormat('vi-VN', {
   dateStyle: 'medium',
   timeStyle: 'short',
 });
-const orderStatuses = new Set<OrderStatus>(['new', 'confirmed']);
+const orderStatuses = new Set<OrderStatus>([
+  'new',
+  'confirmed',
+  'completed',
+  'cancelled',
+  'returned',
+]);
 const paymentStatuses = new Set<PaymentStatus>([
   'unpaid',
   'pending',
@@ -136,6 +142,9 @@ export function OrdersPage() {
               <option value="">Tất cả trạng thái</option>
               <option value="new">Đơn mới</option>
               <option value="confirmed">Đã xác nhận</option>
+              <option value="completed">Đã hoàn tất</option>
+              <option value="cancelled">Đã hủy</option>
+              <option value="returned">Đã trả hàng</option>
             </select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-neutral-800">

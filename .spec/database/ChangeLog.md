@@ -1,5 +1,19 @@
 # Database ChangeLog / Nhật ký thay đổi Logical Database Design
 
+## 2026-08-21 — Prompt 33.2
+
+- Made `product_reviews` executable with required Order identity and active/published aggregate semantics.
+- Kept moderation/report entities future design-only.
+
+## 2026-08-21 — Prompt 33.1
+
+- Aligned canonical fulfillment states/histories and future Review Order+Product identity.
+
+## [0.5.0] - 2026-08-21
+
+- Marked Review persistence design-only for Prompt 33; no migration was created.
+- Deferred verified-purchase evidence, exact duplicate identity and status lifecycle until Order completion eligibility is canonical.
+
 ## [0.4.0] - 2026-08-21
 
 - Made Order-scoped `stock_reservations` executable for Prompt 32.1.
