@@ -23,4 +23,4 @@ Web route `/login` và credentialed CORS preflight với API local đã smoke-te
 
 ## Last Updated / Cập nhật cuối
 
-2026-08-07 — Prompt 18.6 Customer vs Internal Email Verification Policy.
+2026-08-25 — Prompt 34 current-account/role authorization hardening and Admin Dashboard permission.

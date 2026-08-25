@@ -8,7 +8,7 @@
 | Dependency | Orders, Products, Inventory, Analytics, Users |
 | Version | Version 1 |
 | Owner | Manager, Product Owner |
-| Status | Draft for business specification |
+| Status | Admin Dashboard V1 runtime READY |
 
 ## Overview / Tổng quan
 
@@ -18,9 +18,13 @@ Dashboard cung cấp cái nhìn nhanh về tình trạng vận hành cửa hàng
 
 Giúp đội vận hành biết việc cần xử lý ngay: đơn mới, sản phẩm gần hết, doanh số cơ bản và cảnh báo quan trọng.
 
+## Prompt 34 Runtime / Runtime Prompt 34
+
+`GET /api/v1/admin/analytics/dashboard` và route `/admin` đã executable. V1 chỉ dùng aggregate Product/Inventory/Order/Review authoritative; financial analytics, chart, alert/task list và quick action chưa executable.
+
 ## Scope / Phạm vi
 
-Trong phạm vi: tổng quan nghiệp vụ, KPI cơ bản, cảnh báo vận hành, quick links. Ngoài phạm vi: UI dashboard, API metrics, data visualization implementation.
+Trong phạm vi runtime V1: Product total/active-public/unavailable, Order total/status counts, Review total/status counts và Admin shell. Ngoài phạm vi: revenue/profit/conversion/growth, chart/time-series, alert/task list, CRUD và AI insight.
 
 ## Requirement / Yêu cầu
 
@@ -85,4 +89,3 @@ Staff xem vận hành giới hạn. Manager xem business dashboard. Admin xem da
 - Custom dashboard by role.
 - AI insight cards.
 - SaaS platform dashboard.
-

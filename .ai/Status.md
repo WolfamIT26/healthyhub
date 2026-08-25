@@ -4,6 +4,8 @@
 
 AI Development Core đã được mở rộng theo Prompt 04. `.ai` hiện có đủ hệ thống skills, rules, prompts, templates, context-packs, personas, workflows, checklists, validators, reviewers, registry, knowledge, memory và agents.
 
+Prompt 34 đã dùng các rule/context hiện hữu để hoàn thành Admin Foundation; không thay đổi AI capability hoặc tạo AI authority mới.
+
 ## Completed / Đã hoàn thành
 
 - Tạo workflow chuẩn cho generate, review, refactor, audit, testing, documentation và release.
@@ -27,4 +29,3 @@ AI Development Core đã được mở rộng theo Prompt 04. `.ai` hiện có �
 ## Next Recommended Step / Bước tiếp theo đề xuất
 
 Prompt tiếp theo nên dùng `.ai/registry/README.md` để chọn đúng skill, agent, context pack và workflow trước khi tạo đặc tả hoặc tài liệu mới.
-

@@ -154,3 +154,4 @@ export interface AiResult<TOutput = Record<string, unknown>> {
 }
 
 export * from './authentication';
+export * from './admin-dashboard';

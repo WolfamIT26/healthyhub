@@ -32,6 +32,7 @@ Mỗi file tổng hợp nên có:
 
 ## Summary Index / Danh sách file tổng hợp
 
+- [Prompt 34 - Admin Foundation & Access Control V1](2026-08-25-01-prompt-34-admin-foundation-v1.md).
 - [Prompt 33.2 - Reviews & Ratings Implementation V1](2026-08-21-05-prompt-33-2-reviews-ratings-implementation-v1.md).
 - [Prompt 33.1 - Order Fulfillment & Review Eligibility Contract](2026-08-21-04-prompt-33-1-order-fulfillment-review-eligibility.md).
 - [Prompt 33 - Reviews & Ratings V1 Eligibility Audit](2026-08-21-03-prompt-33-reviews-ratings-v1.md).

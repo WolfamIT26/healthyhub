@@ -1,5 +1,17 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## Admin Foundation & Access Control V1 — Prompt 34
+
+Đã hoàn thiện `/admin` foundation bằng canonical Authentication/User RBAC: protected request recheck session/account/current roles, Dashboard yêu cầu Internal role + `analytics:read`, Guest/Customer/disabled actor không thể bypass bằng URL hoặc frontend state. Không tạo role/auth authority mới và không seed Admin credential.
+
+Dashboard đọc Product/Inventory/Order/Review aggregate tenant-scoped thật, không có PII hoặc revenue/profit/conversion giả. Admin shell responsive có loading/error/retry/forbidden/empty state; chỉ Dashboard executable, các module CRUD và Review moderation được giữ disabled/blocked.
+
+Verification PASS: API 232 + Web 152 = 384 unit tests, 13 MySQL files/26 integration tests, 16/16 migrations, format/lint/typecheck/build, OpenAPI 196/196/196 và secrets/docs/diff checks.
+
+File tổng hợp riêng: `docs/work-summaries/2026-08-25-01-prompt-34-admin-foundation-v1.md`.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
 ## Reviews & Ratings Implementation V1 — Prompt 33.2
 
 Đã triển khai `product_reviews` với canonical identity Order+Product, rating 1–5, content 3–2000, published default, audit/version và soft delete. Create derive Customer từ JWT, khóa Order → Shipment và recheck completed+delivered/Product membership trong cùng transaction; exact retry an toàn, conflicting duplicate trả conflict và DB unique là final authority.

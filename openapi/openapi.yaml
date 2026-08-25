@@ -8050,9 +8050,11 @@ paths:
   /api/v1/admin/analytics/dashboard:
     get:
       operationId: "getAdminAnalyticsDashboard"
+      x-runtime-status: "ready"
       summary: "Dashboard tổng quan"
       description: |
-        Dashboard tổng quan
+        Dashboard read-only từ Product, Inventory, Order và Review persistence canonical.
+        Response chỉ có aggregate tenant-scoped; không có PII, revenue, profit, conversion hoặc pending moderation giả.
 
         Ghi chú quyền: analytics:read.
         Xác thực: Staff/Manager/Admin JWT.
@@ -8071,11 +8073,9 @@ paths:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/DateFromParam"
-        - $ref: "#/components/parameters/DateToParam"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/AdminDashboardOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":

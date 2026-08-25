@@ -48,6 +48,13 @@ MySQL/Docker không khả dụng trong môi trường hiện tại, nên 3 datab
 
 Prompt 18.6 integration command exit 0 nhưng 1 file/3 tests đều skipped; không được tính là integration pass.
 
+## Prompt 34 authorization coverage / Coverage phân quyền Prompt 34
+
+- Guest/token/session mismatch 401; Customer/current role missing 403.
+- Disabled actor 403 và locked actor 423.
+- Forged/stale Admin role claim bị thay bằng current persisted Customer role trước `RolesGuard`.
+- Account switch clear actor/token cũ trước login mới.
+
 ## Prompt 18 Frontend Verification
 
 - 6 files / 18 tests pass: login success/failure, register validation/success, forgot generic success, reset missing token, session restore/failure, protected/guest/admin guards, refresh success/failure, 401/403 và network error.

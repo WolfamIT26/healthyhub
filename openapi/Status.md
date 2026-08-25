@@ -18,7 +18,7 @@
 
 ## Validation Status / Trạng thái kiểm tra
 
-- YAML syntax: Passed for 9 YAML files in `openapi`.
+- YAML syntax: Passed for 16 YAML files in `openapi`.
 - `$ref` existence check: Passed for local/external references.
 - `operationId` uniqueness: Passed, 196 unique operationId.
 - API Spec endpoint count match: Passed, 196 operation from `.spec/api/domains`.
@@ -27,6 +27,7 @@
 - Prompt 29: sáu Customer self operations dùng typed Profile/Address request/response, exact non-paginated reads và safe field boundary; validation vẫn 196/196 operations.
 - Prompt 31: Product/Category/Brand public reads dùng typed response và exact query/path contract; validation vẫn 196/196 operations.
 - Prompt 33.2: 6 public/customer Review operations dùng typed schema/response; 2 Admin moderation operations vẫn blocked; validation giữ 196/196/196.
+- Prompt 34: Admin Dashboard operation có typed Product/Inventory/Order/Review aggregate và runtime READY; inventory vẫn 196/196/196.
 
 ## Limitations / Giới hạn
 

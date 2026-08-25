@@ -1,5 +1,12 @@
 # AI Core Checklist / Checklist AI Core
 
+## Prompt 34 Compliance / Tuân thủ Prompt 34
+
+- [x] Đọc rules/context/spec trước khi sửa.
+- [x] Reuse Authentication/User authority, không tạo authority song song.
+- [x] Cập nhật module docs, spec, OpenAPI, security, root summary và Work Summary.
+- [x] Không commit, push, merge hoặc bắt đầu Prompt 35.
+
 ## Prompt 04 Checklist / Checklist Prompt 04
 
 - [x] Đọc Foundation Documentation.
@@ -25,4 +32,3 @@
 - [x] Cập nhật folder structure liên quan.
 - [x] Tạo work summary.
 - [x] Không tạo code nghiệp vụ, frontend, backend, database, API hoặc giao diện.
-

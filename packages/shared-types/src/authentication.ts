@@ -12,7 +12,10 @@ export type TokenPurpose = (typeof TOKEN_PURPOSES)[number];
 export const ROLE_NAMES = ['CUSTOMER', 'STAFF', 'MANAGER', 'ADMINISTRATOR'] as const;
 export type RoleName = (typeof ROLE_NAMES)[number];
 
-export const PERMISSION_NAMES = ['users:manage', 'sessions:manage'] as const;
+export const INTERNAL_ROLE_NAMES = ['STAFF', 'MANAGER', 'ADMINISTRATOR'] as const;
+export type InternalRoleName = (typeof INTERNAL_ROLE_NAMES)[number];
+
+export const PERMISSION_NAMES = ['users:manage', 'sessions:manage', 'analytics:read'] as const;
 export type PermissionName = (typeof PERMISSION_NAMES)[number];
 
 export const AUTHENTICATION_ERROR_CODES = [

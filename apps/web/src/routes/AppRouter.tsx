@@ -162,15 +162,14 @@ export function AppRouter() {
           }
         />
       </Route>
-      <Route element={<AdminLayout />}>
-        <Route
-          path="/admin"
-          element={
-            <RouteGuard area="admin">
-              <AdminHomePage />
-            </RouteGuard>
-          }
-        />
+      <Route
+        element={
+          <RouteGuard area="admin">
+            <AdminLayout />
+          </RouteGuard>
+        }
+      >
+        <Route path="/admin" element={<AdminHomePage />} />
       </Route>
       <Route path="/404" element={<NotFoundPage />} />
       <Route path="/403" element={<ForbiddenPage />} />

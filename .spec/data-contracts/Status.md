@@ -33,6 +33,8 @@ Prompt 33.1 aligns Order/Shipment lifecycle enums and future Review publication 
 
 Prompt 33.2 adds executable typed Review create/update/list/summary/eligibility data contracts without exposing Customer PII or client-controlled authority flags.
 
+Prompt 34 adds an executable typed Admin Dashboard aggregate and current-role/permission boundary without a new API operation.
+
 ## Not Included / Không bao gồm
 
 - Chưa tạo API endpoint.

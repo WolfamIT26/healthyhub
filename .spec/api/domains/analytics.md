@@ -4,6 +4,8 @@
 
 Analytics API cung cấp dashboard, metric, report, conversion/event tracking và export dữ liệu tổng hợp. Domain này không sửa dữ liệu vận hành và không trả raw data nhạy cảm mặc định.
 
+Prompt 34 chỉ mở executable `GET /api/v1/admin/analytics/dashboard`. Tám operation còn lại vẫn là design contract, không được suy diễn là runtime.
+
 ## Endpoint List / Danh sách endpoint
 
 | Method / Method | URI / URI | Purpose / Mục tiêu | Auth / Xác thực | Permission / Quyền |
@@ -57,13 +59,16 @@ Analytics API cung cấp dashboard, metric, report, conversion/event tracking v�
 
 ## Request Contract / Contract request
 
-- Metric query dùng filter period, date range, dimensions và aggregation.
+- Dashboard V1 không nhận query/body/tenant/role từ client; tenant và actor được derive server-side.
+- Các metric query design-only khác dùng filter period, date range, dimensions và aggregation khi được triển khai sau.
 - Export dùng export contract.
 - Event tracking dùng event input đã validate và không chứa PII không cần thiết.
 
 ## Response Contract / Contract response
 
-- Metric summary, dashboard dataset, chart dataset và export job status.
+- Dashboard V1 trả Product total/active-public/unavailable, Order total/status counts, Review total/status counts và `generatedAt`.
+- Dashboard V1 không trả Customer PII, revenue, profit, conversion, growth, best-selling hoặc pending moderation.
+- Metric summary, chart dataset và export job status khác vẫn design-only.
 - Response có data period, timezone, aggregation metadata và data readiness flag nếu cần.
 
 ## Error Contract / Contract lỗi
@@ -85,6 +90,7 @@ Analytics API cung cấp dashboard, metric, report, conversion/event tracking v�
 - Analytics chỉ đọc/tổng hợp dữ liệu.
 - Dữ liệu nhạy cảm ưu tiên aggregate/masking.
 - Report lớn chạy bất đồng bộ.
+- Dashboard V1 chỉ đếm record chưa soft-delete trong tenant đơn canonical; unavailable Product reuse Product/Inventory authority.
 
 ## Pagination / Phân trang
 
@@ -128,4 +134,3 @@ Không áp dụng trong Prompt 10. Integration analytics provider nếu có sẽ
 ## AI Endpoint / Endpoint AI
 
 AI analytics insight nằm ở AI API nhưng có thể dùng Analytics dataset theo quyền.
-

@@ -16,5 +16,6 @@
 - [x] Mô tả đầy đủ signed VNPAY Return/IPN query parameters và callback authority.
 - [x] Typed Customer Profile/Address requests, safe responses và exact self-read parameters.
 - [x] Typed Review public/customer requests, responses, aggregate, pagination và ownership-safe fields.
+- [x] Typed Admin Dashboard response, Internal role security và aggregate-only PII boundary.
 - [ ] Sinh DTO schema chi tiết theo từng domain ở phase sau.
 - [ ] Chạy semantic OpenAPI validator chuyên dụng khi dự án có công cụ phù hợp.

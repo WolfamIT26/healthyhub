@@ -31,6 +31,8 @@ Prompt 33.1 keeps the same 196-operation inventory. All 8 Review operations rema
 
 Prompt 33.2 keeps 196 operations: 6 public/customer Review operations now use executable typed contracts; 2 Admin moderation operations remain runtime-blocked with `ADMIN_REVIEW_MODERATION_NOT_IMPLEMENTED`.
 
+Prompt 34 keeps 196 operations: the existing Admin Analytics Dashboard read is executable for current Internal roles with `analytics:read`; remaining Admin management operations stay outside runtime scope.
+
 ## Not Included / Không bao gồm
 
 - Chưa tạo OpenAPI hoặc Swagger.

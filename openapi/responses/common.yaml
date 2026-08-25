@@ -14,6 +14,12 @@ Ok:
       examples:
         success:
           $ref: "../examples/common.yaml#/Success"
+AdminDashboardOk:
+  description: "Aggregate Product, Inventory, Order và Review tenant-scoped cho Admin Dashboard V1; không chứa PII hoặc analytics giả."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/admin.yaml#/AdminDashboardResponseEnvelope"
 ProductListOk:
   description: "Product Catalog public authoritative, có server pagination/filter/search/sort."
   content:

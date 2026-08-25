@@ -1,5 +1,11 @@
 # UI Contract ChangeLog / Nhật ký thay đổi UI Contract
 
+## 2026-08-25 — Prompt 34
+
+- Opened `/admin` route, responsive Admin shell and authoritative Dashboard states.
+- Limited executable navigation to Dashboard; marked Product/Inventory/Order/Review entries unavailable.
+- Replaced design-only alert/task requirements with the exact Product/Order/Review aggregate available in V1.
+
 ## 2026-08-21 — Prompt 33.2
 
 - Opened Product Detail Review summary/list/pagination and Customer create/edit/delete states.

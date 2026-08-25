@@ -1,5 +1,10 @@
 # Feature Specifications ChangeLog / Nhật ký thay đổi đặc tả tính năng
 
+## 2026-08-25 — Prompt 34
+
+- Marked Admin Dashboard V1 executable with Product/Inventory/Order/Review aggregates.
+- Kept financial analytics, Admin CRUD and Review moderation outside executable scope.
+
 ## 2026-08-21 — Prompt 33.2
 
 - Marked Review public/customer V1 executable from persisted completed+delivered evidence.

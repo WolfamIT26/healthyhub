@@ -1,5 +1,11 @@
 # AI Core ChangeLog / Nhật ký thay đổi AI Core
 
+## 2026-08-25 / Prompt 34
+
+- Applied repository rules/context/spec audit to Admin Foundation implementation.
+- Added the required Admin module documentation pack and Prompt 34 Work Summary.
+- No AI capability, provider, prompt authority or AI workflow was added.
+
 ## 2026-08-05 / Prompt 04
 
 ### Added / Đã thêm
@@ -31,4 +37,3 @@
 - Không tạo code.
 - Không tạo nghiệp vụ.
 - Không tạo frontend, backend, database, API hoặc UI.
-

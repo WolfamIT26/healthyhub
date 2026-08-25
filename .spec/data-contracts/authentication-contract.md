@@ -50,6 +50,7 @@ All payloads are inside the standard success envelope.
 - Registration always assigns `CUSTOMER`. Roles and permissions are many-to-many through User-domain tables; backend authorizes by effective permission.
 - Access token contains subject, session ID, role codes and `permissionsVersion`, not the full permission list. Sensitive authorization resolves current effective permissions/account/session state server-side.
 - `users:manage` permits Administrator to lock/unlock/disable accounts. Owner may revoke the current session; `sessions:manage` permits Administrator to revoke another user's or all sessions. Every privileged action is audited.
+- `analytics:read` permits active Staff, Manager and Administrator roles to read the aggregate-only Admin Dashboard V1. Protected authorization re-resolves current roles/permissions; JWT role claims are not final authority.
 
 ## Canonical Errors / Lỗi chuẩn
 

@@ -19,19 +19,25 @@ describe('Authentication foundation seed', () => {
     expect(AUTHENTICATION_PERMISSION_SEED.map((permission) => permission.permissionCode)).toEqual([
       'users:manage',
       'sessions:manage',
+      'analytics:read',
     ]);
   });
 
   it('uses conflict-safe upserts and creates no account', async () => {
     const roleRepository = {
       upsert: vi.fn().mockResolvedValue(undefined),
-      findOneByOrFail: vi.fn().mockResolvedValue({ id: '4', roleCode: 'ADMINISTRATOR' }),
+      findBy: vi.fn().mockResolvedValue([
+        { id: '2', roleCode: 'STAFF' },
+        { id: '3', roleCode: 'MANAGER' },
+        { id: '4', roleCode: 'ADMINISTRATOR' },
+      ]),
     };
     const permissionRepository = {
       upsert: vi.fn().mockResolvedValue(undefined),
       findBy: vi.fn().mockResolvedValue([
         { id: '1', permissionCode: 'users:manage' },
         { id: '2', permissionCode: 'sessions:manage' },
+        { id: '3', permissionCode: 'analytics:read' },
       ]),
     };
     const rolePermissionRepository = { upsert: vi.fn().mockResolvedValue(undefined) };
@@ -45,6 +51,7 @@ describe('Authentication foundation seed', () => {
     expect(roleRepository.upsert).toHaveBeenCalledTimes(1);
     expect(permissionRepository.upsert).toHaveBeenCalledTimes(1);
     expect(rolePermissionRepository.upsert).toHaveBeenCalledTimes(1);
+    expect(rolePermissionRepository.upsert.mock.calls[0][0]).toHaveLength(5);
     expect(manager.getRepository).toHaveBeenCalledTimes(3);
   });
 });

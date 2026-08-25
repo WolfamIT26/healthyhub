@@ -1,5 +1,11 @@
 # OpenAPI ChangeLog / Lịch sử thay đổi OpenAPI
 
+## 2026-08-25 - Admin Foundation V1
+
+- Opened the existing `GET /api/v1/admin/analytics/dashboard` operation with a typed, PII-free aggregate schema.
+- Removed unsupported date filters from the executable V1 dashboard read and kept operation inventory at 196.
+- Kept both Admin Review moderation operations blocked by `ADMIN_REVIEW_MODERATION_NOT_IMPLEMENTED`.
+
 ## 2026-08-21 - Reviews & Ratings Implementation V1
 
 - Added exact Review list/summary/eligibility/create/update/delete schemas and endpoint responses.

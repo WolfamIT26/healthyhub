@@ -4,6 +4,8 @@
 
 Prompt 04 đã hoàn thiện AI Development Core trong `.ai`. Hệ thống mới giúp AI Agent làm việc có vai trò rõ, workflow rõ, rule rõ, checklist kiểm soát, validator/reviewer để tự kiểm tra và registry để tìm tài nguyên nhanh.
 
+Prompt 34 tuân thủ workflow audit → implementation → testing → documentation; kết quả chi tiết nằm tại `modules/admin` và Work Summary Prompt 34.
+
 ## Added / Đã thêm
 
 - `.ai/workflows`: workflow generate, review, refactor, audit, testing, documentation và release.
@@ -46,4 +48,3 @@ Prompt 04 đã hoàn thiện AI Development Core trong `.ai`. Hệ thống mới
 ## Follow-up / Theo dõi tiếp
 
 Khi thêm tài nguyên AI Core mới, phải cập nhật registry tương ứng và tạo work summary sau khi hoàn thành.
-
