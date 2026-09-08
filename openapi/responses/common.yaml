@@ -38,6 +38,36 @@ ProductOptionsOk:
     application/json:
       schema:
         $ref: "../schemas/product.yaml#/ProductOptionsResponseEnvelope"
+AdminProductListOk:
+  description: "Admin Product list tenant-scoped với pagination/search/filter/sort whitelist."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/product.yaml#/AdminProductListResponseEnvelope"
+AdminProductDetailOk:
+  description: "Admin Product aggregate editable, Inventory availability read-only và version concurrency."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/product.yaml#/AdminProductDetailResponseEnvelope"
+AdminProductOptionsOk:
+  description: "Category, Brand, dietary và existing Media lookup hợp lệ cho Product form."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/product.yaml#/AdminProductOptionsResponseEnvelope"
+AdminProductMutationOk:
+  description: "Admin Product aggregate/lifecycle mutation đã commit transactionally."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/product.yaml#/AdminProductMutationResponseEnvelope"
+AdminProductDeleteOk:
+  description: "Product đã soft-delete; historical relationships không bị cascade."
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/product.yaml#/AdminProductDeleteResponseEnvelope"
 CategoryListOk:
   description: "Category public paginated theo display authority."
   content:

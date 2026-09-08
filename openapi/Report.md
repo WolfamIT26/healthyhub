@@ -31,9 +31,9 @@
 ## Validation / Kiểm tra
 
 - YAML syntax parse cho toàn bộ `openapi/**/*.yaml`: Passed.
-- Đếm operation trong `openapi/openapi.yaml`: 196.
-- Đếm endpoint từ `.spec/api/domains`: 196.
-- Kiểm tra `operationId` không trùng: Passed, 196 unique operationId.
+- Đếm operation trong `openapi/openapi.yaml`: 198.
+- Đếm endpoint từ `.spec/api/domains`: 198.
+- Kiểm tra `operationId` không trùng: Passed, 198 unique operationId.
 - Kiểm tra `$ref` local/external quan trọng: Passed.
 - Đếm schema dùng chung: 55.
 - Quét pattern secret hoặc dấu hiệu chưa hoàn thiện rõ ràng trong `openapi`: Passed.
@@ -74,3 +74,9 @@
 - Opened the existing Admin Analytics Dashboard operation without adding a new operation.
 - Added a strict aggregate-only schema with no Customer PII, provider payload, secret or unsupported financial metric.
 - Kept Review moderation blocked and operation inventory 196/196/196.
+
+## Prompt 35 / Prompt 35
+
+- Opened Admin Product list/detail/options/create/update/status/delete operations with typed schemas.
+- Added exact Product management request/response contracts including version guard and relation payloads.
+- Kept Product media attach/import/export blocked and moved operation inventory to 198/198/198.

@@ -2,7 +2,7 @@
 
 ## Screen Overview / Tổng quan màn hình
 
-Admin Products cho staff/manager/admin quản lý danh sách, tạo, sửa, đổi trạng thái, attach media, import và export sản phẩm.
+Admin Products cho Internal users quản lý danh sách, tạo, sửa, đổi lifecycle và soft-delete sản phẩm từ Product persistence thật.
 
 ## Business Goal / Mục tiêu kinh doanh
 
@@ -13,50 +13,52 @@ Giữ dữ liệu sản phẩm chính xác, đủ điều kiện bán và dễ q
 | Route / Route | Purpose / Mục tiêu |
 | --- | --- |
 | `/admin/products` | Danh sách và quản lý sản phẩm. |
+| `/admin/products/new` | Tạo sản phẩm mới. |
 | `/admin/products/:productId` | Chi tiết/form sản phẩm. |
 
 ## Permission / Phân quyền
 
-Staff đọc theo scope; manager/admin quản lý.
+`products:read` cho list/detail/options. `products:manage` cho create/update/status/delete. Backend là authorization authority.
 
 ## Required API / API bắt buộc
 
 - `GET /api/v1/admin/products`.
+- `GET /api/v1/admin/products/options`.
 - `POST /api/v1/admin/products`.
 - `GET /api/v1/admin/products/{productId}`.
 - `PATCH /api/v1/admin/products/{productId}`.
 - `PATCH /api/v1/admin/products/{productId}/status`.
-- `POST /api/v1/admin/products/{productId}/media`.
-- `POST /api/v1/admin/products/imports`.
-- `POST /api/v1/admin/products/exports`.
+- `DELETE /api/v1/admin/products/{productId}`.
+
+Blocked operations: standalone media attach, import and export.
 
 ## Required Data / Dữ liệu bắt buộc
 
-Product admin list/detail, category/brand option, media summary, status, audit summary, import/export job.
+Product admin list/detail, Category/Brand options, existing Product image Media options, lifecycle state, version and read-only Inventory availability.
 
 ## UI Sections / Khu vực UI
 
-Product table, filter/search/sort, product form, media attach panel, status action, import/export actions.
+Product table, filter/search/sort, product form, existing media selection, status action and soft-delete action.
 
 ## Components / Thành phần
 
-Admin Table, Filter Bar, Product Form, Status Badge, Media Picker, Upload Link, Confirmation Dialog.
+Admin Table, Filter Bar, Product Form, Status Badge, Existing Media Picker, Confirmation Dialog.
 
 ## Form / Form
 
-Product create/update form với name, code, slug, price, summary, category, brand, status và visible fields.
+Product create/update form với name, SKU, slug, price, brand, categories/primary category, content, nutrition, ingredients, dietary tags, existing media and publication fields. SKU is read-only after create.
 
 ## Validation / Validation
 
-Required fields, unique code/slug, DecimalString price, valid category/brand/media references.
+Required fields, unique code/slug, DecimalString price, valid category/brand/media references, one primary category and version on update/status/delete.
 
 ## Search / Tìm kiếm
 
-Search theo product name, code, slug, summary và ingredient keywords.
+Search theo product name, SKU, slug, summary và ingredient keywords.
 
 ## Filter / Lọc
 
-Category, brand, productStatus, stockStatus, createdAt, updatedAt, visibility.
+Category, brand, productStatus, visibility and approved sort only. Availability may be displayed read-only.
 
 ## Sort / Sắp xếp
 
@@ -64,19 +66,19 @@ Default `updatedAt` desc; sort theo price, name, createdAt, updatedAt nếu API 
 
 ## Pagination / Phân trang
 
-Default 20, max 100.
+Default 20, max 60.
 
 ## Upload / Upload
 
-Upload ảnh đi qua Admin Media; màn hình này attach media đã upload.
+No upload in Prompt 35. The form can link existing active Product image Media only.
 
 ## Download / Download
 
-Export sản phẩm qua export job.
+Export job remains blocked in Prompt 35.
 
 ## Loading State / Trạng thái tải
 
-Table skeleton, form disabled khi submit, media attach loading.
+Table skeleton and form disabled while loading/submitting.
 
 ## Empty State / Trạng thái rỗng
 
@@ -84,19 +86,19 @@ Chưa có sản phẩm hoặc không có kết quả theo filter; hiển thị a
 
 ## Error State / Trạng thái lỗi
 
-Validation error, slug conflict, product not found, permission denied.
+Validation error, slug conflict, product not found, stale version, permission denied.
 
 ## Success State / Trạng thái thành công
 
-Product lưu thành công, status updated, import/export job created.
+Sản phẩm lưu thành công, lifecycle updated or soft-delete completed, followed by authoritative refetch/navigation.
 
 ## Confirmation Dialog / Hộp xác nhận
 
-Publish/archive/inactive product cần xác nhận.
+Publish/unpublish/soft-delete actions need confirmation when destructive or visibility-changing.
 
 ## Toast Message / Toast
 
-Tạo/sửa/đổi trạng thái/attach media/import/export thành công hoặc lỗi.
+Tạo/sửa/đổi lifecycle/soft-delete thành công hoặc lỗi.
 
 ## Skeleton / Skeleton
 
@@ -113,4 +115,3 @@ Form label rõ, status có text, action nguy hiểm có mô tả hậu quả.
 ## SEO Metadata / SEO metadata
 
 Noindex vì là admin/private.
-

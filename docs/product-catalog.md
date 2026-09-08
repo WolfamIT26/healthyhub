@@ -11,6 +11,7 @@ Route `/products` giữ UX Prompt 21 nhưng source of truth production là `GET 
 - Availability lấy từ Inventory persistence qua evaluator dùng chung; zero quantity luôn out-of-stock dù persisted status bị trễ. Frontend không tự quyết định stock/sellable.
 - Server xử lý search, filter, sort và pagination. Public chỉ thấy Product active/public có primary Category active/public.
 - Response không chứa internal cost, supplier, audit hoặc inventory quantity.
+- Prompt 35 Admin Product mutations ghi vào cùng Product persistence, nên Catalog public phản ánh create/update/lifecycle/soft-delete hợp lệ mà không đổi public API shape.
 
 ## URL query
 

@@ -10,6 +10,8 @@ Prompt 33.1 aligns logical Order/Shipping histories and canonical Review identit
 
 Prompt 33.2 implements the logical `product_reviews` authority with required Customer/Product/Order references, Order+Product identity, rating/content/status and soft delete.
 
+Prompt 35 reuses existing Product/Category/Brand/Media logical persistence for Admin Product management; no new logical authority or migration is introduced.
+
 - Status: Completed for Prompt 08.
 - Scope: Logical Database Documentation only.
 - Project: HealthyHub.

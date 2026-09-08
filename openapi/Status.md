@@ -10,8 +10,8 @@
 ## Coverage / Mức bao phủ
 
 - Domain count: 23
-- Endpoint operation count: 196
-- Path item count: 169
+- Endpoint operation count: 198
+- Path item count: 170
 - Shared schema count: 55
 - Webhook event contracts: 3
 - Shared response status codes: 13
@@ -20,14 +20,15 @@
 
 - YAML syntax: Passed for 16 YAML files in `openapi`.
 - `$ref` existence check: Passed for local/external references.
-- `operationId` uniqueness: Passed, 196 unique operationId.
-- API Spec endpoint count match: Passed, 196 operation from `.spec/api/domains`.
+- `operationId` uniqueness: Passed, 198 unique operationId.
+- API Spec endpoint count match: Passed, 198 operation from `.spec/api/domains`.
 - Secret/example scan: Passed for obvious unfinished-marker or secret patterns in `openapi`.
 - Prompt 27.3: VNPAY Return/IPN signed query parameters and authority notes documented; validation remains 196/196 operations.
 - Prompt 29: sáu Customer self operations dùng typed Profile/Address request/response, exact non-paginated reads và safe field boundary; validation vẫn 196/196 operations.
 - Prompt 31: Product/Category/Brand public reads dùng typed response và exact query/path contract; validation vẫn 196/196 operations.
 - Prompt 33.2: 6 public/customer Review operations dùng typed schema/response; 2 Admin moderation operations vẫn blocked; validation giữ 196/196/196.
 - Prompt 34: Admin Dashboard operation có typed Product/Inventory/Order/Review aggregate và runtime READY; inventory vẫn 196/196/196.
+- Prompt 35: Admin Product management operations use typed list/detail/options/mutation schemas; validation is 198/198/198 and media attach/import/export remain blocked.
 
 ## Limitations / Giới hạn
 

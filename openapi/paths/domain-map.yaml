@@ -1,9 +1,9 @@
-generatedAt: "2026-08-06"
+generatedAt: "2026-08-27"
 source: ".spec/api/domains"
 apiPrefix: "/api/v1"
 domainCount: 23
-endpointCount: 196
-pathCount: 169
+endpointCount: 198
+pathCount: 170
 domains:
   - name: Authentication
     endpointCount: 10
@@ -64,7 +64,7 @@ domains:
       - method: GET
         uri: /api/v1/admin/users
         operationId: getAdminUsers
-        auth: "Staff JWT"
+        auth: "Staff/Manager/Admin JWT"
         permission: "users:read"
       - method: POST
         uri: /api/v1/admin/users
@@ -74,7 +74,7 @@ domains:
       - method: GET
         uri: /api/v1/admin/users/{userId}
         operationId: getAdminUsersUserId
-        auth: "Staff JWT"
+        auth: "Staff/Manager/Admin JWT"
         permission: "users:read"
       - method: PATCH
         uri: /api/v1/admin/users/{userId}
@@ -198,7 +198,8 @@ domains:
         auth: "Manager/Admin JWT"
         permission: "staff:read"
   - name: Product
-    endpointCount: 11
+    endpointCount: 13
+    runtimeStatus: public_and_admin_management_ready_import_export_blocked
     paths:
       - method: GET
         uri: /api/v1/public/products
@@ -220,41 +221,64 @@ domains:
         operationId: getAdminProducts
         auth: "Staff JWT"
         permission: "products:read"
+        runtimeStatus: ready
+      - method: GET
+        uri: /api/v1/admin/products/options
+        operationId: getAdminProductsOptions
+        auth: "Staff/Manager/Admin JWT"
+        permission: "products:read"
+        runtimeStatus: ready
       - method: POST
         uri: /api/v1/admin/products
         operationId: postAdminProducts
-        auth: "Staff/Manager JWT"
+        auth: "Staff/Manager/Admin JWT"
         permission: "products:manage"
+        runtimeStatus: ready
       - method: GET
         uri: /api/v1/admin/products/{productId}
         operationId: getAdminProductsProductId
         auth: "Staff JWT"
         permission: "products:read"
+        runtimeStatus: ready
       - method: PATCH
         uri: /api/v1/admin/products/{productId}
         operationId: patchAdminProductsProductId
-        auth: "Staff/Manager JWT"
+        auth: "Staff/Manager/Admin JWT"
         permission: "products:manage"
+        runtimeStatus: ready
+      - method: DELETE
+        uri: /api/v1/admin/products/{productId}
+        operationId: deleteAdminProductsProductId
+        auth: "Manager/Admin JWT"
+        permission: "products:manage"
+        runtimeStatus: ready
       - method: PATCH
         uri: /api/v1/admin/products/{productId}/status
         operationId: patchAdminProductsProductIdStatus
         auth: "Manager/Admin JWT"
         permission: "products:manage"
+        runtimeStatus: ready
       - method: POST
         uri: /api/v1/admin/products/{productId}/media
         operationId: postAdminProductsProductIdMedia
-        auth: "Staff/Manager JWT"
+        auth: "Staff/Manager/Admin JWT"
         permission: "products:manage"
+        runtimeStatus: blocked
+        runtimeBlocker: ADMIN_PRODUCT_MEDIA_ATTACH_USE_AGGREGATE_UPDATE
       - method: POST
         uri: /api/v1/admin/products/imports
         operationId: postAdminProductsImports
         auth: "Manager/Admin JWT"
         permission: "products:manage"
+        runtimeStatus: blocked
+        runtimeBlocker: ADMIN_PRODUCT_IMPORT_NOT_IMPLEMENTED
       - method: POST
         uri: /api/v1/admin/products/exports
         operationId: postAdminProductsExports
         auth: "Manager/Admin JWT"
         permission: "products:read"
+        runtimeStatus: blocked
+        runtimeBlocker: ADMIN_PRODUCT_EXPORT_NOT_IMPLEMENTED
   - name: Category
     endpointCount: 9
     paths:

@@ -5,13 +5,33 @@ import { Avatar, Badge, Button, IconButton } from '../../components';
 import { ErrorBoundary } from '../../components/foundation/ErrorBoundary';
 import { useAuth } from '../../features/auth/AuthContext';
 
-const adminNavigation = [
-  { label: 'Dashboard', description: 'Tổng quan vận hành', to: '/admin', enabled: true, icon: '⌂' },
-  { label: 'Sản phẩm', description: 'Chưa triển khai', enabled: false, icon: '□' },
-  { label: 'Tồn kho', description: 'Chưa triển khai', enabled: false, icon: '▦' },
-  { label: 'Đơn hàng', description: 'Chưa triển khai', enabled: false, icon: '≡' },
-  { label: 'Đánh giá', description: 'Chờ policy moderation', enabled: false, icon: '★' },
-] as const;
+interface AdminNavigationItem {
+  label: string;
+  description: string;
+  icon: string;
+  to?: string;
+  permission?: string;
+}
+
+const adminNavigation: AdminNavigationItem[] = [
+  {
+    label: 'Dashboard',
+    description: 'Tổng quan vận hành',
+    to: '/admin',
+    permission: 'analytics:read',
+    icon: '⌂',
+  },
+  {
+    label: 'Sản phẩm',
+    description: 'Quản trị catalog',
+    to: '/admin/products',
+    permission: 'products:read',
+    icon: '□',
+  },
+  { label: 'Tồn kho', description: 'Chưa triển khai', icon: '▦' },
+  { label: 'Đơn hàng', description: 'Chưa triển khai', icon: '≡' },
+  { label: 'Đánh giá', description: 'Chờ policy moderation', icon: '★' },
+];
 
 export function AdminLayout() {
   const auth = useAuth();
@@ -65,10 +85,10 @@ export function AdminLayout() {
           </p>
           <nav aria-label="Điều hướng quản trị" className="mt-3 space-y-1">
             {adminNavigation.map((item) =>
-              item.enabled ? (
+              item.to && item.permission && auth.hasPermission(item.permission) ? (
                 <NavLink
                   key={item.label}
-                  end
+                  end={item.to === '/admin'}
                   to={item.to}
                   onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>

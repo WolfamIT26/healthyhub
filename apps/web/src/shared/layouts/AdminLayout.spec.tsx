@@ -47,8 +47,12 @@ describe('AdminLayout', () => {
     renderLayout();
     expect(screen.getByText('Nội dung dashboard')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Dashboard/ })).toHaveAttribute('href', '/admin');
+    expect(screen.getByRole('link', { name: /Sản phẩm/ })).toHaveAttribute(
+      'href',
+      '/admin/products',
+    );
     expect(screen.getByText('Quản trị viên')).toBeInTheDocument();
-    for (const label of ['Sản phẩm', 'Tồn kho', 'Đơn hàng', 'Đánh giá']) {
+    for (const label of ['Tồn kho', 'Đơn hàng', 'Đánh giá']) {
       expect(screen.getByText(label).closest('[aria-disabled="true"]')).not.toBeNull();
     }
   });

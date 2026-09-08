@@ -6,6 +6,8 @@ Prompt 04 đã hoàn thiện AI Development Core trong `.ai`. Hệ thống mới
 
 Prompt 34 tuân thủ workflow audit → implementation → testing → documentation; kết quả chi tiết nằm tại `modules/admin` và Work Summary Prompt 34.
 
+Prompt 35 tuân thủ audit repository trước khi sửa, reuse Product/Category/Brand/Media authority và Admin authorization foundation. Kết quả chi tiết nằm tại `modules/products`, `modules/admin` và Work Summary Prompt 35.
+
 ## Added / Đã thêm
 
 - `.ai/workflows`: workflow generate, review, refactor, audit, testing, documentation và release.

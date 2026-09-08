@@ -3,7 +3,7 @@
 - [x] Tạo thư mục `openapi/`.
 - [x] Tạo OpenAPI 3.1 root file.
 - [x] Khai báo 23 domain tag.
-- [x] Sinh 196 endpoint operation từ API Specification.
+- [x] Sinh 198 endpoint operation từ API Specification.
 - [x] Khai báo Bearer JWT, Refresh Token, API Key, Webhook Signature.
 - [x] Khai báo response chuẩn 200, 201, 202, 204, 400, 401, 403, 404, 409, 422, 429, 500, 502, 503.
 - [x] Khai báo schema dùng chung cho envelope, error, pagination, upload, AI, money, address, audit metadata.
@@ -17,5 +17,7 @@
 - [x] Typed Customer Profile/Address requests, safe responses và exact self-read parameters.
 - [x] Typed Review public/customer requests, responses, aggregate, pagination và ownership-safe fields.
 - [x] Typed Admin Dashboard response, Internal role security và aggregate-only PII boundary.
+- [x] Typed Admin Product list/detail/options/create/update/status/delete contracts.
+- [x] Mark Product media attach/import/export runtime-blocked.
 - [ ] Sinh DTO schema chi tiết theo từng domain ở phase sau.
 - [ ] Chạy semantic OpenAPI validator chuyên dụng khi dự án có công cụ phù hợp.

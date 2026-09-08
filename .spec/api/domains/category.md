@@ -109,6 +109,12 @@ Category API quản lý danh mục sản phẩm, cây danh mục, thứ tự hi�
 - Public tree trả parent/children từ persistence và chỉ gồm active/public Category.
 - `category_display_rules` kênh web là display-order authority; không trả audit/status nội bộ.
 
+## Prompt 35 Product-Scoped Admin Use / Sử dụng Admin theo Product
+
+- `GET /api/v1/admin/products/options` trả active Category options để Product form chọn.
+- Product create/update validate Category theo tenant, active state và exactly-one-primary invariant.
+- Prompt 35 không mở standalone Admin Category CRUD, reorder hoặc status transition.
+
 ## Upload / Upload
 
 Không áp dụng trực tiếp. Ảnh category nếu có đi qua Media API.

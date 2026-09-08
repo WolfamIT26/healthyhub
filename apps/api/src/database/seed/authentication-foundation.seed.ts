@@ -41,6 +41,11 @@ export async function seedAuthenticationFoundation(manager: EntityManager): Prom
     { roleCode: 'STAFF', permissionCode: 'analytics:read' },
     { roleCode: 'MANAGER', permissionCode: 'analytics:read' },
     { roleCode: 'ADMINISTRATOR', permissionCode: 'analytics:read' },
+    { roleCode: 'STAFF', permissionCode: 'products:read' },
+    { roleCode: 'MANAGER', permissionCode: 'products:read' },
+    { roleCode: 'ADMINISTRATOR', permissionCode: 'products:read' },
+    { roleCode: 'MANAGER', permissionCode: 'products:manage' },
+    { roleCode: 'ADMINISTRATOR', permissionCode: 'products:manage' },
     { roleCode: 'ADMINISTRATOR', permissionCode: 'users:manage' },
     { roleCode: 'ADMINISTRATOR', permissionCode: 'sessions:manage' },
   ];

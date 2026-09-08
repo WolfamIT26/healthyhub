@@ -12,7 +12,7 @@ Domain API Map cho biết mỗi domain có API namespace, nhóm quyền, contrac
 | User | `/api/v1/admin/users` | Admin, super admin | `users:read`, `users:manage` | User summary/detail, role summary |
 | Customer | `/api/v1/me`, `/api/v1/admin/customers` | Customer, staff, manager, admin | `customers:read`, `customers:manage` | Customer profile/detail |
 | Staff | `/api/v1/admin/staff` | Admin, super admin | `staff:read`, `staff:manage` | Staff summary/detail |
-| Product | `/api/v1/public/products`, `/api/v1/admin/products` | Guest, customer, staff/admin | `products:read`, `products:manage` | Product list/detail |
+| Product | `/api/v1/public/products`, `/api/v1/admin/products` | Guest, customer, staff/admin | `products:read`, `products:manage` | Product list/detail/admin aggregate |
 | Category | `/api/v1/public/categories`, `/api/v1/admin/categories` | Guest, customer, staff/admin | `categories:read`, `categories:manage` | Category tree/detail |
 | Brand | `/api/v1/public/brands`, `/api/v1/admin/brands` | Guest, customer, staff/admin | `brands:read`, `brands:manage` | Brand summary/detail |
 | Inventory | `/api/v1/admin/inventory` | Staff, manager, admin | `inventory:read`, `inventory:adjust` | Stock summary, movement summary |
@@ -42,4 +42,3 @@ Domain API Map cho biết mỗi domain có API namespace, nhóm quyền, contrac
 | AI | AI endpoint dùng source reference và safety metadata, không đọc trực tiếp contract nội bộ của domain khác. |
 | Analytics | API trả aggregate/dataset, không trả raw operational data mặc định. |
 | Media | Upload/download dùng file transfer contract, không trả storage key public. |
-

@@ -1,5 +1,11 @@
 # UI Contract ChangeLog / Nhật ký thay đổi UI Contract
 
+## 2026-08-27 — Prompt 35
+
+- Marked Admin Products list/form/lifecycle/delete as executable runtime screens.
+- Updated Admin navigation: Dashboard and Products are open; Inventory/Orders/Reviews remain disabled.
+- Kept Product upload/import/export, Inventory adjustment and Review moderation outside Prompt 35.
+
 ## 2026-08-25 — Prompt 34
 
 - Opened `/admin` route, responsive Admin shell and authoritative Dashboard states.

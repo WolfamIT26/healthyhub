@@ -35,6 +35,8 @@ Prompt 33.2 adds executable typed Review create/update/list/summary/eligibility 
 
 Prompt 34 adds an executable typed Admin Dashboard aggregate and current-role/permission boundary without a new API operation.
 
+Prompt 35 adds executable typed Admin Product list/detail/options/mutation contracts and current `products:read`/`products:manage` permission boundaries.
+
 ## Not Included / Không bao gồm
 
 - Chưa tạo API endpoint.

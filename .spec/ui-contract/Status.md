@@ -28,7 +28,7 @@ Prompt 33.1 note: Review eligibility is READY, but Review screen contracts remai
 
 Prompt 33.2 note: Product Detail Review section is executable with backend summary/list/eligibility and owner form. Dedicated Customer Reviews and Admin moderation screens remain outside scope.
 
-Prompt 34 note: `/admin` shell và Dashboard aggregate are executable with Internal route protection, loading/error/retry/forbidden/empty states. Other Admin screens remain design-only.
+Prompt 34 note: `/admin` shell và Dashboard aggregate are executable with Internal route protection, loading/error/retry/forbidden/empty states. Prompt 35 note: Admin Products list/create/edit/lifecycle/delete screens are executable inside the Admin shell. Product media upload/import/export, Inventory adjustment and Review moderation remain design-only/blocked.
 
 ## Not Included / Không bao gồm
 

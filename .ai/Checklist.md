@@ -1,5 +1,13 @@
 # AI Core Checklist / Checklist AI Core
 
+## Prompt 35 Compliance / Tuân thủ Prompt 35
+
+- [x] Audit rules/context/spec/Product/Admin authority trước khi sửa.
+- [x] Reuse Product/Category/Brand/Media persistence và Prompt 34 authorization.
+- [x] Không tạo authority song song hoặc AI capability mới.
+- [x] Cập nhật module docs, spec, OpenAPI, root summary và Work Summary.
+- [x] Không commit, push, merge hoặc bắt đầu Prompt 36.
+
 ## Prompt 34 Compliance / Tuân thủ Prompt 34
 
 - [x] Đọc rules/context/spec trước khi sửa.

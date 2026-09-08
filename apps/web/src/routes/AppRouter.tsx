@@ -27,6 +27,8 @@ import { AccountAddressesPage } from '../pages/AccountAddressesPage';
 import { AccountProfilePage } from '../pages/AccountProfilePage';
 import { OrdersPage } from '../pages/OrdersPage';
 import { OrderDetailPage } from '../pages/OrderDetailPage';
+import { AdminProductsPage } from '../pages/AdminProductsPage';
+import { AdminProductFormPage } from '../pages/AdminProductFormPage';
 
 export function AppRouter() {
   return (
@@ -170,6 +172,9 @@ export function AppRouter() {
         }
       >
         <Route path="/admin" element={<AdminHomePage />} />
+        <Route path="/admin/products" element={<AdminProductsPage />} />
+        <Route path="/admin/products/new" element={<AdminProductFormPage />} />
+        <Route path="/admin/products/:productId" element={<AdminProductFormPage />} />
       </Route>
       <Route path="/404" element={<NotFoundPage />} />
       <Route path="/403" element={<ForbiddenPage />} />

@@ -33,6 +33,8 @@ Prompt 33.2 keeps 196 operations: 6 public/customer Review operations now use ex
 
 Prompt 34 keeps 196 operations: the existing Admin Analytics Dashboard read is executable for current Internal roles with `analytics:read`; remaining Admin management operations stay outside runtime scope.
 
+Prompt 35 increases inventory to 198 operations: Admin Product list/detail/create/update/status/options/delete are executable with typed contracts and `products:read`/`products:manage`; Product media attach/import/export remain blocked.
+
 ## Not Included / Không bao gồm
 
 - Chưa tạo OpenAPI hoặc Swagger.

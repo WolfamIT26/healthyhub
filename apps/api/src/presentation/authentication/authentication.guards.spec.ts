@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { RequestWithContext } from '../../common/types/request-with-context';
-import { AccessTokenGuard, RolesGuard } from './authentication.guards';
+import { AccessTokenGuard, PermissionsGuard, RolesGuard } from './authentication.guards';
 
 function context(request: Partial<RequestWithContext>) {
   return {
@@ -107,5 +107,30 @@ describe('AccessTokenGuard current actor authority', () => {
     expect(() => roles.canActivate(context(request))).toThrowError(
       expect.objectContaining({ status: 403 }),
     );
+  });
+});
+
+describe('PermissionsGuard persisted authority', () => {
+  it('allows a current effective Product permission and rejects a missing one', async () => {
+    const reflector = {
+      getAllAndOverride: vi.fn().mockReturnValue(['products:read']),
+    };
+    const repository = { getEffectivePermissions: vi.fn().mockResolvedValue(['products:read']) };
+    const guard = new PermissionsGuard(reflector as never, repository as never);
+    const request = {
+      headers: {},
+      auth: {
+        userAccountId: '7',
+        sessionId: '1',
+        sessionPublicId: 'session',
+        roles: ['STAFF'],
+        permissionsVersion: 1,
+      },
+    } as RequestWithContext;
+
+    await expect(guard.canActivate(context(request))).resolves.toBe(true);
+    reflector.getAllAndOverride.mockReturnValue(['products:manage']);
+    await expect(guard.canActivate(context(request))).rejects.toMatchObject({ status: 403 });
+    expect(repository.getEffectivePermissions).toHaveBeenCalledWith('7');
   });
 });

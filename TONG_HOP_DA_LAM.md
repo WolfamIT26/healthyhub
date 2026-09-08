@@ -1,5 +1,19 @@
 # TONG_HOP_DA_LAM / Tổng hợp những gì đã làm
 
+## Admin Product Catalog Management V1 — Prompt 35
+
+Đã triển khai Admin Product management thật trên canonical Product/Category/Brand/Media persistence: list/detail/options, create/update, lifecycle publish/unpublish/activate/deactivate theo status hiện có và Product soft-delete. Backend dùng Prompt 34 authorization, current Internal role và `products:read`/`products:manage`; DTO whitelist không nhận tenant, stock quantity, audit field hoặc relation tùy ý.
+
+Product create luôn bắt đầu `draft + hidden + unavailable`, không tạo Inventory row giả. Update giữ SKU immutable, reconcile Content/Nutrition/Ingredients/Dietary/Category/Media trong transaction, kiểm tra version và khóa row để chống stale/concurrent overwrite. Public catalog đọc cùng persistence nên phản ánh Admin mutation; Inventory vẫn là availability authority.
+
+Frontend đã mở `/admin/products`, `/admin/products/new` và `/admin/products/:productId` trong Admin shell với list/search/filter/pagination, create/edit form, lifecycle action, soft-delete confirmation, loading/error/retry/empty/forbidden states và authoritative refetch sau mutation.
+
+OpenAPI tăng lên 198 operations vì thêm Admin Product options và delete; media attach/import/export vẫn blocked. Không triển khai Inventory adjustment, upload infrastructure, Category/Brand CRUD, Order/Shipping admin, Review moderation, AI hoặc Prompt 36.
+
+Verification cuối cùng được ghi trong Work Summary riêng: `docs/work-summaries/2026-08-27-01-prompt-35-admin-product-catalog-management-v1.md`.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
 ## Admin Foundation & Access Control V1 — Prompt 34
 
 Đã hoàn thiện `/admin` foundation bằng canonical Authentication/User RBAC: protected request recheck session/account/current roles, Dashboard yêu cầu Internal role + `analytics:read`, Guest/Customer/disabled actor không thể bypass bằng URL hoặc frontend state. Không tạo role/auth authority mới và không seed Admin credential.

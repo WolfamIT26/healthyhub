@@ -38,16 +38,22 @@ Lưu dữ liệu sản phẩm healthy, nội dung mô tả, thành phần, cản
 - Product chỉ được bán khi `sellable_status` và `product_visibility` cho phép.
 - Product public phải có tên, mô tả, giá, category và media tối thiểu.
 - Cảnh báo dị ứng hoặc lưu ý sức khỏe phải gắn với product/ingredient khi có.
+- Prompt 35 Admin create starts Product as `draft`, `hidden` and `unavailable`.
+- Admin public visibility requires active Product, public visibility, published Content and active/public primary Category; Inventory remains availability authority.
+- Product code is immutable after create.
 
 ## Delete Strategy / Chiến lược xóa
 
 - Product dùng soft delete hoặc discontinued nếu đã từng xuất hiện trong order.
 - Content và ingredient có thể hidden; không hard delete nếu đã public hoặc đã dùng cho AI/SEO.
 - Media link có thể inactive khi thay ảnh.
+- Prompt 35 soft delete targets the Product row only and does not cascade historical Order, Review, Inventory, Category or Media records.
 
 ## Audit Fields / Trường audit
 
 Áp dụng audit fields chuẩn. Product và content nên có `version` để kiểm soát chỉnh sửa nội dung.
+
+Prompt 35 uses Product `version` for stale Admin update/status/delete protection.
 
 ## Data Lifecycle / Vòng đời dữ liệu
 

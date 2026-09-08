@@ -106,6 +106,12 @@ Brand API quản lý thương hiệu/nhà sản xuất, logo, mô tả và trạ
 - Public list hỗ trợ `page`, `pageSize`, `q`; detail nhận numeric ID hoặc slug.
 - Chỉ active Brand được trả; response gồm ID, slug, name, origin/description public và không có audit metadata.
 
+## Prompt 35 Product-Scoped Admin Use / Sử dụng Admin theo Product
+
+- `GET /api/v1/admin/products/options` trả active Brand options để Product form chọn.
+- Product create/update validate Brand theo tenant và trạng thái hiện hành trước khi gắn.
+- Prompt 35 không mở standalone Admin Brand CRUD, media logo upload hoặc Brand status transition.
+
 ## Upload / Upload
 
 - Upload logo đi qua Media API.

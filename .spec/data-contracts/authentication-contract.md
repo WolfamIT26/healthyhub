@@ -51,6 +51,7 @@ All payloads are inside the standard success envelope.
 - Access token contains subject, session ID, role codes and `permissionsVersion`, not the full permission list. Sensitive authorization resolves current effective permissions/account/session state server-side.
 - `users:manage` permits Administrator to lock/unlock/disable accounts. Owner may revoke the current session; `sessions:manage` permits Administrator to revoke another user's or all sessions. Every privileged action is audited.
 - `analytics:read` permits active Staff, Manager and Administrator roles to read the aggregate-only Admin Dashboard V1. Protected authorization re-resolves current roles/permissions; JWT role claims are not final authority.
+- `products:read` permits active Internal roles to read Admin Product list/detail/options. `products:manage` permits Manager and Administrator roles to create, update, change lifecycle and soft-delete Products. Product permissions are resolved from persistence on each protected request.
 
 ## Canonical Errors / Lỗi chuẩn
 

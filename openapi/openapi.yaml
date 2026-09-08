@@ -498,7 +498,7 @@ paths:
         Danh sách user
 
         Ghi chú quyền: users:read.
-        Xác thực: Staff JWT.
+        Xác thực: Staff/Manager/Admin JWT.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
         Idempotency: không bắt buộc cho thao tác đọc.
       tags:
@@ -506,7 +506,7 @@ paths:
       security:
         - BearerAuth: []
       x-permission: "users:read"
-      x-auth-level: "Staff JWT"
+      x-auth-level: "Staff/Manager/Admin JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
       x-idempotency-required: false
       x-source: ".spec/api/domains/user.md"
@@ -596,7 +596,7 @@ paths:
         Chi tiết user
 
         Ghi chú quyền: users:read.
-        Xác thực: Staff JWT.
+        Xác thực: Staff/Manager/Admin JWT.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
         Idempotency: không bắt buộc cho thao tác đọc.
       tags:
@@ -604,7 +604,7 @@ paths:
       security:
         - BearerAuth: []
       x-permission: "users:read"
-      x-auth-level: "Staff JWT"
+      x-auth-level: "Staff/Manager/Admin JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
       x-idempotency-required: false
       x-source: ".spec/api/domains/user.md"
@@ -1919,6 +1919,7 @@ paths:
   /api/v1/admin/products:
     get:
       operationId: "getAdminProducts"
+      x-runtime-status: "ready"
       summary: "Danh sách sản phẩm admin"
       description: |
         Danh sách sản phẩm admin
@@ -1940,14 +1941,36 @@ paths:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/PageSizeParam"
-        - $ref: "#/components/parameters/QParam"
-        - $ref: "#/components/parameters/SortParam"
-        - $ref: "#/components/parameters/FilterParam"
+        - name: page
+          in: query
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: pageSize
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 60, default: 20 }
+        - name: q
+          in: query
+          schema: { type: string, maxLength: 100 }
+        - name: productStatus
+          in: query
+          schema: { type: string, enum: [draft, active, discontinued] }
+        - name: visibility
+          in: query
+          schema: { type: string, enum: [public, hidden, private] }
+        - name: categoryId
+          in: query
+          schema: { type: string, pattern: "^[1-9][0-9]*$" }
+        - name: brandId
+          in: query
+          schema: { type: string, pattern: "^[1-9][0-9]*$" }
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [updated-desc, updated-asc, name-asc, name-desc, price-asc, price-desc]
+            default: updated-desc
       responses:
         "200":
-          $ref: "#/components/responses/PaginatedOk"
+          $ref: "./responses/common.yaml#/AdminProductListOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -1964,40 +1987,37 @@ paths:
           $ref: "#/components/responses/NotFound"
     post:
       operationId: "postAdminProducts"
+      x-runtime-status: "ready"
       summary: "Tạo sản phẩm"
       description: |
         Tạo sản phẩm
 
         Ghi chú quyền: products:manage.
-        Xác thực: Staff/Manager JWT.
+        Xác thực: Staff/Manager/Admin JWT.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
-        Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
+        Idempotency: SKU/slug unique là final duplicate authority; V1 không nhận idempotency key.
       tags:
         - "Product"
       security:
         - BearerAuth: []
       x-permission: "products:manage"
-      x-auth-level: "Staff/Manager JWT"
+      x-auth-level: "Staff/Manager/Admin JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
-      x-idempotency-required: true
+      x-idempotency-required: false
       x-source: ".spec/api/domains/product.md"
       parameters:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GenericCommandRequest"
-            examples:
-              default:
-                $ref: "#/components/examples/GenericCommandRequest"
+              $ref: "./schemas/product.yaml#/AdminCreateProductRequest"
       responses:
         "201":
-          $ref: "#/components/responses/Created"
+          $ref: "./responses/common.yaml#/AdminProductMutationOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -2014,9 +2034,42 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
+  /api/v1/admin/products/options:
+    get:
+      operationId: "getAdminProductsOptions"
+      x-runtime-status: "ready"
+      summary: "Lookup quản trị Product"
+      description: |
+        Category/Brand/dietary/existing Media options hợp lệ cho Product form.
+        Không trả raw storage key, tenant selector hoặc Inventory mutation.
+      tags:
+        - "Product"
+      security:
+        - BearerAuth: []
+      x-permission: "products:read"
+      x-auth-level: "Staff/Manager/Admin JWT"
+      x-rate-limit-note: "Authenticated Normal."
+      x-idempotency-required: false
+      x-source: ".spec/api/domains/product.md"
+      parameters:
+        - $ref: "#/components/parameters/RequestIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      responses:
+        "200":
+          $ref: "./responses/common.yaml#/AdminProductOptionsOk"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/v1/admin/products/{productId}:
     get:
       operationId: "getAdminProductsProductId"
+      x-runtime-status: "ready"
       summary: "Chi tiết sản phẩm admin"
       description: |
         Chi tiết sản phẩm admin
@@ -2041,7 +2094,7 @@ paths:
         - $ref: "#/components/parameters/ProductIdPath"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/AdminProductDetailOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -2058,41 +2111,38 @@ paths:
           $ref: "#/components/responses/NotFound"
     patch:
       operationId: "patchAdminProductsProductId"
+      x-runtime-status: "ready"
       summary: "Cập nhật sản phẩm"
       description: |
         Cập nhật sản phẩm
 
         Ghi chú quyền: products:manage.
-        Xác thực: Staff/Manager JWT.
+        Xác thực: Staff/Manager/Admin JWT.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
-        Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
+        Idempotency: optimistic version chặn stale overwrite; desired aggregate replacement chạy transactionally.
       tags:
         - "Product"
       security:
         - BearerAuth: []
       x-permission: "products:manage"
-      x-auth-level: "Staff/Manager JWT"
+      x-auth-level: "Staff/Manager/Admin JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
-      x-idempotency-required: true
+      x-idempotency-required: false
       x-source: ".spec/api/domains/product.md"
       parameters:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
         - $ref: "#/components/parameters/ProductIdPath"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GenericCommandRequest"
-            examples:
-              default:
-                $ref: "#/components/examples/GenericCommandRequest"
+              $ref: "./schemas/product.yaml#/AdminUpdateProductRequest"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/AdminProductMutationOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -2109,9 +2159,52 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
+    delete:
+      operationId: "deleteAdminProductsProductId"
+      x-runtime-status: "ready"
+      summary: "Xóa mềm sản phẩm"
+      description: |
+        Soft-delete Product theo optimistic version. Public/Cart/Wishlist không còn đọc Product;
+        Inventory, Order và Review history không bị cascade.
+      tags:
+        - "Product"
+      security:
+        - BearerAuth: []
+      x-permission: "products:manage"
+      x-auth-level: "Manager/Admin JWT"
+      x-rate-limit-note: "Authenticated Normal."
+      x-idempotency-required: false
+      x-source: ".spec/api/domains/product.md"
+      parameters:
+        - $ref: "#/components/parameters/RequestIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+        - $ref: "#/components/parameters/ProductIdPath"
+        - name: version
+          in: query
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        "200":
+          $ref: "./responses/common.yaml#/AdminProductDeleteOk"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/v1/admin/products/{productId}/status:
     patch:
       operationId: "patchAdminProductsProductIdStatus"
+      x-runtime-status: "ready"
       summary: "Đổi trạng thái sản phẩm"
       description: |
         Đổi trạng thái sản phẩm
@@ -2119,7 +2212,7 @@ paths:
         Ghi chú quyền: products:manage.
         Xác thực: Manager/Admin JWT.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
-        Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
+        Idempotency: desired lifecycle state cùng optimistic version.
       tags:
         - "Product"
       security:
@@ -2127,26 +2220,22 @@ paths:
       x-permission: "products:manage"
       x-auth-level: "Manager/Admin JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
-      x-idempotency-required: true
+      x-idempotency-required: false
       x-source: ".spec/api/domains/product.md"
       parameters:
         - $ref: "#/components/parameters/RequestIdHeader"
         - $ref: "#/components/parameters/TraceIdHeader"
         - $ref: "#/components/parameters/AcceptLanguageHeader"
         - $ref: "#/components/parameters/ProductIdPath"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GenericCommandRequest"
-            examples:
-              default:
-                $ref: "#/components/examples/GenericCommandRequest"
+              $ref: "./schemas/product.yaml#/AdminProductStatusRequest"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          $ref: "./responses/common.yaml#/AdminProductMutationOk"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -2166,12 +2255,14 @@ paths:
   /api/v1/admin/products/{productId}/media:
     post:
       operationId: "postAdminProductsProductIdMedia"
+      x-runtime-status: "blocked"
+      x-runtime-blocker: "ADMIN_PRODUCT_MEDIA_ATTACH_USE_AGGREGATE_UPDATE"
       summary: "Gắn media vào sản phẩm"
       description: |
         Gắn media vào sản phẩm
 
         Ghi chú quyền: products:manage.
-        Xác thực: Staff/Manager JWT.
+        Xác thực: Staff/Manager/Admin JWT.
         Rate limit: Áp dụng rate limit mặc định theo tài liệu API Security.
         Idempotency: client nên gửi X-Idempotency-Key cho thao tác ghi hoặc tích hợp nhạy cảm.
       tags:
@@ -2179,7 +2270,7 @@ paths:
       security:
         - BearerAuth: []
       x-permission: "products:manage"
-      x-auth-level: "Staff/Manager JWT"
+      x-auth-level: "Staff/Manager/Admin JWT"
       x-rate-limit-note: "Áp dụng rate limit mặc định theo tài liệu API Security."
       x-idempotency-required: true
       x-source: ".spec/api/domains/product.md"
@@ -2220,6 +2311,8 @@ paths:
   /api/v1/admin/products/imports:
     post:
       operationId: "postAdminProductsImports"
+      x-runtime-status: "blocked"
+      x-runtime-blocker: "ADMIN_PRODUCT_IMPORT_NOT_IMPLEMENTED"
       summary: "Tạo job import sản phẩm"
       description: |
         Tạo job import sản phẩm
@@ -2273,6 +2366,8 @@ paths:
   /api/v1/admin/products/exports:
     post:
       operationId: "postAdminProductsExports"
+      x-runtime-status: "blocked"
+      x-runtime-blocker: "ADMIN_PRODUCT_EXPORT_NOT_IMPLEMENTED"
       summary: "Tạo job export sản phẩm"
       description: |
         Tạo job export sản phẩm

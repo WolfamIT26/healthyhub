@@ -1,5 +1,11 @@
 # Admin ChangeLog / Nhật ký Admin
 
+## 2026-08-27 — Prompt 35
+
+- Opened Admin Products navigation and routes on top of Prompt 34 shell.
+- Added current-permission Product management boundary with `products:read` and `products:manage`.
+- Kept Inventory, Orders, Reviews moderation, User/Role management and upload/import/export disabled.
+
 ## 2026-08-25 — Prompt 34
 
 - Added current-state Internal authorization and `analytics:read` permission mapping.

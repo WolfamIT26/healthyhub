@@ -1,5 +1,11 @@
 # AI Core ChangeLog / Nhật ký thay đổi AI Core
 
+## 2026-08-27 / Prompt 35
+
+- Applied repository rules/context/spec audit to Admin Product implementation.
+- Added required Product/Admin documentation and Prompt 35 Work Summary.
+- No AI capability, provider, prompt authority or AI workflow was added.
+
 ## 2026-08-25 / Prompt 34
 
 - Applied repository rules/context/spec audit to Admin Foundation implementation.

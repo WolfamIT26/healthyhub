@@ -1,5 +1,11 @@
 # Physical Database ChangeLog / Nhật ký thay đổi Physical Database Design
 
+## 2026-08-27 — Prompt 35
+
+- Confirmed Admin Product management required no new migration.
+- Documented reuse of existing Product unique SKU/slug constraints, child relation constraints and version/audit columns.
+- Recorded Product-only soft delete with no cascade into commerce, Review, Inventory, Category or Media history.
+
 ## 2026-08-21 — Prompt 33.2
 
 - Added forward/reversible `product_reviews` migration with rating/content/status checks.

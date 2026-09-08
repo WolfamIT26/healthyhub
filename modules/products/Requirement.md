@@ -9,7 +9,11 @@
 - [x] Persisted content, ingredient/allergen, dietary, nutrition and safe public media.
 - [x] Catalog/Detail/Search server source of truth with URL reload.
 - [x] Cart/Wishlist regression.
+- [x] Admin Product list/detail/options over canonical persistence.
+- [x] Admin Product create/update/lifecycle/soft-delete with DTO whitelist, transaction and version guard.
+- [x] Category/Brand/existing Media relationship assignment without duplicate authority.
+- [x] Public Catalog reflects Admin Product mutations while Inventory remains the availability authority.
 
 ## Exclusions / Ngoài phạm vi
 
-Admin CRUD, upload, Inventory mutation, Review, Promotion/Coupon, recommendation/AI and Supplier management.
+Inventory quantity adjustment, Media upload infrastructure, import/export jobs, Category/Brand CRUD, Review moderation, Promotion/Coupon, recommendation/AI and Supplier management.

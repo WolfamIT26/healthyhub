@@ -1,5 +1,11 @@
 # OpenAPI ChangeLog / Lịch sử thay đổi OpenAPI
 
+## 2026-08-27 - Admin Product Catalog Management V1
+
+- Opened Admin Product list/detail/options/create/update/status/delete with typed Product schemas and responses.
+- Added Product options and soft-delete operations, moving operation inventory to 198.
+- Kept Product media attach/import/export blocked.
+
 ## 2026-08-25 - Admin Foundation V1
 
 - Opened the existing `GET /api/v1/admin/analytics/dashboard` operation with a typed, PII-free aggregate schema.

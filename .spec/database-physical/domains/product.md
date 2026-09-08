@@ -79,3 +79,5 @@ Mọi bảng dùng `id BIGINT UNSIGNED NOT NULL`, `tenant_id BIGINT UNSIGNED NOT
 
 - Query catalog public dùng `(tenant_id, product_visibility, sellable_status, product_status)`.
 - Product đã có order không hard delete; chuyển discontinued/hidden.
+- Prompt 35 uses existing Product/child-table indexes for Admin list filters and versioned aggregate writes; no migration is added.
+- Admin Product soft delete sets Product `deleted_at` and keeps historical Order/Review/Inventory references intact.
