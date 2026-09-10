@@ -11,8 +11,8 @@
 ## Frontend coverage / Coverage frontend
 
 - Guest redirect, Customer forbidden, Internal access và reload loading.
-- Responsive Admin navigation; future modules disabled.
+- Responsive Admin navigation; Dashboard and Products executable, remaining future modules disabled.
 - Dashboard loading, authoritative render, empty, error/retry và forbidden.
 - Logout và account switch không giữ actor Admin cũ.
 
-Kết quả command cuối được ghi trong `Report.md` và Work Summary Prompt 34.
+Prompt 35 bổ sung coverage cho Product navigation permission, list/search/filter/pagination, create/edit form, lifecycle/delete, backend authorization và missing permission. Kết quả command cuối được ghi trong `Report.md` và Work Summary Prompt 35.

@@ -34,9 +34,10 @@ Bộ tài liệu bao phủ:
 
 Prompt 10 chỉ tạo tài liệu API Specification. Endpoint trong tài liệu chưa phải implementation và chưa sinh OpenAPI.
 
+Prompt 35 runtime update: Admin Product management now has executable list/detail/options/create/update/status/delete contracts. Operation inventory is 198 after adding Product options and soft-delete; Product media attach, import and export remain blocked.
+
 ## Assumptions / Giả định
 
 - HealthyHub dùng `/api/v1` cho API version đầu.
 - Public product detail có thể dùng `{productId}` ở spec hiện tại; slug/public identifier có thể bổ sung ở API refinement sau.
 - Payment, shipping và notification provider thật chưa chọn, nên webhook chỉ thiết kế pattern provider-neutral.
-

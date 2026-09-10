@@ -33,7 +33,7 @@ Tài liệu này mapping nhóm component logic với các màn hình. Đây khô
 | Checkout | Checkout Form, Address Selector, Shipping Quote, Payment Method, Order Summary |
 | Customer Account | Profile Form, Address List, Order Summary, Notification List |
 | Admin Dashboard | Admin Shell, Metric Card, Alert List, Task List |
-| Admin Products | Admin Shell, Data Table, Filter Bar, Product Form, Upload Link, Status Action |
+| Admin Products | Admin Shell, Data Table, Filter Bar, Product Form, Existing Media Picker, Status Action, Confirmation Dialog |
 | Admin Orders | Admin Shell, Data Table, Order Detail, Timeline, Status Action, Reason Dialog |
 | Admin Analytics | Admin Shell, Metric Card, Chart Placeholder, Date Range Filter, Export Action |
 | Admin AI | Admin Shell, AI Prompt Panel, AI Output Review, Source List, Safety Notice |
@@ -44,4 +44,3 @@ Tài liệu này mapping nhóm component logic với các màn hình. Đây khô
 - Component không được phụ thuộc vào database field name.
 - Component nhận dữ liệu từ API contract hoặc state nội bộ đã mô tả.
 - Component có loading, empty và error behavior nếu nhận dữ liệu async.
-

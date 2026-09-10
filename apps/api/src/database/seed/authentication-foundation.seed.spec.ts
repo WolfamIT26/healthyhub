@@ -20,6 +20,8 @@ describe('Authentication foundation seed', () => {
       'users:manage',
       'sessions:manage',
       'analytics:read',
+      'products:read',
+      'products:manage',
     ]);
   });
 
@@ -38,6 +40,8 @@ describe('Authentication foundation seed', () => {
         { id: '1', permissionCode: 'users:manage' },
         { id: '2', permissionCode: 'sessions:manage' },
         { id: '3', permissionCode: 'analytics:read' },
+        { id: '4', permissionCode: 'products:read' },
+        { id: '5', permissionCode: 'products:manage' },
       ]),
     };
     const rolePermissionRepository = { upsert: vi.fn().mockResolvedValue(undefined) };
@@ -51,7 +55,7 @@ describe('Authentication foundation seed', () => {
     expect(roleRepository.upsert).toHaveBeenCalledTimes(1);
     expect(permissionRepository.upsert).toHaveBeenCalledTimes(1);
     expect(rolePermissionRepository.upsert).toHaveBeenCalledTimes(1);
-    expect(rolePermissionRepository.upsert.mock.calls[0][0]).toHaveLength(5);
+    expect(rolePermissionRepository.upsert.mock.calls[0][0]).toHaveLength(10);
     expect(manager.getRepository).toHaveBeenCalledTimes(3);
   });
 });

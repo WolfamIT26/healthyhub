@@ -6,11 +6,11 @@ Thư mục này quản lý module nghiệp vụ độc lập với source code. 
 
 ## Modules / Danh sách module
 
-- [`admin`](admin/README.md): Internal access control, application shell và authoritative Dashboard V1.
+- [`admin`](admin/README.md): Internal access control, application shell, authoritative Dashboard và Product management V1.
 - [`authentication`](authentication/README.md): Context Pack xác thực V1 (đã mapping, còn blocker trước triển khai).
 - `users`: người dùng.
-- `products`: sản phẩm.
-- `categories`: danh mục.
+- [`products`](products/README.md): public catalog authority và Admin Product management V1.
+- [`categories`](categories/README.md): public Category authority và Product-scoped Admin assignment.
 - `cart`: giỏ hàng.
 - [`orders`](orders/README.md): Order create/read và canonical internal fulfillment lifecycle.
 - [`payment`](payment/Report.md): COD/VNPAY authority và provider-event transaction.

@@ -4,7 +4,7 @@ Tài liệu này là nguồn OpenAPI 3.1 chính thức cho HealthyHub ở giai �
 
 ## Main Files / File chính
 
-- `openapi.yaml`: đặc tả OpenAPI 3.1 tổng hợp, gồm 196 operation thuộc 23 domain.
+- `openapi.yaml`: đặc tả OpenAPI 3.1 tổng hợp, gồm 198 operation thuộc 23 domain.
 - `schemas/common.yaml`: schema dùng chung cho envelope, error, pagination, upload, AI, money, address và audit metadata.
 - `schemas/customer.yaml`: typed Profile/Address mutation và safe response envelopes cho Customer self API.
 - `schemas/review.yaml`: typed Review public/owner list, aggregate, eligibility và mutation contracts.
@@ -25,3 +25,4 @@ Tài liệu này là nguồn OpenAPI 3.1 chính thức cho HealthyHub ở giai �
 - OpenAPI này chưa sinh DTO nghiệp vụ chi tiết; schema domain cụ thể sẽ được mở rộng ở phase backend/API DTO sau.
 - `x-runtime-status: blocked` đánh dấu contract-stage operation chưa có executable runtime. Prompt 33.2 mở 6 Review public/customer operations; 2 Admin moderation operations giữ blocker `ADMIN_REVIEW_MODERATION_NOT_IMPLEMENTED`. Operation inventory vẫn là 196.
 - Prompt 34 mở operation có sẵn `GET /api/v1/admin/analytics/dashboard`; các Admin CRUD operation khác vẫn contract-only hoặc blocked theo module authority.
+- Prompt 35 mở Admin Product list/detail/options/create/update/status/delete với typed schemas. Product media attach/import/export vẫn blocked; operation inventory là 198.

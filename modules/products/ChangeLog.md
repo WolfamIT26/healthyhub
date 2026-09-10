@@ -1,5 +1,12 @@
 # Product ChangeLog / Nhật ký Product
 
+## 2026-08-27 — Prompt 35
+
+- Added executable Admin Product list/detail/options/create/update/status/delete APIs on canonical Product persistence.
+- Added Product management permissions, transactional aggregate writes, version concurrency and safe audit logging.
+- Added `/admin/products` list and create/edit form with authoritative refetch and no Inventory quantity editor.
+- Kept upload/import/export, Category/Brand CRUD, Inventory adjustment, Review moderation and Prompt 36 out of scope.
+
 ## 2026-08-21 — Prompt 33.2
 
 - Replaced Product Detail no-data Review placeholder with persisted rating summary/list and owner form.

@@ -8,7 +8,7 @@
 | Dependency | Products |
 | Version | MVP |
 | Owner | Product Owner, Manager |
-| Status | Draft for business specification |
+| Status | Public read ready; Product-scoped Admin assignment ready |
 
 ## Overview / Tổng quan
 
@@ -20,14 +20,14 @@ Giảm ma sát tìm kiếm sản phẩm và giúp danh mục healthy rõ ràng n
 
 ## Scope / Phạm vi
 
-Trong phạm vi: danh mục chính, trạng thái hiển thị, thứ tự ưu tiên, gắn sản phẩm. Ngoài phạm vi: cấu trúc database category, API lọc danh mục, giao diện menu.
+Trong phạm vi hiện tại: public Category reads/tree và Product-scoped Admin Category assignment. Ngoài phạm vi Prompt 35: full Admin Category CRUD/reorder/status UI.
 
 ## Requirement / Yêu cầu
 
 - Category phải có tên dễ hiểu bằng tiếng Việt cho UI.
 - Category không được trùng nghĩa gây rối.
 - Sản phẩm công khai cần thuộc category phù hợp.
-- Manager/Admin có thể quản lý category.
+- Manager/Admin có thể chọn Category hợp lệ khi quản lý Product. Full Category management cần prompt riêng.
 
 ## User Story / User story
 
@@ -40,8 +40,7 @@ Trong phạm vi: danh mục chính, trạng thái hiển thị, thứ tự ưu t
 | Use Case | Actor | Result |
 | --- | --- | --- |
 | Browse by category | Guest, Customer | Khách xem sản phẩm theo nhóm. |
-| Manage category | Manager, Admin | Danh mục được tạo/cập nhật. |
-| Assign product category | Manager, Admin | Sản phẩm thuộc nhóm phù hợp. |
+| Assign product category | Manager, Admin | Sản phẩm thuộc nhóm phù hợp và có đúng một primary Category. |
 
 ## Business Flow / Luồng nghiệp vụ
 
@@ -58,7 +57,7 @@ Trong phạm vi: danh mục chính, trạng thái hiển thị, thứ tự ưu t
 
 ## Permission / Phân quyền
 
-Guest/Customer xem category public. Manager/Admin quản lý category. Staff chỉ xem khi vận hành.
+Guest/Customer xem category public. Staff có `products:read` xem Category options trong Product form. Manager/Admin có `products:manage` gắn Category vào Product. Full `categories:*` runtime chưa mở trong Prompt 35.
 
 ## Acceptance Criteria / Tiêu chí hoàn thành
 
@@ -84,4 +83,3 @@ Guest/Customer xem category public. Manager/Admin quản lý category. Staff ch�
 - Category tree nhiều cấp.
 - SEO landing page cho category.
 - AI category suggestion.
-

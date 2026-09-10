@@ -13,3 +13,7 @@
 - [x] Không tạo migration hoặc Admin credential.
 - [x] Cập nhật OpenAPI/spec/security/docs.
 - [x] Ghi kết quả full verification cuối.
+- [x] Prompt 35: open Products navigation only when Product management runtime exists.
+- [x] Prompt 35: require `products:read` and `products:manage` permissions through current permission guards.
+- [x] Prompt 35: keep Inventory, Orders, Reviews moderation and User/Role management disabled/out of scope.
+- [x] Prompt 35: add frontend loading/error/retry/empty/forbidden and mutation states.

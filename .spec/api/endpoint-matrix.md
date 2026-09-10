@@ -21,8 +21,10 @@ Endpoint Matrix tổng hợp các endpoint chính để dễ rà soát trước 
 | Authentication | POST | `/api/v1/auth/logout` | Đăng xuất | JWT |
 | Product | GET | `/api/v1/public/products` | Xem danh sách sản phẩm public | Public |
 | Product | GET | `/api/v1/public/products/{productId}` | Xem chi tiết sản phẩm public | Public |
-| Product | GET | `/api/v1/admin/products` | Quản lý danh sách sản phẩm | Staff JWT |
-| Product | POST | `/api/v1/admin/products` | Tạo sản phẩm | Staff JWT |
+| Product | GET | `/api/v1/admin/products` | Quản lý danh sách sản phẩm | Internal JWT + `products:read` |
+| Product | GET | `/api/v1/admin/products/options` | Lookup Category/Brand/Media cho Product form | Internal JWT + `products:read` |
+| Product | POST | `/api/v1/admin/products` | Tạo sản phẩm | Internal JWT + `products:manage` |
+| Product | DELETE | `/api/v1/admin/products/{productId}` | Xóa mềm sản phẩm | Internal JWT + `products:manage` |
 | Cart | GET | `/api/v1/cart` | Xem giỏ hàng | Guest token hoặc Customer JWT |
 | Cart | POST | `/api/v1/cart/items` | Thêm item vào giỏ | Guest token hoặc Customer JWT |
 | Order | POST | `/api/v1/orders` | Tạo đơn hàng từ checkout | Guest token hoặc Customer JWT |
@@ -38,4 +40,3 @@ Endpoint Matrix tổng hợp các endpoint chính để dễ rà soát trước 
 ## Full Domain Detail / Chi tiết đầy đủ
 
 Mở [Domain API Specifications](domains/README.md) để xem endpoint list đầy đủ theo từng domain, gồm permission, request contract, response contract, error contract, validation, pagination, filter, search, sort, upload/download, rate limit, idempotency, webhook và AI endpoint.
-

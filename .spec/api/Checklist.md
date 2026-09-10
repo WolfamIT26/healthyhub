@@ -58,6 +58,13 @@ Checklist này dùng để kiểm tra bộ API Specification trước khi chuy�
 | AI | Done |
 | Settings | Done |
 
+## Prompt 35 Runtime Checklist / Checklist runtime Prompt 35
+
+- [x] Admin Product list/detail/options/create/update/status/delete documented as executable.
+- [x] Product permissions documented as `products:read` and `products:manage`.
+- [x] Product media attach/import/export kept blocked.
+- [x] Operation inventory updated to 198.
+
 ## Non-Code Checklist / Checklist không tạo code
 
 | Item / Hạng mục | Status / Trạng thái |
@@ -70,4 +77,3 @@ Checklist này dùng để kiểm tra bộ API Specification trước khi chuy�
 | Không tạo entity | Done |
 | Không viết SQL/migration | Done |
 | Không tạo frontend/backend runtime | Done |
-

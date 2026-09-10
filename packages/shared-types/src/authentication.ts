@@ -15,7 +15,13 @@ export type RoleName = (typeof ROLE_NAMES)[number];
 export const INTERNAL_ROLE_NAMES = ['STAFF', 'MANAGER', 'ADMINISTRATOR'] as const;
 export type InternalRoleName = (typeof INTERNAL_ROLE_NAMES)[number];
 
-export const PERMISSION_NAMES = ['users:manage', 'sessions:manage', 'analytics:read'] as const;
+export const PERMISSION_NAMES = [
+  'users:manage',
+  'sessions:manage',
+  'analytics:read',
+  'products:read',
+  'products:manage',
+] as const;
 export type PermissionName = (typeof PERMISSION_NAMES)[number];
 
 export const AUTHENTICATION_ERROR_CODES = [

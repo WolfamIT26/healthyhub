@@ -1,5 +1,11 @@
 # Data Contract ChangeLog / Nhật ký thay đổi Data Contract
 
+## [0.6.0] - 2026-08-27
+
+- Added typed Admin Product management contracts for list/detail/options/create/update/status/delete.
+- Added `products:read` and `products:manage` authorization semantics.
+- Kept Inventory quantity, upload/import/export and Category/Brand CRUD outside Prompt 35.
+
 ## [0.5.0] - 2026-08-25
 
 - Added Admin Dashboard aggregate contract and current persisted role/permission authorization clarification.

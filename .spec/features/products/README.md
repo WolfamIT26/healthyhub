@@ -8,7 +8,7 @@
 | Dependency | Categories, Brands, Media, Inventory |
 | Version | MVP |
 | Owner | Product Owner, Manager |
-| Status | Draft for business specification |
+| Status | Runtime ready for public catalog and Prompt 35 Admin Product management |
 
 ## Overview / Tổng quan
 
@@ -18,15 +18,17 @@ Products quản lý thông tin sản phẩm healthy được bán trên HealthyH
 
 Giúp khách hiểu sản phẩm rõ ràng, tăng niềm tin khi mua và giúp cửa hàng quản lý danh mục bán hàng có hệ thống.
 
-## Scope / Phạm vi
+## Runtime Scope / Phạm vi runtime
 
-Trong phạm vi: danh sách sản phẩm, chi tiết sản phẩm, trạng thái bán, nội dung healthy, hình ảnh, category/brand liên quan. Ngoài phạm vi: database product schema, API catalog, UI trang sản phẩm.
+Trong phạm vi runtime hiện tại: danh sách public, chi tiết public, Review summary/detail integration, Admin list/detail/create/update/lifecycle/soft-delete, Category/Brand assignment, content, nutrition, ingredients, dietary tags và existing Media links.
+
+Ngoài phạm vi Prompt 35: Inventory quantity adjustment, upload infrastructure, import/export jobs, full Category/Brand CRUD, Review moderation, Supplier, Promotion và AI.
 
 ## Requirement / Yêu cầu
 
 - Sản phẩm công khai phải có tên, mô tả, hình ảnh và trạng thái bán.
 - Sản phẩm healthy nên có thông tin thành phần, lưu ý sử dụng và cảnh báo dị ứng nếu có.
-- Manager/Admin có thể tạo, cập nhật, ẩn hoặc xuất bản sản phẩm.
+- Manager/Admin có `products:manage` có thể tạo, cập nhật, ẩn/xuất bản và soft-delete sản phẩm.
 - Sản phẩm hết hàng phải hiển thị đúng khả năng mua.
 - Nội dung sản phẩm không được đưa tuyên bố y tế sai lệch.
 
@@ -42,12 +44,12 @@ Trong phạm vi: danh sách sản phẩm, chi tiết sản phẩm, trạng thái
 | --- | --- | --- |
 | View product list | Guest, Customer | Danh sách sản phẩm được hiển thị. |
 | View product detail | Guest, Customer | Khách hiểu thông tin sản phẩm. |
-| Manage product | Manager, Admin | Sản phẩm được tạo/cập nhật theo rule. |
-| Publish product | Manager, Admin | Sản phẩm sẵn sàng bán công khai. |
+| Manage product | Manager, Admin | Sản phẩm được tạo/cập nhật theo canonical Product rule. |
+| Publish product | Manager, Admin | Sản phẩm đủ invariant được public; Inventory vẫn quyết định availability. |
 
 ## Business Flow / Luồng nghiệp vụ
 
-1. Manager/Admin nhập hoặc cập nhật thông tin sản phẩm.
+1. Manager/Admin nhập hoặc cập nhật thông tin sản phẩm trong Admin Product form.
 2. Hệ thống kiểm tra điều kiện nội dung tối thiểu.
 3. Sản phẩm được gắn category, brand và media phù hợp.
 4. Trạng thái bán được xác nhận.
@@ -62,7 +64,7 @@ Trong phạm vi: danh sách sản phẩm, chi tiết sản phẩm, trạng thái
 
 ## Permission / Phân quyền
 
-Guest/Customer xem sản phẩm công khai. Staff có thể xem phục vụ vận hành. Manager/Admin quản lý sản phẩm. Super Admin không quản lý sản phẩm cửa hàng trừ khi SaaS yêu cầu.
+Guest/Customer xem sản phẩm công khai. Internal actor có `products:read` xem Admin list/detail/options. Internal actor có `products:manage` tạo, cập nhật lifecycle và soft-delete. Frontend permission chỉ là UX; backend guard là authority.
 
 ## Acceptance Criteria / Tiêu chí hoàn thành
 
@@ -92,4 +94,3 @@ Guest/Customer xem sản phẩm công khai. Staff có thể xem phục vụ vậ
 - Product bundle.
 - AI product summary.
 - QR product scanner.
-

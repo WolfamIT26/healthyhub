@@ -6,6 +6,8 @@ AI Development Core đã được mở rộng theo Prompt 04. `.ai` hiện có �
 
 Prompt 34 đã dùng các rule/context hiện hữu để hoàn thành Admin Foundation; không thay đổi AI capability hoặc tạo AI authority mới.
 
+Prompt 35 đã dùng cùng workflow/rule/context để triển khai Admin Product management; không thêm AI capability, provider hoặc authority mới.
+
 ## Completed / Đã hoàn thành
 
 - Tạo workflow chuẩn cho generate, review, refactor, audit, testing, documentation và release.

@@ -1,5 +1,31 @@
 # ChangeLog / Nhật ký thay đổi
 
+## [0.24.0] - 2026-08-27
+
+### Added / Đã thêm
+
+- Added Admin Product list/detail/options/create/update/status/delete APIs over canonical Product persistence.
+- Added `products:read` and `products:manage` permissions with idempotent seed mapping.
+- Added `/admin/products`, `/admin/products/new` and `/admin/products/:productId` frontend routes inside the Admin shell.
+
+### Security & Concurrency / Bảo mật và đồng thời
+
+- Admin Product access requires current Bearer session, active account, persisted Internal role and effective Product permission.
+- Product aggregate mutations use DTO whitelists, transaction boundaries, row locks/version checks and DB unique constraints for SKU/slug races.
+- Category/Brand/Media relations are tenant-scoped and validated server-side; tenant, stock quantity and audit fields are not client-controlled.
+
+### Scope / Phạm vi
+
+- Product create starts `draft + hidden + unavailable` and does not create Inventory quantity.
+- Public catalog reflects Admin mutations through the same Product authority; Inventory remains the availability authority.
+- Product media attach/import/export remain blocked; no Inventory adjustment, Category/Brand CRUD, Review moderation or Prompt 36 work was started.
+
+### Verification / Kiểm tra
+
+- Final verification results are recorded in `docs/work-summaries/2026-08-27-01-prompt-35-admin-product-catalog-management-v1.md`.
+
+`VNPAY Sandbox E2E: PENDING — environment credentials/public HTTPS callback`
+
 ## [0.23.0] - 2026-08-25
 
 ### Added / Đã thêm

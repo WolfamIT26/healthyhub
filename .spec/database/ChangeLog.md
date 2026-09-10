@@ -1,5 +1,11 @@
 # Database ChangeLog / Nhật ký thay đổi Logical Database Design
 
+## 2026-08-27 — Prompt 35
+
+- Documented Admin Product management as reuse of existing Product/Category/Brand/Media persistence.
+- Recorded Product version, public visibility invariant and soft-delete non-cascade behavior.
+- Confirmed no new logical Product authority or migration.
+
 ## 2026-08-21 — Prompt 33.2
 
 - Made `product_reviews` executable with required Order identity and active/published aggregate semantics.

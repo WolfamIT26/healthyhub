@@ -10,6 +10,8 @@ Prompt 33.1 adds migration `1760000014000` for exact Order/Shipment status const
 
 Prompt 33.2 adds migration `1760000015000` for `product_reviews`, exact checks/FKs/indexes and unique `(tenant_id, order_id, product_id)`; migration state is 16/16.
 
+Prompt 35 adds no schema migration. Admin Product management uses existing Product indexes, FK constraints, unique SKU/slug constraints, generated primary Category uniqueness and BaseAudit version columns.
+
 - Status: Completed for Prompt 09.
 - Scope: Physical Database Documentation only.
 - Project: HealthyHub.

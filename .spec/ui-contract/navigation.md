@@ -59,4 +59,4 @@ Tài liệu này định nghĩa navigation cho Public, Customer, Staff và Admin
 - Public navigation ưu tiên tìm sản phẩm, danh mục, giỏ hàng và tài khoản.
 - Admin navigation ưu tiên đơn hàng, sản phẩm, tồn kho và cảnh báo vận hành.
 - Mobile navigation cần rút gọn thành bottom navigation hoặc drawer ở bước thiết kế frontend sau, chưa quyết định visual tại Prompt 11.
-- Prompt 34 chỉ mở Dashboard. Products, Inventory, Orders và Reviews phải disabled/ghi chưa khả dụng cho tới khi API/module tương ứng executable.
+- Prompt 34 mở Dashboard. Prompt 35 mở Products với `products:read`/`products:manage`. Inventory, Orders và Reviews phải disabled/ghi chưa khả dụng cho tới khi API/module tương ứng executable.

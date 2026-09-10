@@ -8,6 +8,8 @@ Hệ thống cần chuẩn bị cơ chế đăng ký, đăng nhập, đăng xu�
 
 Phân quyền theo role và permission. Mọi API nhạy cảm phải khai báo permission trong tài liệu API.
 
+Admin Product Management dùng current persisted Internal role và permission: `products:read` cho list/detail/options, `products:manage` cho create/update/lifecycle/soft-delete. Frontend role state không phải authorization authority.
+
 ## JWT / Token
 
 - JWT secret phải lấy từ environment.
@@ -26,4 +28,3 @@ Phân quyền theo role và permission. Mọi API nhạy cảm phải khai báo 
 ## Privacy / Quyền riêng tư
 
 Không thu thập dữ liệu cá nhân ngoài mục đích sản phẩm. Dữ liệu nhạy cảm phải có chính sách lưu trữ, truy cập và xóa.
-

@@ -1,5 +1,11 @@
 # API Specification ChangeLog / Nhật ký thay đổi API Specification
 
+## 2026-08-27 — Prompt 35
+
+- Opened Admin Product list/detail/options/create/update/status/delete as executable runtime API contracts.
+- Added Product options and soft-delete operations, bringing inventory to 198.
+- Kept Product media attach/import/export blocked and standalone Category/Brand Admin CRUD outside Prompt 35.
+
 ## 2026-08-25 — Prompt 34
 
 - Opened the existing Admin Analytics Dashboard operation with exact aggregate-only response and server-derived tenant/role boundary.

@@ -8,7 +8,7 @@ Prompt 33.1 makes Order/Shipping fulfillment and Review eligibility executable w
 
 Prompt 33.2 makes Reviews & Ratings V1 public/customer persistence, API, aggregate and Product Detail executable. Admin moderation remains future scope.
 
-Prompt 34 makes Admin access control, `/admin` shell and minimal authoritative Dashboard executable. Other Admin modules remain future scope.
+Prompt 34 makes Admin access control, `/admin` shell and minimal authoritative Dashboard executable. Prompt 35 makes Admin Product Catalog Management executable for list/detail/create/update/lifecycle/soft-delete. Inventory adjustment, Product upload/import/export, Category/Brand CRUD and other Admin modules remain future scope.
 
 ## Completed / Đã hoàn thành
 

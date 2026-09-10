@@ -15,3 +15,7 @@ V1 query persistence thật, không cache/materialized analytics. Chỉ metric c
 ## D-ADM-004 — Moderation remains blocked / Moderation tiếp tục blocked
 
 Không mở Admin Review operations cho tới khi reason, re-publish, audit và role policy được duyệt.
+
+## D-ADM-005 — Product navigation opens only with runtime / Chỉ mở Product khi runtime đã có
+
+Prompt 35 mở Products trong Admin shell vì backend/frontend/API đã executable. Các module còn lại tiếp tục disabled thay vì route giả.

@@ -8,7 +8,7 @@
 | Dependency | Products, Media |
 | Version | MVP |
 | Owner | Product Owner, Manager |
-| Status | Draft for business specification |
+| Status | Public read ready; Product-scoped Admin lookup ready |
 
 ## Overview / Tổng quan
 
@@ -20,13 +20,13 @@ Tăng độ tin cậy sản phẩm, hỗ trợ lọc/tìm kiếm và giúp khác
 
 ## Scope / Phạm vi
 
-Trong phạm vi: tên thương hiệu, mô tả, trạng thái, liên kết sản phẩm, thông tin chứng nhận nếu có. Ngoài phạm vi: database brand schema, API brand, UI brand page.
+Trong phạm vi hiện tại: public Brand reads và Product-scoped Admin Brand lookup/assignment. Ngoài phạm vi Prompt 35: full Admin Brand CRUD, logo upload và Brand management UI.
 
 ## Requirement / Yêu cầu
 
 - Brand phải có tên rõ ràng trước khi gắn vào sản phẩm.
 - Brand public không được gây hiểu nhầm nguồn gốc.
-- Manager/Admin có thể quản lý brand.
+- Manager/Admin có thể chọn Brand hợp lệ khi quản lý Product. Full Brand management cần prompt riêng.
 - Chứng nhận liên quan brand cần kiểm soát media.
 
 ## User Story / User story
@@ -39,7 +39,6 @@ Trong phạm vi: tên thương hiệu, mô tả, trạng thái, liên kết sả
 | Use Case | Actor | Result |
 | --- | --- | --- |
 | View brand info | Guest, Customer | Khách hiểu thương hiệu. |
-| Manage brand | Manager, Admin | Brand được cập nhật đúng. |
 | Assign brand to product | Manager, Admin | Sản phẩm có thương hiệu phù hợp. |
 
 ## Business Flow / Luồng nghiệp vụ
@@ -57,7 +56,7 @@ Trong phạm vi: tên thương hiệu, mô tả, trạng thái, liên kết sả
 
 ## Permission / Phân quyền
 
-Guest/Customer xem brand public. Manager/Admin quản lý. Staff chỉ xem.
+Guest/Customer xem brand public. Staff có `products:read` có thể xem Brand options trong Product form. Manager/Admin có `products:manage` có thể gắn Brand vào Product. Full `brands:*` runtime chưa mở trong Prompt 35.
 
 ## Acceptance Criteria / Tiêu chí hoàn thành
 
@@ -83,4 +82,3 @@ Guest/Customer xem brand public. Manager/Admin quản lý. Staff chỉ xem.
 - Brand landing page.
 - Supplier integration.
 - Brand trust score.
-

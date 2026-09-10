@@ -1,5 +1,11 @@
 # Feature Specifications ChangeLog / Nhật ký thay đổi đặc tả tính năng
 
+## 2026-08-27 — Prompt 35
+
+- Updated Products feature status to runtime-ready for Admin Product management.
+- Clarified Category/Brand are reused for Product assignment, not opened as full Admin CRUD.
+- Kept Inventory adjustment, upload/import/export, Review moderation and AI out of Prompt 35.
+
 ## 2026-08-25 — Prompt 34
 
 - Marked Admin Dashboard V1 executable with Product/Inventory/Order/Review aggregates.
